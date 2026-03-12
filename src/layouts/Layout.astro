@@ -28,7 +28,7 @@ const {
   SITE URL — change this once when you have a real domain.
   Used to build canonical links and Open Graph URLs.
 */
-const siteUrl = "https://argonavis.agency";
+const siteUrl = "https://argo-navis.net";
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
 const canonicalPath = stripLocalePrefix(Astro.url.pathname);
 const englishURL = new URL(withLocale(canonicalPath, "en"), siteUrl);
@@ -43,7 +43,6 @@ const hebrewURL = new URL(withLocale(canonicalPath, "he"), siteUrl);
 
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
 
     <!-- Primary meta -->
     <title>{title} | Argo Navis</title>

@@ -35,15 +35,17 @@ It highlights our core services, showcases past work, and drives inbound leads v
   - Problem → solution → results format.
   - Visuals (screenshots, mockups, metrics) where relevant.
 
-- **Lead form generator (Supabase)**
+- **Lead form + email notifications (Supabase + Resend)**
   - Configurable forms for different entry points (main page, service pages, sub‑pages).
   - Form submissions stored in **Supabase**.
   - Captures `name`, `email`, optional `website`, `message`, and `source`.
   - Captures preferred contact channel in this order: `email` → `phone` → `telegram` → `whatsapp`.
   - For non-email channels, opens and requires a channel-specific contact details input.
   - Turnstile token is verified server-side before insert.
-  - Multiple form “types” possible (e.g., discovery call, audit request, custom quote).
-  - No email provider integration (no Resend).
+  - Multiple form "types" possible (e.g., discovery call, audit request, custom quote).
+  - On successful insert, two transactional emails fire via **Resend**:
+    - **Lead auto-reply** (`hello@argo-navis.net` → submitter): branded confirmation with a dynamic subject line, service-specific copy, echoed message, website callout (if provided), and contact method acknowledgement.
+    - **Owner notification** (`leads@argo-navis.net` → `NOTIFICATION_EMAIL`): compact table of all lead fields — name, email, website, contact method, message, source, UTC timestamp — with a Supabase dashboard link.
 
 ## Tech Stack
 
@@ -51,6 +53,7 @@ It highlights our core services, showcases past work, and drives inbound leads v
 - **Language**: TypeScript/JavaScript (Astro components + vanilla JS islands)
 - **Styling**: Tailwind CSS
 - **Database**: Supabase (Postgres) for storing form submissions
+- **Email**: Resend (transactional — lead auto-reply + owner notification)
 - **Bot protection**: Cloudflare Turnstile (form verification)
 - **Localization**: English (default) + Hebrew routes under `/he/...` with RTL layout
 - **Navigation UX**: Language and theme controls are icon-only (flag and sun/moon)
@@ -84,11 +87,13 @@ It highlights our core services, showcases past work, and drives inbound leads v
    cp .env.example .env
    ```
 
-   Fill in `.env` with your Supabase credentials:
-   - `SUPABASE_URL` — found at Supabase Dashboard → Settings → API → Project URL
-   - `SUPABASE_SERVICE_ROLE_KEY` — found at Settings → API → service_role (secret)
+   Fill in `.env`:
+   - `SUPABASE_URL` — Supabase Dashboard → Settings → API → Project URL
+   - `SUPABASE_SECRET_KEY` — Supabase Dashboard → Settings → **API Keys** tab → **Secret key** (`sb_secret_...`). Do NOT use the legacy `service_role` JWT key.
    - `PUBLIC_TURNSTILE_SITE_KEY` — Cloudflare Turnstile site key (safe on client)
    - `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile secret key (server only)
+   - `RESEND_API_KEY` — Resend Dashboard → API Keys → Create API Key (Sending access). See [resend.com](https://resend.com).
+   - `NOTIFICATION_EMAIL` — the inbox where owner lead-alert emails are delivered
 
 3. **Create the Supabase `leads` table**
 
@@ -109,8 +114,8 @@ It highlights our core services, showcases past work, and drives inbound leads v
    npm run build
    ```
 
-   Set the same env vars (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,
-   `PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`) in
+   Set all env vars (`SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `PUBLIC_TURNSTILE_SITE_KEY`,
+   `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL`) in
    Cloudflare Pages → Settings → Environment variables.
 
 ---
@@ -146,7 +151,7 @@ src/
     campaigns/
       index.astro         ← Campaigns service page
     api/
-      leads.ts            ← POST endpoint — saves form data to Supabase
+      leads.ts            ← POST endpoint — validates, saves to Supabase, sends Resend emails
   lib/
     locale.ts             ← locale path helpers (EN/HE switch)
     supabase.ts           ← Supabase client (server-side only)
@@ -174,6 +179,9 @@ src/
 | Contact DB columns | `src/lib/schema.sql` (`contact_method`, `contact_details`) |
 | Supabase table name | `src/pages/api/leads.ts` → `TABLE` constant |
 | Turnstile enforcement | `src/pages/api/leads.ts` (strict in production, soft in development) |
+| Lead auto-reply email copy | `src/pages/api/leads.ts` → `buildLeadReplyHtml` + `sourceLabel` + `leadReplySubject` |
+| Owner notification email | `src/pages/api/leads.ts` → `buildOwnerNotificationHtml` |
+| Resend sender addresses | `src/pages/api/leads.ts` → `from` fields in the two `resend.emails.send()` calls |
 
 ---
 

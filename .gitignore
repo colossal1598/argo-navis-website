@@ -26,3 +26,7 @@ pnpm-debug.log*
 # personal files
 .personal/
 .personal/**
+
+# APM files
+.apm/
+.cursor/

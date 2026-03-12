@@ -1,0 +1,55 @@
+---
+/*
+  PAGE GOAL: Branded 404 page. Keeps users on-site when they hit a broken
+  or mistyped URL. Cloudflare Pages serves this file automatically for any
+  unmatched route. Offers a clear path back to the homepage and services.
+*/
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Page Not Found"
+  description="The page you're looking for doesn't exist."
+>
+
+  <!-- 404 Hero -->
+  <section class="flex min-h-[80vh] flex-col items-center justify-center px-6 py-24 text-center">
+
+    <!-- Large error code -->
+    <p class="text-8xl font-black text-brand-400 sm:text-9xl">404</p>
+
+    <h1 class="mt-4 text-3xl font-bold text-text-primary sm:text-4xl">
+      This page doesn't exist.
+    </h1>
+
+    <p class="mt-4 max-w-md text-text-muted">
+      The link might be broken, the page may have moved, or you may have typed the URL incorrectly.
+    </p>
+
+    <!-- Primary CTA -->
+    <a
+      href="/"
+      class="mt-8 inline-flex items-center gap-2 rounded-lg bg-brand-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-600"
+    >
+      ← Back to homepage
+    </a>
+
+    <!-- Secondary links -->
+    <div class="mt-12 border-t border-border-subtle pt-10">
+      <p class="mb-5 text-sm font-medium text-text-muted">Or go to a service page:</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        <a href="/automations" class="rounded-md border border-border-subtle px-4 py-2 text-sm text-text-muted transition-colors hover:border-brand-400 hover:text-text-primary">
+          Automations
+        </a>
+        <a href="/websites" class="rounded-md border border-border-subtle px-4 py-2 text-sm text-text-muted transition-colors hover:border-brand-400 hover:text-text-primary">
+          Websites
+        </a>
+        <a href="/campaigns" class="rounded-md border border-border-subtle px-4 py-2 text-sm text-text-muted transition-colors hover:border-brand-400 hover:text-text-primary">
+          Campaigns
+        </a>
+      </div>
+    </div>
+
+  </section>
+
+</Layout>
