@@ -38,6 +38,10 @@ It highlights our core services, showcases past work, and drives inbound leads v
 - **Lead form generator (Supabase)**
   - Configurable forms for different entry points (main page, service pages, sub‑pages).
   - Form submissions stored in **Supabase**.
+  - Captures `name`, `email`, optional `website`, `message`, and `source`.
+  - Captures preferred contact channel in this order: `email` → `phone` → `telegram` → `whatsapp`.
+  - For non-email channels, opens and requires a channel-specific contact details input.
+  - Turnstile token is verified server-side before insert.
   - Multiple form “types” possible (e.g., discovery call, audit request, custom quote).
   - No email provider integration (no Resend).
 
@@ -47,35 +51,24 @@ It highlights our core services, showcases past work, and drives inbound leads v
 - **Language**: TypeScript/JavaScript (Astro components + vanilla JS islands)
 - **Styling**: Tailwind CSS
 - **Database**: Supabase (Postgres) for storing form submissions
-- **Deployment**: (to be decided – e.g. Vercel / Netlify / Cloudflare Pages)
+- **Bot protection**: Cloudflare Turnstile (form verification)
+- **Localization**: English (default) + Hebrew routes under `/he/...` with RTL layout
+- **Navigation UX**: Language and theme controls are icon-only (flag and sun/moon)
+- **Deployment**: Cloudflare Pages (with `@astrojs/cloudflare`)
 
-## Project Structure
+## Leads Table Columns (Current)
 
-> This will be adjusted as the project evolves.
-
-Planned structure (Astro-style):
-
-- `src/`
-  - `pages/`
-    - `index.astro` – main landing page
-    - `automations/` – automations service + showcases
-    - `websites/` – websites service + showcases
-    - `campaigns/` – campaigns service + showcases
-  - `components/` – shared UI (navigation, layout, forms, cards, etc.)
-  - `lib/` – utilities (Supabase client, form config, helpers)
-- `public/` – static assets
-
-## Lead Form Generator (Concept)
-
-- **Config-driven forms**
-  - Central config describing fields per form type (e.g., “Automation discovery”, “Website project brief”, “Campaign strategy call”).
-  - Pages select the appropriate form configuration.
-- **Supabase integration**
-  - Astro endpoint(s) to accept form POSTs.
-  - Insert submissions into a `leads` table in Supabase.
-  - Basic validation and error handling.
-- **No email sending for now**
-  - Notifications or email workflows can be added later if needed.
+| Column | Type | Required | Notes |
+|---|---|---|---|
+| `id` | `uuid` | yes | auto-generated primary key |
+| `name` | `text` | yes | lead name |
+| `email` | `text` | yes | validated in API |
+| `website` | `text` | no | optional |
+| `contact_method` | `text` | yes | `email` \| `phone` \| `telegram` \| `whatsapp` |
+| `contact_details` | `text` | no | required in API when method is not `email` |
+| `message` | `text` | yes | lead message |
+| `source` | `text` | yes | page/form source tag |
+| `created_at` | `timestamptz` | yes | auto `now()` |
 
 ## Getting Started
 
@@ -94,6 +87,8 @@ Planned structure (Astro-style):
    Fill in `.env` with your Supabase credentials:
    - `SUPABASE_URL` — found at Supabase Dashboard → Settings → API → Project URL
    - `SUPABASE_SERVICE_ROLE_KEY` — found at Settings → API → service_role (secret)
+   - `PUBLIC_TURNSTILE_SITE_KEY` — Cloudflare Turnstile site key (safe on client)
+   - `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile secret key (server only)
 
 3. **Create the Supabase `leads` table**
 
@@ -114,7 +109,8 @@ Planned structure (Astro-style):
    npm run build
    ```
 
-   Set the same env vars (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`) in
+   Set the same env vars (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,
+   `PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`) in
    Cloudflare Pages → Settings → Environment variables.
 
 ---
@@ -137,6 +133,11 @@ src/
     ContactForm.astro     ← lead-capture form (posts to /api/leads)
   pages/
     index.astro           ← main landing page
+    he/
+      index.astro         ← Hebrew landing page (`/he`)
+      automations/index.astro
+      websites/index.astro
+      campaigns/index.astro
     automations/
       index.astro         ← Automations service page
       crm-slack-routing.astro  ← example showcase sub-page
@@ -147,6 +148,7 @@ src/
     api/
       leads.ts            ← POST endpoint — saves form data to Supabase
   lib/
+    locale.ts             ← locale path helpers (EN/HE switch)
     supabase.ts           ← Supabase client (server-side only)
     schema.sql            ← SQL to create the leads table
   styles/
@@ -160,12 +162,31 @@ src/
 | What you want to change | Where to change it |
 |---|---|
 | Brand colours | `src/styles/global.css` → `@theme` block |
+| Light/Dark tokens | `src/styles/global.css` → semantic `--theme-*` variables |
 | Nav links | `src/components/Navigation.astro` → `navLinks` array |
+| Language switch behavior | `src/components/Navigation.astro` + `src/lib/locale.ts` |
 | Hero headline / copy | `src/components/Hero.astro` → top variables |
 | Service cards | `src/components/ServicesSection.astro` → `services` array |
 | Footer columns | `src/components/Footer.astro` → `columns` array |
 | Form fields | `src/components/ContactForm.astro` → `fields` array |
+| Contact method buttons | `src/components/ContactForm.astro` → `contactMethods` (order controls button order) |
+| Channel details field | `src/components/ContactForm.astro` → `contactDetailsRequiredText` + `contactDetailsPlaceholders` |
+| Contact DB columns | `src/lib/schema.sql` (`contact_method`, `contact_details`) |
 | Supabase table name | `src/pages/api/leads.ts` → `TABLE` constant |
+| Turnstile enforcement | `src/pages/api/leads.ts` (strict in production, soft in development) |
+
+---
+
+## Code Documentation Convention (Required)
+
+For all **new pages** and for major edits to existing pages/components:
+
+- Add a short `PAGE GOAL` comment near the top of the file explaining conversion intent.
+- Add section-level comments before key blocks (Hero, Problem, Process, FAQ, Contact, etc.).
+- Keep comments practical and editable-focused (what to change, why the block exists).
+- When adding localized pages (`/he/...`), keep structure mirrored to EN and document any intentional differences.
+
+This keeps future changes consistent with the existing annotated style used across the project.
 
 ---
 
@@ -175,9 +196,3 @@ src/
 2. Move it to the right service folder (`/websites/`, `/campaigns/`, etc.)
 3. Update the `ShowcaseLayout` props and the three `ShowcaseSection` blocks
 4. Add a `ShowcaseCard` entry to the parent service page's `showcases` array
-
----
-
-## Original README content follows
-
-### Lead Form Generator (Concept)

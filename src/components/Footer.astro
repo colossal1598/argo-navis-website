@@ -1,4 +1,13 @@
 ---
+import { type SiteLocale, withLocale } from "../lib/locale";
+
+interface Props {
+  locale?: SiteLocale;
+}
+
+const { locale = "en" } = Astro.props;
+const isHebrew = locale === "he";
+
 /*
   FOOTER COLUMNS — each object is a column in the footer.
   To add a column: add another { heading, links: [...] } object.
@@ -6,18 +15,17 @@
 */
 const columns = [
   {
-    heading: "Services",
+    heading: isHebrew ? "שירותים" : "Services",
     links: [
-      { label: "Automations", href: "/automations" },
-      { label: "Websites",    href: "/websites" },
-      { label: "Campaigns",   href: "/campaigns" },
+      { label: isHebrew ? "אוטומציות" : "Automations", href: withLocale("/automations", locale) },
+      { label: isHebrew ? "אתרים" : "Websites", href: withLocale("/websites", locale) },
+      { label: isHebrew ? "קמפיינים" : "Campaigns", href: withLocale("/campaigns", locale) },
     ],
   },
   {
-    heading: "Company",
+    heading: isHebrew ? "חברה" : "Company",
     links: [
-      { label: "About",   href: "/about" },
-      { label: "Contact", href: "/#contact" },
+      { label: isHebrew ? "דברו איתנו" : "Contact", href: withLocale("/#contact", locale) },
     ],
   },
 ];
@@ -35,7 +43,7 @@ const year = new Date().getFullYear();
 const companyName = "Argo Navis";
 ---
 
-<footer class="border-t border-surface-700 bg-surface-900">
+<footer class="border-t border-border-subtle bg-surface-900">
   <div class="mx-auto max-w-6xl px-6 py-12">
 
     <!-- Top row: logo + columns -->
@@ -43,15 +51,17 @@ const companyName = "Argo Navis";
 
       <!-- Brand column -->
       <div class="lg:col-span-2">
-        <a href="/" class="text-xl font-bold text-white">
+        <a href={withLocale("/", locale)} class="text-xl font-bold text-text-primary">
           Argo <span class="text-brand-400">Navis</span>
         </a>
         <!--
           TAGLINE — one sentence that captures what you do.
           Keep it under ~12 words for best readability.
         -->
-        <p class="mt-3 max-w-xs text-sm text-slate-400">
-          We build systems, sites, and campaigns that generate leads and scale your business.
+        <p class="mt-3 max-w-xs text-sm text-text-muted">
+          {isHebrew
+            ? "אנחנו בונים מערכות, אתרים וקמפיינים שמביאים לידים ומקדמים את העסק שלכם."
+            : "We build systems, sites, and campaigns that generate leads and scale your business."}
         </p>
 
         <!-- Social icons -->
@@ -62,7 +72,7 @@ const companyName = "Argo Navis";
               aria-label={s.label}
               target="_blank"
               rel="noopener noreferrer"
-              class="rounded-md p-2 text-slate-400 transition-colors hover:bg-surface-700 hover:text-white"
+              class="rounded-md p-2 text-text-muted transition-colors hover:bg-surface-700 hover:text-text-primary"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
                 <path d={s.icon} />
@@ -75,7 +85,7 @@ const companyName = "Argo Navis";
       <!-- Link columns -->
       {columns.map(col => (
         <div>
-          <h3 class="text-xs font-semibold uppercase tracking-widest text-slate-500">
+          <h3 class="text-xs font-semibold uppercase tracking-widest text-text-muted/80">
             {col.heading}
           </h3>
           <ul class="mt-3 space-y-2">
@@ -83,7 +93,7 @@ const companyName = "Argo Navis";
               <li>
                 <a
                   href={link.href}
-                  class="text-sm text-slate-400 transition-colors hover:text-white"
+                  class="text-sm text-text-muted transition-colors hover:text-text-primary"
                 >
                   {link.label}
                 </a>
@@ -95,7 +105,7 @@ const companyName = "Argo Navis";
     </div>
 
     <!-- Bottom row: copyright -->
-    <div class="mt-10 border-t border-surface-700 pt-6 text-center text-xs text-slate-500">
+    <div class="mt-10 border-t border-border-subtle pt-6 text-center text-xs text-text-muted/80">
       © {year} {companyName}. All rights reserved.
     </div>
 

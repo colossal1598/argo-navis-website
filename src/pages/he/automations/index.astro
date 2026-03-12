@@ -1,0 +1,184 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import ProcessBlock from "../../../components/ProcessBlock.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+
+/*
+  PAGE GOAL (HE AUTOMATIONS):
+  Keep the exact conversion structure of the automation service page in Hebrew:
+  pain framing -> offer -> examples -> process -> FAQ -> contact.
+*/
+
+/* PROCESS STEPS — localized for Hebrew while reusing shared component. */
+const processSteps = [
+  { label: "אתם מראים את התהליך", description: "אתם מסבירים מה קורה ביום-יום." },
+  { label: "אנחנו מזהים מה ניתן לאוטומציה", description: "ממפים את כל מה שלא חייב יד אדם." },
+  { label: "אנחנו בונים", description: "מחברים מערכות, בודקים, ומעלים לאוויר." },
+  { label: "אתם מקבלים זמן בחזרה", description: "מעבירים לכם תהליך יציב שעובד לבד." },
+];
+
+const faq = [
+  {
+    q: "אני לא יודע בכלל מה אפשר לאוטומט.",
+    a: "בשביל זה אנחנו כאן. עוברים איתכם על היום שלכם ומזהים איפה לא חייבים עבודה ידנית.",
+  },
+  {
+    q: "מה קורה אם משהו נשבר?",
+    a: "אנחנו בונים עם בדיקות ואמינות מראש. אם משהו נשבר אחרי המסירה, מתקנים.",
+  },
+  {
+    q: "צריך להיות טכני כדי לעבוד איתכם?",
+    a: "בכלל לא. אתם מתארים את העבודה, אנחנו מטפלים בביצוע.",
+  },
+];
+
+/* FORM FIELDS — same lead schema, service-specific Hebrew prompts. */
+const automationFormFields = [
+  {
+    id: "name",
+    label: "שם מלא",
+    type: "text" as const,
+    placeholder: "איך קוראים לך?",
+    required: true,
+  },
+  {
+    id: "email",
+    label: "אימייל",
+    type: "email" as const,
+    placeholder: "you@company.com",
+    required: true,
+  },
+  {
+    id: "website",
+    label: "אתר",
+    type: "url" as const,
+    placeholder: "example.com",
+    required: false,
+  },
+  {
+    id: "message",
+    label: "מה תרצו לאוטומט?",
+    type: "textarea" as const,
+    placeholder: "ספרו לנו מה מתבצע אצלכם ידנית היום",
+    required: true,
+  },
+];
+---
+
+<Layout
+  title="אוטומציות"
+  description="אנחנו בונים את המערכות שמריצות את העסק גם כשאתם לא מסתכלים."
+  locale="he"
+  dir="rtl"
+>
+  <!-- HERO — lead with the time-saving hook -->
+  <section class="relative overflow-hidden bg-surface-950 px-6 py-24 md:py-36">
+    <div class="relative z-10 mx-auto max-w-3xl">
+      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+        למה להשקיע 10 שעות בעבודה שמחשב עושה ב-10 דקות?
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg text-text-muted">
+        אנחנו בונים את המערכות שמריצות את העסק גם כשאתם לא מסתכלים.
+      </p>
+    </div>
+  </section>
+
+  <!-- PROBLEM BLOCK — explicit pain statements to qualify intent -->
+  <section class="bg-surface-900 px-6 py-20">
+    <div class="mx-auto max-w-3xl space-y-6">
+      {[
+        "כל שעה על דוחות ידניים היא שעה שלא מושקעת בצמיחה.",
+        "לידים מתקררים כי אף אחד לא חזר בזמן.",
+        "אדמין שמצטבר במקום לרוץ לבד.",
+      ].map(line => (
+        <p class="text-2xl font-semibold text-text-primary md:text-3xl">{line}</p>
+      ))}
+    </div>
+  </section>
+
+  <!-- WHAT WE DO — concise value proposition -->
+  <section class="bg-surface-950 px-6 py-20">
+    <div class="mx-auto max-w-3xl">
+      <p class="text-lg text-text-soft md:text-xl">
+        אנחנו ממפים את מה שאתם עושים ידנית ובונים מערכות שעושות את זה בשבילכם.
+        התוצאה: פחות כיבוי שריפות, תגובות מהירות יותר ללקוחות, ועסק שעובד כמו שהוא אמור לעבוד.
+        <br />
+        <span class="mt-3 inline-block font-semibold text-text-primary">בלי שתצטרכו לשמור עליו כל הזמן.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT WE AUTOMATE — practical categories clients recognize quickly -->
+  <section class="bg-surface-950 px-6 pb-4">
+    <div class="mx-auto max-w-5xl border-t border-border-subtle pt-16">
+      <h2 class="text-3xl font-bold text-text-primary md:text-4xl">מה אנחנו מאוטומטים</h2>
+      <p class="mt-3 max-w-3xl text-text-muted">
+        ארבעה אזורים נפוצים להתחיל מהם. הפרטים משתנים, התוצאה קבועה - פחות עבודה ידנית, יותר זמן פנוי.
+      </p>
+
+      <div class="mt-10 grid gap-8 md:grid-cols-2">
+        <div class="rounded-lg border border-border-subtle bg-surface-950/60 p-6">
+          <h3 class="text-lg font-semibold text-text-primary">דיווחים</h3>
+          <p class="mt-2 text-text-muted">דוחות אוטומטיים לתיבת המייל, בלי קבצי אקסל אינסופיים.</p>
+        </div>
+        <div class="rounded-lg border border-border-subtle bg-surface-950/60 p-6">
+          <h3 class="text-lg font-semibold text-text-primary">חשבוניות ואדמין</h3>
+          <p class="mt-2 text-text-muted">שליחה, מעקב ותזכורות - בלי לגעת ידנית בכל פעולה.</p>
+        </div>
+        <div class="rounded-lg border border-border-subtle bg-surface-950/60 p-6">
+          <h3 class="text-lg font-semibold text-text-primary">תזמון תוכן</h3>
+          <p class="mt-2 text-text-muted">התוכן שלכם מתפרסם בזמן קבוע, בלי כניסה יומית לכל מערכת.</p>
+        </div>
+        <div class="rounded-lg border border-border-subtle bg-surface-950/60 p-6">
+          <h3 class="text-lg font-semibold text-text-primary">הודעות ופולואפ</h3>
+          <p class="mt-2 text-text-muted">מעקבים אוטומטיים כך שאף ליד או לקוח לא נופל בין הכיסאות.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS — "what working with us looks like" in Hebrew -->
+  <ProcessBlock heading="איך העבודה איתנו נראית" steps={processSteps} />
+
+  <!-- FAQ — objection handling before form submit -->
+  <section class="bg-surface-950 px-6 py-20">
+    <div class="mx-auto max-w-3xl">
+      <h2 class="mb-10 text-2xl font-bold text-text-primary">שאלות נפוצות</h2>
+      <div class="space-y-8">
+        {faq.map(item => (
+          <div>
+            <p class="font-semibold text-text-primary">{item.q}</p>
+            <p class="mt-2 text-text-muted">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT FORM — endpoint remains /api/leads via shared component -->
+  <ContactForm
+    heading="לא בטוחים מאיפה להתחיל? בשביל זה השיחה הראשונה."
+    source="automations-he"
+    fields={automationFormFields}
+    reassurance="בדרך כלל נחזור אליכם תוך 24 שעות."
+    submitLabel="בואו נדבר"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactMethods={[
+      { id: "email", label: "אימייל" },
+      { id: "phone", label: "טלפון" },
+      { id: "telegram", label: "טלגרם" },
+      { id: "whatsapp", label: "ווטסאפ" },
+    ]}
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+</Layout>

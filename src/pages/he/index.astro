@@ -1,0 +1,154 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ProcessBlock from "../../components/ProcessBlock.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+/*
+  PAGE GOAL (HE HOMEPAGE):
+  Mirror the English homepage structure for Hebrew users, keeping the same
+  funnel flow: value prop -> services -> trust -> process -> contact form.
+*/
+
+/*
+  PROCESS STEPS — Hebrew copy passed into the shared ProcessBlock component.
+*/
+const processSteps = [
+  { label: "היכרות", description: "אתם מספרים לנו מה קורה בעסק" },
+  { label: "תכנית", description: "אנחנו חוזרים עם מהלך ברור ומחיר ברור" },
+  { label: "ביצוע", description: "אנחנו מבצעים, אתם נשארים מעודכנים" },
+  { label: "מסירה", description: "הכול באוויר, עובד ושייך לכם" },
+];
+
+const fields = [
+  {
+    id: "name",
+    label: "שם מלא",
+    type: "text" as const,
+    placeholder: "איך קוראים לך?",
+    required: true,
+  },
+  {
+    id: "email",
+    label: "אימייל",
+    type: "email" as const,
+    placeholder: "you@company.com",
+    required: true,
+  },
+  {
+    id: "website",
+    label: "אתר",
+    type: "url" as const,
+    placeholder: "example.com",
+    required: false,
+  },
+  {
+    id: "message",
+    label: "מה תרצו שנשפר?",
+    type: "textarea" as const,
+    placeholder: "תארו בקצרה מה לא עובד היום",
+    required: true,
+  },
+];
+---
+
+<Layout
+  title="דף הבית"
+  description="Argo Navis בונים אתרים, קמפיינים ואוטומציות שמביאים לידים ומגדילים את העסק."
+  locale="he"
+  dir="rtl"
+>
+  <!-- HERO — first value statement and primary CTA -->
+  <section class="relative overflow-hidden bg-surface-950 px-6 py-24 text-start md:py-36">
+    <div class="relative z-10 mx-auto max-w-3xl">
+      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+        האתר, הקמפיינים והתהליכים שלכם - חדים, מקצועיים ועובדים באמת.
+      </h1>
+      <p class="mt-6 max-w-xl text-lg text-text-muted">
+        רוב העסקים מאבדים כסף בין הסדקים. אנחנו סוגרים אותם.
+      </p>
+      <div class="mt-10">
+        <a
+          href="/he/#contact"
+          class="inline-block rounded-sm bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-400"
+        >
+          דברו איתנו
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES OVERVIEW — same 3 service pillars as EN homepage -->
+  <section id="services" class="bg-surface-950 px-6 py-24">
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-16 text-center">
+        <h2 class="text-3xl font-bold text-text-primary md:text-4xl">מה אנחנו עושים</h2>
+      </div>
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <article class="rounded-2xl border border-border-subtle bg-surface-900 p-8 transition-all hover:bg-surface-800">
+          <h3 class="text-xl font-semibold text-text-primary">אתרים</h3>
+          <p class="mt-3 text-sm leading-relaxed text-text-muted">האתר הוא הרושם הראשון שלכם. בואו נגרום לו לעבוד.</p>
+          <a href="/he/websites" class="mt-6 inline-flex items-center gap-1 text-sm font-medium text-brand-400">
+            קראו עוד
+          </a>
+        </article>
+        <article class="rounded-2xl border border-border-subtle bg-surface-900 p-8 transition-all hover:bg-surface-800">
+          <h3 class="text-xl font-semibold text-text-primary">קמפיינים</h3>
+          <p class="mt-3 text-sm leading-relaxed text-text-muted">פרסום ותוכן שמביאים פניות אמיתיות, לא רק חשיפות.</p>
+          <a href="/he/campaigns" class="mt-6 inline-flex items-center gap-1 text-sm font-medium text-brand-400">
+            קראו עוד
+          </a>
+        </article>
+        <article class="rounded-2xl border border-border-subtle bg-surface-900 p-8 transition-all hover:bg-surface-800">
+          <h3 class="text-xl font-semibold text-text-primary">אוטומציות</h3>
+          <p class="mt-3 text-sm leading-relaxed text-text-muted">לתת למשימות החוזרות לרוץ לבד, בזמן שאתם מתמקדים בצמיחה.</p>
+          <a href="/he/automations" class="mt-6 inline-flex items-center gap-1 text-sm font-medium text-brand-400">
+            קראו עוד
+          </a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST BLOCK — short brand statement, matching EN page intent -->
+  <section class="bg-surface-800 px-6 py-24">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="text-3xl font-bold leading-snug tracking-tight text-text-primary md:text-4xl">
+        סטנדרט גבוה. בכל פעם מחדש.
+      </h2>
+      <p class="mx-auto mt-5 max-w-xl text-lg text-text-muted">
+        כל פרויקט נבנה כאילו השם שלנו עליו. כי הוא באמת.
+      </p>
+    </div>
+  </section>
+
+  <!-- PROCESS — "How it works" localized to Hebrew -->
+  <ProcessBlock heading="איך זה עובד" steps={processSteps} />
+
+  <!-- CONTACT FORM — localized labels, same backend/source pattern -->
+  <ContactForm
+    heading="מוכנים להפסיק לאבד הזדמנויות?"
+    subheading="ספרו לנו מה קורה בעסק, ואנחנו ניקח את זה משם."
+    source="landing-he"
+    fields={fields}
+    submitLabel="בואו נדבר"
+    reassurance="בלי לחץ, בלי מכירה אגרסיבית, רק שיחה מקצועית."
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactMethods={[
+      { id: "email", label: "אימייל" },
+      { id: "phone", label: "טלפון" },
+      { id: "telegram", label: "טלגרם" },
+      { id: "whatsapp", label: "ווטסאפ" },
+    ]}
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+</Layout>

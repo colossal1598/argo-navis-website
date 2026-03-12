@@ -1,0 +1,185 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import ProcessBlock from "../../../components/ProcessBlock.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+
+/*
+  PAGE GOAL (HE WEBSITES):
+  Replicate the English websites page structure in Hebrew with strong RTL flow,
+  moving users from discomfort ("site not working") to a low-friction contact.
+*/
+
+/* PROCESS STEPS — Hebrew copy for the shared step timeline. */
+const processSteps = [
+  { label: "אתם שולחים את האתר", description: "או אומרים שצריך לבנות מאפס" },
+  { label: "אנחנו עושים אבחון", description: "מהירות, עיצוב, מסר ומבנה" },
+  { label: "מציגים תכנית", description: "היקף ברור ומחיר ברור" },
+  { label: "בונים", description: "אתם מעודכנים לאורך כל הדרך" },
+  { label: "עולים לאוויר", description: "עם אתר שמייצר תוצאות" },
+];
+
+const faq = [
+  {
+    q: "צריך אתר קיים כדי להתחיל?",
+    a: "לא. אנחנו בונים מאפס בדיוק כמו שאנחנו משדרגים אתרים קיימים.",
+  },
+  {
+    q: "כמה זמן זה לוקח?",
+    a: "תלוי היקף. אתר נקי של 5 עמודים לרוב ייקח 2-3 שבועות, ואנחנו מגדירים הכול מראש.",
+  },
+  {
+    q: "מה צריך ממני?",
+    a: "שיחת היכרות אחת, נכסי מותג אם יש, ופידבק כשמבקשים. זה הכול.",
+  },
+];
+
+/* FORM FIELDS — website-specific discovery prompts in Hebrew. */
+const websiteFormFields = [
+  {
+    id: "name",
+    label: "שם מלא",
+    type: "text" as const,
+    placeholder: "איך קוראים לך?",
+    required: true,
+  },
+  {
+    id: "email",
+    label: "אימייל",
+    type: "email" as const,
+    placeholder: "you@company.com",
+    required: true,
+  },
+  {
+    id: "website",
+    label: "אתר",
+    type: "url" as const,
+    placeholder: "example.com",
+    required: false,
+  },
+  {
+    id: "message",
+    label: "מה לא עובד היום?",
+    type: "textarea" as const,
+    placeholder: "מה הבעיה באתר או מה תרצו לבנות?",
+    required: true,
+  },
+];
+---
+
+<Layout
+  title="אתרים"
+  description="אנחנו בונים אתרים שמביאים לקוחות - ומשדרגים אתרים שמרחיקים אותם."
+  locale="he"
+  dir="rtl"
+>
+  <!-- HERO — sets the core "working for you or against you" framing -->
+  <section class="relative overflow-hidden bg-surface-950 px-6 py-24 md:py-36">
+    <div class="relative z-10 mx-auto max-w-3xl">
+      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+        האתר שלכם או עובד בשבילכם או עובד נגדכם. אין באמצע.
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg text-text-muted">
+        אנחנו בונים אתרים שמכניסים לקוחות, ומשדרגים אתרים שדוחפים אותם החוצה.
+      </p>
+    </div>
+  </section>
+
+  <!-- PROBLEM BLOCK — three direct pain statements -->
+  <section class="bg-surface-900 px-6 py-20">
+    <div class="mx-auto max-w-3xl space-y-6">
+      {[
+        "אתר איטי מאבד מבקרים תוך 3 שניות.",
+        "מבנה מבלבל מוריד אמון עוד לפני שמתחילים לקרוא.",
+        "עיצוב מיושן משדר שהעסק נתקע.",
+      ].map(line => (
+        <p class="text-2xl font-semibold text-text-primary md:text-3xl">{line}</p>
+      ))}
+    </div>
+  </section>
+
+  <!-- WHAT WE DO — outcome-focused offer and capabilities -->
+  <section class="bg-surface-950 px-6 py-20">
+    <div class="mx-auto max-w-3xl">
+      <p class="text-lg text-text-soft md:text-xl">
+        אנחנו בונים אתרים מהירים ונקיים שעושים דבר אחד:
+        <strong class="text-text-primary"> הופכים מבקרים ללידים.</strong>
+        בלי עומס מיותר ובלי תבניות שנראות כמו כולם.
+      </p>
+      <ul class="mt-8 space-y-3">
+        {[
+          "מהיר ומותאם מובייל",
+          "בנוי לקידום בגוגל",
+          "מבוסס על הלקוח שלכם, לא על טעם אישי",
+        ].map(line => (
+          <li class="flex items-start gap-3 text-text-muted">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400"></span>
+            {line}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- PROCESS — handoff and delivery expectation setting -->
+  <ProcessBlock heading="איך העבודה איתנו נראית" steps={processSteps} />
+
+  <!-- REBUILD OFFER — low-pressure CTA section for colder traffic -->
+  <section id="rebuild" class="bg-surface-800 px-6 py-24">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="text-3xl font-bold text-text-primary md:text-4xl">
+        נציג לכם איך האתר שלכם יכול להיראות. לפני שמתחייבים.
+      </h2>
+      <p class="mx-auto mt-5 max-w-xl text-text-muted">
+        שולחים לנו את האתר, ואנחנו חוזרים עם דוגמה אמיתית למה היינו עושים אחרת - בלי לחץ ובלי התחייבות.
+      </p>
+      <a
+        href="/he/#contact"
+        class="mt-8 inline-block rounded-sm bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-400"
+      >
+        שלחו לנו את האתר
+      </a>
+    </div>
+  </section>
+
+  <!-- FAQ — pre-qualify and reduce friction before submit -->
+  <section class="bg-surface-950 px-6 py-20">
+    <div class="mx-auto max-w-3xl">
+      <h2 class="mb-10 text-2xl font-bold text-text-primary">שאלות נפוצות</h2>
+      <div class="space-y-8">
+        {faq.map(item => (
+          <div>
+            <p class="font-semibold text-text-primary">{item.q}</p>
+            <p class="mt-2 text-text-muted">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT FORM — same data shape, Hebrew labels/messages -->
+  <ContactForm
+    heading="יש לכם אתר שלא עושה את העבודה? ספרו לנו."
+    source="websites-he"
+    fields={websiteFormFields}
+    reassurance="בדרך כלל נחזור אליכם תוך 24 שעות."
+    submitLabel="בואו נדבר"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactMethods={[
+      { id: "email", label: "אימייל" },
+      { id: "phone", label: "טלפון" },
+      { id: "telegram", label: "טלגרם" },
+      { id: "whatsapp", label: "ווטסאפ" },
+    ]}
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+</Layout>

@@ -1,0 +1,118 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+
+/*
+  PAGE GOAL (HE CAMPAIGNS):
+  Keep campaigns service messaging available in Hebrew with the same lead
+  generation intent as EN: service framing -> examples -> contact.
+*/
+
+/* FORM FIELDS — campaign qualification prompts for Hebrew leads. */
+const campaignFormFields = [
+  {
+    id: "name",
+    label: "שם מלא",
+    type: "text" as const,
+    placeholder: "איך קוראים לך?",
+    required: true,
+  },
+  {
+    id: "email",
+    label: "אימייל",
+    type: "email" as const,
+    placeholder: "you@company.com",
+    required: true,
+  },
+  {
+    id: "website",
+    label: "אתר",
+    type: "url" as const,
+    placeholder: "example.com",
+    required: false,
+  },
+  {
+    id: "message",
+    label: "מי קהל היעד ומה היעד העסקי?",
+    type: "textarea" as const,
+    placeholder: "ספרו לנו מה אתם מוכרים ולמי",
+    required: true,
+  },
+];
+---
+
+<Layout
+  title="קמפיינים"
+  description="אסטרטגיה, קריאייטיב ומדידה לקמפיינים שמביאים תוצאות ולא רק רעש."
+  locale="he"
+  dir="rtl"
+>
+  <!-- HERO — service framing and scope summary -->
+  <section class="relative overflow-hidden bg-surface-950 px-6 py-24 text-center md:py-36">
+    <div class="relative z-10 mx-auto max-w-3xl">
+      <span class="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-500/30 bg-slate-500/10 px-4 py-1.5 text-sm font-medium text-slate-300">
+        קמפיינים
+      </span>
+      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+        קמפיינים שבונים מומנטום.
+      </h1>
+      <p class="mx-auto mt-6 max-w-2xl text-lg text-text-muted">
+        אנחנו בונים מערכות ליצירת לידים - לא רק מודעות חד-פעמיות. SEO, אאוטבאונד ומדיה בתשלום שמתחברים יחד.
+      </p>
+    </div>
+  </section>
+
+  <!-- EXAMPLES GRID — proof-style content before contact form -->
+  <section class="bg-surface-950 px-6 py-24">
+    <div class="mx-auto max-w-6xl">
+      <h2 class="mb-3 text-3xl font-bold text-text-primary">קמפיינים לדוגמה</h2>
+      <p class="mb-12 text-text-muted">דוגמאות לתהליכי שיווק שבנינו כדי לייצר פניות איכותיות.</p>
+
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <article class="rounded-2xl border border-border-subtle bg-surface-900 p-6">
+          <h3 class="text-lg font-semibold text-text-primary">LinkedIn Outbound</h3>
+          <p class="mt-2 text-sm text-text-muted">מערכת פנייה קרה ומדידה לקהלים מדויקים עם אופטימיזציה שבועית.</p>
+          <p class="mt-4 text-xs font-semibold text-brand-300">שיעור תגובה יציב</p>
+        </article>
+        <article class="rounded-2xl border border-border-subtle bg-surface-900 p-6">
+          <h3 class="text-lg font-semibold text-text-primary">Google Ads Funnel</h3>
+          <p class="mt-2 text-sm text-text-muted">בניית משפך מלא ממחקר מילות מפתח ועד דפי נחיתה שממירים.</p>
+          <p class="mt-4 text-xs font-semibold text-brand-300">ירידה בעלות לליד</p>
+        </article>
+        <article class="rounded-2xl border border-border-subtle bg-surface-900 p-6">
+          <h3 class="text-lg font-semibold text-text-primary">Content Pipeline</h3>
+          <p class="mt-2 text-sm text-text-muted">תוכן אורגני + הפצה רב-ערוצית כדי להפוך חשיפה להזדמנויות.</p>
+          <p class="mt-4 text-xs font-semibold text-brand-300">צמיחה עקבית בלידים</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT FORM — final conversion block -->
+  <ContactForm
+    heading="בואו נבנה לכם קמפיין שעובד"
+    subheading="ספרו לנו על קהל היעד והמטרות, ונחזור עם כיוון ברור."
+    source="campaigns-he"
+    fields={campaignFormFields}
+    submitLabel="בואו נדבר"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    reassurance="בדרך כלל נחזור אליכם תוך 24 שעות."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactMethods={[
+      { id: "email", label: "אימייל" },
+      { id: "phone", label: "טלפון" },
+      { id: "telegram", label: "טלגרם" },
+      { id: "whatsapp", label: "ווטסאפ" },
+    ]}
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+</Layout>

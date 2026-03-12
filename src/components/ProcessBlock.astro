@@ -27,7 +27,7 @@ const { heading = "How it works", steps } = Astro.props;
   <div class="mx-auto max-w-5xl">
 
     <!-- Section heading -->
-    <h2 class="mb-16 text-center text-3xl font-bold text-white md:text-4xl">
+    <h2 class="mb-16 text-center text-3xl font-bold text-text-primary md:text-4xl">
       {heading}
     </h2>
 
@@ -46,7 +46,7 @@ const { heading = "How it works", steps } = Astro.props;
         hidden md:block — invisible on mobile.
       -->
       <div
-        class="absolute left-0 right-0 top-5 hidden h-px bg-surface-700 md:block"
+        class="absolute start-0 end-0 top-5 hidden h-px bg-border-subtle md:block"
         aria-hidden="true"
       ></div>
 
@@ -72,10 +72,10 @@ const { heading = "How it works", steps } = Astro.props;
             </div>
 
             <!-- STEP LABEL — bold -->
-            <p class="font-semibold text-white">{step.label}</p>
+            <p class="font-semibold text-text-primary">{step.label}</p>
 
             <!-- STEP DESCRIPTION — one line -->
-            <p class="mt-1 text-sm text-slate-400">{step.description}</p>
+            <p class="mt-1 text-sm text-text-muted">{step.description}</p>
 
           </li>
         ))}

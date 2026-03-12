@@ -1,4 +1,6 @@
 ---
+import { switchLocalePath, type SiteLocale, withLocale } from "../lib/locale";
+
 /*
   NAV LINKS — the array below controls every item in the navbar.
   To add a page: add { label: "Pricing", href: "/pricing" }
@@ -16,10 +18,39 @@ const navLinks = [
   CTA BUTTON — the label and link for the top-right button.
   Change href to a Calendly link, contact form anchor, or any URL.
 */
-const ctaLabel = "Book a Call";
-const ctaHref  = "/#contact";
+interface Props {
+  locale?: SiteLocale;
+}
+
+const { locale = "en" } = Astro.props;
+
+/*
+  LOCALE BEHAVIOR:
+    - `locale` controls translated labels and localized href generation.
+    - EN pages link to EN paths; HE pages link to /he paths.
+*/
+const isHebrew = locale === "he";
+const ctaLabel = isHebrew ? "קבעו שיחה" : "Book a Call";
+const ctaHref = withLocale("/#contact", locale);
+const logoHref = withLocale("/", locale);
+
+/* Localized navigation labels keep structure identical across both languages. */
+const localizedLinks = navLinks.map((link) => ({
+  label: isHebrew
+    ? (
+      link.href === "/#services" ? "שירותים"
+      : link.href === "/automations" ? "אוטומציות"
+      : link.href === "/websites" ? "אתרים"
+      : "קמפיינים"
+    )
+    : link.label,
+  href: withLocale(link.href, locale),
+}));
 
 const currentPath = Astro.url.pathname;
+/* Language toggle targets the equivalent route in the other locale. */
+const localeSwitchHref = `${switchLocalePath(Astro.url.pathname)}${Astro.url.search}`;
+const currentLocaleFlag = isHebrew ? "he" : "en";
 ---
 
 <!--
@@ -27,21 +58,21 @@ const currentPath = Astro.url.pathname;
   frosted-glass effect when you scroll past content.
   z-50 makes sure it sits above everything else on the page.
 -->
-<header class="sticky top-0 z-50 border-b border-surface-700 bg-surface-950/80 backdrop-blur-md">
+<header class="sticky top-0 z-50 border-b border-border-subtle bg-surface-950/80 backdrop-blur-md">
   <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
 
     <!--
       LOGO — change the text or swap in an <img> tag.
       The href="/" always takes the user back to the homepage.
     -->
-    <a href="/" class="text-xl font-bold tracking-tight text-white">
+    <a href={logoHref} class="text-xl font-bold tracking-tight text-text-primary">
       Argo <span class="text-brand-400">Navis</span>
     </a>
 
     <!-- Desktop nav: links + theme toggle + CTA -->
     <div class="hidden items-center gap-6 md:flex">
       <ul class="flex items-center gap-8">
-        {navLinks.map(link => (
+        {localizedLinks.map(link => (
           <li>
             <a
               href={link.href}
@@ -52,9 +83,9 @@ const currentPath = Astro.url.pathname;
                   make it white (active). Otherwise it's a muted gray.
                   This means /automations will highlight the Automations link.
                 */
-                currentPath === link.href || currentPath.startsWith(link.href.replace("/#", "/"))
-                  ? "text-white"
-                  : "text-slate-400",
+                currentPath === link.href || (link.href !== withLocale("/#services", locale) && currentPath.startsWith(`${link.href}/`))
+                  ? "text-text-primary"
+                  : "text-text-muted",
               ]}
             >
               {link.label}
@@ -63,12 +94,45 @@ const currentPath = Astro.url.pathname;
         ))}
       </ul>
 
+      <!-- Language switch button — sits next to the theme toggle -->
+      <a
+        data-language-toggle
+        href={localeSwitchHref}
+        class="inline-flex items-center justify-center p-0"
+        aria-label={isHebrew ? "Switch to English" : "החלף לעברית"}
+      >
+        {
+          /*
+            FLAG ICON RULE:
+              - Show current locale flag.
+              - UK = English current locale, ISR = Hebrew current locale.
+          */
+          currentLocaleFlag === "en" ? (
+            <svg class="h-3.5 w-5 rounded-[2px]" viewBox="0 0 60 40" aria-hidden="true">
+              <rect width="60" height="40" fill="#012169"></rect>
+              <path d="M0 0l60 40M60 0L0 40" stroke="#fff" stroke-width="8"></path>
+              <path d="M0 0l60 40M60 0L0 40" stroke="#C8102E" stroke-width="4"></path>
+              <path d="M30 0v40M0 20h60" stroke="#fff" stroke-width="14"></path>
+              <path d="M30 0v40M0 20h60" stroke="#C8102E" stroke-width="8"></path>
+            </svg>
+          ) : (
+            <svg class="h-3.5 w-5 rounded-[2px]" viewBox="0 0 60 40" aria-hidden="true">
+              <rect width="60" height="40" fill="#fff"></rect>
+              <rect y="3" width="60" height="6" fill="#0038B8"></rect>
+              <rect y="31" width="60" height="6" fill="#0038B8"></rect>
+              <path d="M30 12l6.2 10.8H23.8z" fill="none" stroke="#0038B8" stroke-width="2"></path>
+              <path d="M30 28l-6.2-10.8h12.4z" fill="none" stroke="#0038B8" stroke-width="2"></path>
+            </svg>
+          )
+        }
+      </a>
+
       <!-- Theme toggle button -->
       <button
         id="theme-toggle"
-        class="flex h-9 w-9 items-center justify-center rounded-full border border-surface-700 bg-surface-900 text-slate-300 shadow-sm transition-colors hover:border-brand-500/60 hover:text-white"
+        class="inline-flex items-center justify-center p-0 text-text-muted transition-colors hover:text-text-primary"
         type="button"
-        aria-label="Toggle dark mode"
+        aria-label={isHebrew ? "החלפת מצב תאורה" : "Toggle dark mode"}
       >
         <!-- Sun icon (light mode indicator) -->
         <svg
@@ -125,11 +189,11 @@ const currentPath = Astro.url.pathname;
     <button
       id="menu-toggle"
       class="flex flex-col gap-1.5 p-2 md:hidden"
-      aria-label="Open menu"
+      aria-label={isHebrew ? "פתח תפריט" : "Open menu"}
     >
-      <span class="h-0.5 w-6 bg-white transition-all"></span>
-      <span class="h-0.5 w-6 bg-white transition-all"></span>
-      <span class="h-0.5 w-6 bg-white transition-all"></span>
+      <span class="h-0.5 w-6 bg-text-primary transition-all"></span>
+      <span class="h-0.5 w-6 bg-text-primary transition-all"></span>
+      <span class="h-0.5 w-6 bg-text-primary transition-all"></span>
     </button>
   </nav>
 
@@ -143,23 +207,50 @@ const currentPath = Astro.url.pathname;
     class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out md:hidden"
   >
     <ul class="flex flex-col gap-1 px-6 pb-4">
-      {navLinks.map(link => (
+      {localizedLinks.map(link => (
         <li>
           <a
             href={link.href}
-            class="block rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-surface-800 hover:text-white"
+            class="block rounded-md px-3 py-2 text-sm font-medium text-text-muted hover:bg-surface-800 hover:text-text-primary"
           >
             {link.label}
           </a>
         </li>
       ))}
+      <li class="mt-1">
+        <!-- Mobile language switch -->
+        <a
+          data-language-toggle
+          href={localeSwitchHref}
+          class="inline-flex items-center justify-center p-0"
+          aria-label={isHebrew ? "Switch to English" : "החלף לעברית"}
+        >
+          {currentLocaleFlag === "en" ? (
+            <svg class="h-3.5 w-5 rounded-[2px]" viewBox="0 0 60 40" aria-hidden="true">
+              <rect width="60" height="40" fill="#012169"></rect>
+              <path d="M0 0l60 40M60 0L0 40" stroke="#fff" stroke-width="8"></path>
+              <path d="M0 0l60 40M60 0L0 40" stroke="#C8102E" stroke-width="4"></path>
+              <path d="M30 0v40M0 20h60" stroke="#fff" stroke-width="14"></path>
+              <path d="M30 0v40M0 20h60" stroke="#C8102E" stroke-width="8"></path>
+            </svg>
+          ) : (
+            <svg class="h-3.5 w-5 rounded-[2px]" viewBox="0 0 60 40" aria-hidden="true">
+              <rect width="60" height="40" fill="#fff"></rect>
+              <rect y="3" width="60" height="6" fill="#0038B8"></rect>
+              <rect y="31" width="60" height="6" fill="#0038B8"></rect>
+              <path d="M30 12l6.2 10.8H23.8z" fill="none" stroke="#0038B8" stroke-width="2"></path>
+              <path d="M30 28l-6.2-10.8h12.4z" fill="none" stroke="#0038B8" stroke-width="2"></path>
+            </svg>
+          )}
+        </a>
+      </li>
       <li class="mt-2 flex items-center justify-between gap-3">
         <!-- Mobile theme toggle -->
         <button
           id="theme-toggle-mobile"
-          class="flex h-9 w-9 items-center justify-center rounded-full border border-surface-700 bg-surface-900 text-slate-300 shadow-sm transition-colors hover:border-brand-500/60 hover:text-white"
+          class="inline-flex items-center justify-center p-0 text-text-muted transition-colors hover:text-text-primary"
           type="button"
-          aria-label="Toggle dark mode"
+          aria-label={isHebrew ? "החלפת מצב תאורה" : "Toggle dark mode"}
         >
           <svg
             id="icon-sun-mobile"
@@ -273,4 +364,19 @@ const currentPath = Astro.url.pathname;
 
   desktopToggle?.addEventListener("click", toggleTheme);
   mobileToggle?.addEventListener("click", toggleTheme);
+
+  // Keep query/hash during language switching for deep links and sections.
+  const languageToggles = document.querySelectorAll("[data-language-toggle]");
+  languageToggles.forEach((toggleEl) => {
+    toggleEl.addEventListener("click", (event) => {
+      const anchor = event.currentTarget as HTMLAnchorElement;
+      if (!anchor?.href) return;
+      const url = new URL(anchor.href);
+      const hash = window.location.hash;
+      if (hash) {
+        url.hash = hash;
+      }
+      anchor.href = `${url.pathname}${url.search}${url.hash}`;
+    });
+  });
 </script>

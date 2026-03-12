@@ -48,6 +48,13 @@ const websiteFormFields = [
     required:    true,
   },
   {
+    id:          "email",
+    label:       "Email",
+    type:        "email" as const,
+    placeholder: "you@company.com",
+    required:    true,
+  },
+  {
     id:          "website",
     label:       "Website",
     type:        "url" as const,
@@ -81,10 +88,10 @@ const websiteFormFields = [
         "Either working for you or against you" is meant to be slightly
         uncomfortable — it surfaces a pain most people already feel.
       -->
-      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
+      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
         Your website is either working for you or against you. There's no middle ground.
       </h1>
-      <p class="mt-6 max-w-2xl text-lg text-slate-400">
+      <p class="mt-6 max-w-2xl text-lg text-text-muted">
         We build sites that bring people in — and rebuild ones that push them away.
       </p>
     </div>
@@ -103,7 +110,7 @@ const websiteFormFields = [
         "A confusing layout kills trust before you say a word.",
         "An outdated design tells people you stopped caring.",
       ].map(line => (
-        <p class="text-2xl font-semibold text-white md:text-3xl">{line}</p>
+        <p class="text-2xl font-semibold text-text-primary md:text-3xl">{line}</p>
       ))}
     </div>
   </section>
@@ -111,13 +118,13 @@ const websiteFormFields = [
   <!-- ─── WHAT WE DO ─── -->
   <section class="bg-surface-950 px-6 py-20">
     <div class="mx-auto max-w-3xl">
-      <p class="text-lg text-slate-300 md:text-xl">
+      <p class="text-lg text-text-soft md:text-xl">
         We build clean, fast websites that do one thing —{" "}
         <!--
           EMPHASIS — the key phrase is bolded and white.
           Move the <strong> tags to highlight a different phrase.
         -->
-        <strong class="text-white">turn visitors into leads.</strong>{" "}
+        <strong class="text-text-primary">turn visitors into leads.</strong>{" "}
         No bloat, no templates that look like everyone else's.
       </p>
 
@@ -131,7 +138,7 @@ const websiteFormFields = [
           "Built to rank on Google",
           "Designed around your customer, not your preferences",
         ].map(line => (
-          <li class="flex items-start gap-3 text-slate-400">
+          <li class="flex items-start gap-3 text-text-muted">
             <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400"></span>
             {line}
           </li>
@@ -159,10 +166,10 @@ const websiteFormFields = [
         REBUILD HEADLINE + BODY — the low-pressure offer.
         "No pitch, no pressure" is doing heavy lifting here — keep it visible.
       -->
-      <h2 class="text-3xl font-bold text-white md:text-4xl">
+      <h2 class="text-3xl font-bold text-text-primary md:text-4xl">
         We'll show you what your site could look like. Before you commit to anything.
       </h2>
-      <p class="mx-auto mt-5 max-w-xl text-slate-400">
+      <p class="mx-auto mt-5 max-w-xl text-text-muted">
         Send us your site. We'll come back with a real example of what we'd do differently — no pitch, no pressure.
       </p>
       <!--
@@ -181,7 +188,7 @@ const websiteFormFields = [
   <!-- ─── FAQ ─── -->
   <section class="bg-surface-950 px-6 py-20">
     <div class="mx-auto max-w-3xl">
-      <h2 class="mb-10 text-2xl font-bold text-white">Common questions</h2>
+      <h2 class="mb-10 text-2xl font-bold text-text-primary">Common questions</h2>
 
       <!--
         FAQ LIST — questions and answers rendered from the faq array above.
@@ -190,8 +197,8 @@ const websiteFormFields = [
       <div class="space-y-8">
         {faq.map(item => (
           <div>
-            <p class="font-semibold text-white">{item.q}</p>
-            <p class="mt-2 text-slate-400">{item.a}</p>
+            <p class="font-semibold text-text-primary">{item.q}</p>
+            <p class="mt-2 text-text-muted">{item.a}</p>
           </div>
         ))}
       </div>

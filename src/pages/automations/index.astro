@@ -1,73 +1,191 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import ServiceHero from "../../components/ServiceHero.astro";
-import ShowcaseCard from "../../components/ShowcaseCard.astro";
+import ProcessBlock from "../../components/ProcessBlock.astro";
 import ContactForm from "../../components/ContactForm.astro";
 
 /*
-  SHOWCASES — the example projects shown on this page.
-  Each object becomes one ShowcaseCard.
-
-  To add a new showcase:
-    1. Add a new object here
-    2. Create the sub-page at src/pages/automations/your-slug.astro
-    3. Set href to "/automations/your-slug"
-
-  To remove one: delete its object.
+  PROCESS STEPS — specific to the automations service.
+  Mirrors the "What working with us looks like" block in the copy.
 */
-const showcases = [
+const processSteps = [
   {
-    title:       "CRM ↔ Slack Lead Routing",
-    description: "New deals in HubSpot auto-routed to the right Slack channel based on deal size and region.",
-    tags:        ["HubSpot", "Slack", "Make"],
-    href:        "/automations/crm-slack-routing",
-    metric:      "0 manual steps",
+    label:       "You show us your workflow",
+    description: "Walk us through what you're doing every day.",
   },
   {
-    title:       "Client Onboarding Pipeline",
-    description: "Signed contract triggers Notion setup, welcome email, and calendar invite — in under 60 seconds.",
-    tags:        ["Notion", "Gmail", "Calendly", "Make"],
-    href:        "/automations/client-onboarding",
-    metric:      "3× faster",
+    label:       "We identify what can run itself",
+    description: "Map out every step that doesn't need a human.",
   },
   {
-    title:       "Invoice & Payment Reminders",
-    description: "Stripe events trigger automatic follow-up sequences until payment is confirmed.",
-    tags:        ["Stripe", "Gmail", "Make"],
-    href:        "/automations/invoice-reminders",
-    metric:      "30% faster payment",
+    label:       "We build it",
+    description: "Systems connected, tested, and running.",
+  },
+  {
+    label:       "You get time back",
+    description: "We hand it over and make sure it sticks.",
+  },
+];
+
+/*
+  FAQ — based directly on the automation page draft.
+*/
+const faq = [
+  {
+    q: "I don't even know what could be automated in my business.",
+    a: "We do. That's literally the first step — you walk us through your day and we spot what shouldn't need a human.",
+  },
+  {
+    q: "What happens if something breaks?",
+    a: "We build with reliability in mind and test before handover. If something breaks after, we fix it.",
+  },
+  {
+    q: "Do I need to be technical to work with you?",
+    a: "Not at all. You explain what you do, we handle the rest.",
+  },
+];
+
+/*
+  AUTOMATIONS FORM FIELDS — tailored to the automation service.
+  Framing matches the copy: "Tell us what you're doing manually".
+*/
+const automationFormFields = [
+  {
+    id:          "name",
+    label:       "Your name",
+    type:        "text" as const,
+    placeholder: "Your name",
+    required:    true,
+  },
+  {
+    id:          "email",
+    label:       "Email",
+    type:        "email" as const,
+    placeholder: "you@company.com",
+    required:    true,
+  },
+  {
+    id:          "website",
+    label:       "Website",
+    type:        "url" as const,
+    placeholder: "yoursite.com (if you have one)",
+    required:    false,
+  },
+  {
+    id:          "message",
+    label:       "What do you want to automate?",
+    type:        "textarea" as const,
+    placeholder: "Tell us what you're doing manually",
+    required:    true,
   },
 ];
 ---
 
 <Layout
   title="Automations"
-  description="We build workflow automations that eliminate repetitive tasks and accelerate your operations."
+  description="We build the systems that run your business while you're not looking."
 >
 
-  <ServiceHero
-    eyebrow="Automations"
-    headline="Stop Doing Things Manually."
-    body="We map your workflows, build the automations, and hand them off fully running — so your team never touches the same task twice."
-    accent="brand"
-  />
+  <!-- ─── HERO ─── -->
+  <!-- No CTA button — let them scroll into the problem first. -->
+  <section class="relative overflow-hidden bg-surface-950 px-6 py-24 md:py-36">
+    <div class="relative z-10 mx-auto max-w-3xl">
+      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+        Why spend 10 hours on work a computer can do in 10 minutes?
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg text-text-muted">
+        We build the systems that run your business while you're not looking.
+      </p>
+    </div>
+  </section>
 
-  <!-- Showcases grid -->
-  <section id="showcases" class="bg-surface-950 px-6 py-24">
-    <div class="mx-auto max-w-6xl">
-      <h2 class="mb-3 text-3xl font-bold text-white">Recent Projects</h2>
-      <p class="mb-12 text-slate-400">A sample of automations we've built for clients.</p>
+  <!-- ─── PROBLEM BLOCK ─── -->
+  <section class="bg-surface-900 px-6 py-20">
+    <div class="mx-auto max-w-3xl space-y-6">
+      {[
+        "Every hour spent on manual reporting is an hour not spent on growth.",
+        "Leads going cold because nobody followed up in time.",
+        "Admin work that piles up instead of running itself.",
+      ].map(line => (
+        <p class="text-2xl font-semibold text-text-primary md:text-3xl">{line}</p>
+      ))}
+    </div>
+  </section>
 
-      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {showcases.map(s => <ShowcaseCard {...s} />)}
+  <!-- ─── WHAT WE DO ─── -->
+  <section class="bg-surface-950 px-6 py-20">
+    <div class="mx-auto max-w-3xl">
+      <p class="text-lg text-text-soft md:text-xl">
+        We map out everything you're doing manually and build systems that handle it for you. The result — your team stops firefighting, your clients get faster responses, and your business runs like it's supposed to.
+        <br />
+        <span class="mt-3 inline-block font-semibold text-text-primary">Without you babysitting it.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── WHAT WE AUTOMATE ─── -->
+  <section class="bg-surface-950 px-6 pb-4">
+    <div class="mx-auto max-w-5xl border-t border-border-subtle pt-16">
+      <h2 class="text-3xl font-bold text-text-primary md:text-4xl">What we automate</h2>
+      <p class="mt-3 max-w-2xl text-text-muted">
+        Four of the most common places we start. The specifics change, the outcome doesn't — less manual work, more time back.
+      </p>
+
+      <div class="mt-10 grid gap-8 md:grid-cols-2">
+        <div class="rounded-lg border border-border-subtle bg-surface-950/60 p-6">
+          <h3 class="text-lg font-semibold text-text-primary">Reporting</h3>
+          <p class="mt-2 text-text-muted">
+            Automated reports delivered to your inbox — no spreadsheet wrangling.
+          </p>
+        </div>
+        <div class="rounded-lg border border-border-subtle bg-surface-950/60 p-6">
+          <h3 class="text-lg font-semibold text-text-primary">Invoicing and admin</h3>
+          <p class="mt-2 text-text-muted">
+            Invoices sent, tracked, and followed up on without touching them.
+          </p>
+        </div>
+        <div class="rounded-lg border border-border-subtle bg-surface-950/60 p-6">
+          <h3 class="text-lg font-semibold text-text-primary">Social scheduling</h3>
+          <p class="mt-2 text-text-muted">
+            Your content goes out on time, every time, without the daily login.
+          </p>
+        </div>
+        <div class="rounded-lg border border-border-subtle bg-surface-950/60 p-6">
+          <h3 class="text-lg font-semibold text-text-primary">Messaging</h3>
+          <p class="mt-2 text-text-muted">
+            Automatic follow-ups so no lead or client falls through the cracks.
+          </p>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- ─── PROCESS ─── -->
+  <ProcessBlock
+    heading="What working with us looks like"
+    steps={processSteps}
+  />
+
+  <!-- ─── FAQ ─── -->
+  <section class="bg-surface-950 px-6 py-20">
+    <div class="mx-auto max-w-3xl">
+      <h2 class="mb-10 text-2xl font-bold text-text-primary">Common questions</h2>
+      <div class="space-y-8">
+        {faq.map(item => (
+          <div>
+            <p class="font-semibold text-text-primary">{item.q}</p>
+            <p class="mt-2 text-text-muted">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CONTACT FORM ─── -->
   <ContactForm
-    heading="Ready to Automate?"
-    subheading="Tell us which process you want off your plate first."
+    heading="Not sure where to start? That's what the first conversation is for."
     source="automations"
+    fields={automationFormFields}
+    reassurance="We usually reply within 24 hours."
   />
 
 </Layout>

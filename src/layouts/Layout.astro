@@ -2,6 +2,7 @@
 import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
 import "../styles/global.css";
+import { stripLocalePrefix, type SiteLocale, withLocale } from "../lib/locale";
 
 /*
   PROPS — every page that uses this layout must pass:
@@ -12,11 +13,15 @@ import "../styles/global.css";
 interface Props {
   title: string;
   description?: string;
+  locale?: SiteLocale;
+  dir?: "ltr" | "rtl";
 }
 
 const {
   title,
   description = "Argo Navis – automations, websites, and campaigns that grow your business.",
+  locale = "en",
+  dir = locale === "he" ? "rtl" : "ltr",
 } = Astro.props;
 
 /*
@@ -25,10 +30,13 @@ const {
 */
 const siteUrl = "https://argonavis.agency";
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+const canonicalPath = stripLocalePrefix(Astro.url.pathname);
+const englishURL = new URL(withLocale(canonicalPath, "en"), siteUrl);
+const hebrewURL = new URL(withLocale(canonicalPath, "he"), siteUrl);
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth" data-theme="dark">
+<html lang={locale} dir={dir} class="scroll-smooth" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -47,6 +55,9 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
       is reachable via multiple URLs.
     -->
     <link rel="canonical" href={canonicalURL} />
+    <link rel="alternate" hreflang="en" href={englishURL} />
+    <link rel="alternate" hreflang="he" href={hebrewURL} />
+    <link rel="alternate" hreflang="x-default" href={englishURL} />
 
     <!--
       OPEN GRAPH — controls how the page looks when shared on
@@ -69,17 +80,31 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
 
     <meta name="generator" content={Astro.generator} />
+    <meta name="color-scheme" content="dark light" />
+    <script is:inline>
+      (() => {
+        const key = "argo-theme";
+        const html = document.documentElement;
+        const stored = localStorage.getItem(key);
+        if (stored === "light" || stored === "dark") {
+          html.setAttribute("data-theme", stored);
+          return;
+        }
+        const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+        html.setAttribute("data-theme", prefersLight ? "light" : "dark");
+      })();
+    </script>
   </head>
 
-  <body class="min-h-screen bg-surface-950 text-slate-200 antialiased">
+  <body class="min-h-screen bg-surface-950 text-text-primary antialiased">
 
     <!-- Navigation sits at the very top of every page -->
-    <Navigation />
+    <Navigation locale={locale} />
 
     <!--
       <slot /> is the placeholder for each page's unique content.
@@ -91,7 +116,7 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
     </main>
 
     <!-- Footer sits at the very bottom of every page -->
-    <Footer />
+    <Footer locale={locale} />
 
   </body>
 </html>

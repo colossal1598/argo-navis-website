@@ -20,31 +20,55 @@
   --color-brand-200: #bcd2ff;
   --color-brand-300: #8fb3ff;
   --color-brand-400: #5b8aff;
-  --color-brand-500: #3a6bef;   /* main brand color */
+  --color-brand-500: #3a6bef;
   --color-brand-600: #2550d4;
   --color-brand-700: #1e40ab;
   --color-brand-800: #1e378a;
   --color-brand-900: #1e3370;
 
   /* ─── Gold accent (CTAs, highlights) ─── */
-  --color-gold-400:  #fbbf24;
-  --color-gold-500:  #f59e0b;   /* main gold */
-  --color-gold-600:  #d97706;
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #f59e0b;
+  --color-gold-600: #d97706;
 
-  /* ─── Dark surfaces (backgrounds, default theme) ─── */
-  --color-surface-950: #070c16;  /* page background */
-  --color-surface-900: #0d1526;  /* card backgrounds */
-  --color-surface-800: #16213e;  /* elevated sections */
-  --color-surface-700: #1e2d50;  /* borders, dividers */
+  /* ─── Semantic theme tokens (mapped by data-theme) ─── */
+  --color-surface-950: var(--theme-surface-950);
+  --color-surface-900: var(--theme-surface-900);
+  --color-surface-800: var(--theme-surface-800);
+  --color-surface-700: var(--theme-surface-700);
 
-  /* ─── Light surfaces (for light mode) ─── */
-  --color-surface-light-50:  #f8fafc;
-  --color-surface-light-100: #f1f5f9;
-  --color-surface-light-200: #e2e8f0;
-  --color-surface-light-900: #0f172a;
+  --color-text-primary: var(--theme-text-primary);
+  --color-text-muted: var(--theme-text-muted);
+  --color-text-soft: var(--theme-text-soft);
+  --color-border-subtle: var(--theme-border-subtle);
 
   /* ─── Typography ─── */
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: "Inter", "Heebo", system-ui, sans-serif;
+}
+
+:root,
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --theme-surface-950: #070c16;
+  --theme-surface-900: #0d1526;
+  --theme-surface-800: #16213e;
+  --theme-surface-700: #1e2d50;
+  --theme-text-primary: #f8fafc;
+  --theme-text-muted: #94a3b8;
+  --theme-text-soft: #cbd5e1;
+  --theme-border-subtle: #334155;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+  --theme-surface-950: #f8fafc;
+  --theme-surface-900: #eef2ff;
+  --theme-surface-800: #e2e8f0;
+  --theme-surface-700: #cbd5e1;
+  --theme-text-primary: #0f172a;
+  --theme-text-muted: #334155;
+  --theme-text-soft: #1e293b;
+  --theme-border-subtle: #94a3b8;
 }
 
 /* Smooth scrolling and base resets */
@@ -54,17 +78,7 @@ html {
 
 body {
   background-color: var(--color-surface-950);
-  color: #e2e8f0;  /* slate-200 — default text */
+  color: var(--color-text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-}
-
-/*
-  Light mode overrides — when [data-theme="light"] is set on <html>,
-  swap to a light background and dark text. Existing Tailwind classes
-  still work; this just adjusts the base page feel.
-*/
-html[data-theme="light"] body {
-  background-color: var(--color-surface-light-50);
-  color: #0f172a; /* slate-900 */
 }
