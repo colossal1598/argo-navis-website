@@ -1,0 +1,97 @@
+---
+import Navigation from "../components/Navigation.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+
+/*
+  PROPS — every page that uses this layout must pass:
+    title       (required) — shown in the browser tab and used by SEO
+    description (optional) — shown in Google search snippets
+                             defaults to a generic tagline if not provided
+*/
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "Argo Navis – automations, websites, and campaigns that grow your business.",
+} = Astro.props;
+
+/*
+  SITE URL — change this once when you have a real domain.
+  Used to build canonical links and Open Graph URLs.
+*/
+const siteUrl = "https://argonavis.agency";
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+
+    <!-- Primary meta -->
+    <title>{title} | Argo Navis</title>
+    <meta name="description" content={description} />
+
+    <!--
+      CANONICAL URL — tells Google which URL is the "real" version of
+      this page. Prevents duplicate content issues if the same page
+      is reachable via multiple URLs.
+    -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!--
+      OPEN GRAPH — controls how the page looks when shared on
+      LinkedIn, Slack, WhatsApp, etc.
+      og:title and og:description default to the same values above.
+      og:image should be a 1200×630 px image — swap the path below.
+    -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content={canonicalURL} />
+    <meta property="og:title"       content={`${title} | Argo Navis`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image"       content={`${siteUrl}/og-image.png`} />
+
+    <!--
+      FONT — Inter loaded from Google Fonts.
+      To swap the font: change the family name in both the link URL
+      and the --font-sans variable in global.css.
+      display=swap prevents invisible text while the font loads.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta name="generator" content={Astro.generator} />
+  </head>
+
+  <body class="min-h-screen bg-surface-950 text-slate-200 antialiased">
+
+    <!-- Navigation sits at the very top of every page -->
+    <Navigation />
+
+    <!--
+      <slot /> is the placeholder for each page's unique content.
+      When a page does <Layout title="...">..page html...</Layout>,
+      everything inside the tags replaces this slot.
+    -->
+    <main>
+      <slot />
+    </main>
+
+    <!-- Footer sits at the very bottom of every page -->
+    <Footer />
+
+  </body>
+</html>

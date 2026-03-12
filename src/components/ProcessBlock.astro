@@ -1,0 +1,86 @@
+---
+/*
+  PROPS:
+    heading — section title shown above the steps
+              defaults to "How it works"
+    steps   — array of step objects:
+                label       — bold step name
+                description — one sentence, keep it short
+
+  Used on the homepage (4 steps) and websites page (5 steps).
+  Pass a different steps array to each page.
+*/
+interface Step {
+  label:       string;
+  description: string;
+}
+
+interface Props {
+  heading?: string;
+  steps:    Step[];
+}
+
+const { heading = "How it works", steps } = Astro.props;
+---
+
+<section class="bg-surface-950 px-6 py-24">
+  <div class="mx-auto max-w-5xl">
+
+    <!-- Section heading -->
+    <h2 class="mb-16 text-center text-3xl font-bold text-white md:text-4xl">
+      {heading}
+    </h2>
+
+    <!--
+      STEPS — horizontal on desktop (grid-cols-N), vertical on mobile.
+      The connecting line is drawn using a pseudo-element on the
+      inner wrapper — it sits behind the numbered circles.
+    -->
+    <div class="relative">
+
+      <!--
+        CONNECTING LINE — only visible on md+ screens.
+        It's a thin horizontal rule that runs through the center of the
+        numbered circles. The negative top value (-translate-y) centers
+        it on the circle height.
+        hidden md:block — invisible on mobile.
+      -->
+      <div
+        class="absolute left-0 right-0 top-5 hidden h-px bg-surface-700 md:block"
+        aria-hidden="true"
+      ></div>
+
+      <!--
+        STEPS GRID — the number of columns matches the number of steps.
+        We use inline style for the grid-template-columns so it works
+        for any number of steps without hardcoding breakpoint classes.
+      -->
+      <ol
+        class="relative grid gap-10 md:gap-6"
+        style={`grid-template-columns: repeat(${steps.length}, 1fr)`}
+      >
+        {steps.map((step, i) => (
+          <li class="flex flex-col items-center text-center">
+
+            <!--
+              NUMBER CIRCLE — sits on top of the connecting line (z-10).
+              bg-surface-950 matches the page background so the line
+              appears to "pass through" the circle gap.
+            -->
+            <div class="relative z-10 mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-surface-700 bg-surface-950 text-sm font-bold text-brand-400">
+              {i + 1}
+            </div>
+
+            <!-- STEP LABEL — bold -->
+            <p class="font-semibold text-white">{step.label}</p>
+
+            <!-- STEP DESCRIPTION — one line -->
+            <p class="mt-1 text-sm text-slate-400">{step.description}</p>
+
+          </li>
+        ))}
+      </ol>
+    </div>
+
+  </div>
+</section>

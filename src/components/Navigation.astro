@@ -1,0 +1,276 @@
+---
+/*
+  NAV LINKS — the array below controls every item in the navbar.
+  To add a page: add { label: "Pricing", href: "/pricing" }
+  To remove a page: delete the object.
+  The "active" highlight is automatic based on the current URL.
+*/
+const navLinks = [
+  { label: "Services",    href: "/#services" },
+  { label: "Automations", href: "/automations" },
+  { label: "Websites",    href: "/websites" },
+  { label: "Campaigns",   href: "/campaigns" },
+];
+
+/*
+  CTA BUTTON — the label and link for the top-right button.
+  Change href to a Calendly link, contact form anchor, or any URL.
+*/
+const ctaLabel = "Book a Call";
+const ctaHref  = "/#contact";
+
+const currentPath = Astro.url.pathname;
+---
+
+<!--
+  sticky + backdrop-blur = the nav sticks to the top and gets a
+  frosted-glass effect when you scroll past content.
+  z-50 makes sure it sits above everything else on the page.
+-->
+<header class="sticky top-0 z-50 border-b border-surface-700 bg-surface-950/80 backdrop-blur-md">
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+
+    <!--
+      LOGO — change the text or swap in an <img> tag.
+      The href="/" always takes the user back to the homepage.
+    -->
+    <a href="/" class="text-xl font-bold tracking-tight text-white">
+      Argo <span class="text-brand-400">Navis</span>
+    </a>
+
+    <!-- Desktop nav: links + theme toggle + CTA -->
+    <div class="hidden items-center gap-6 md:flex">
+      <ul class="flex items-center gap-8">
+        {navLinks.map(link => (
+          <li>
+            <a
+              href={link.href}
+              class:list={[
+                "text-sm font-medium transition-colors hover:text-brand-400",
+                /*
+                  If the current page path starts with the link href,
+                  make it white (active). Otherwise it's a muted gray.
+                  This means /automations will highlight the Automations link.
+                */
+                currentPath === link.href || currentPath.startsWith(link.href.replace("/#", "/"))
+                  ? "text-white"
+                  : "text-slate-400",
+              ]}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <!-- Theme toggle button -->
+      <button
+        id="theme-toggle"
+        class="flex h-9 w-9 items-center justify-center rounded-full border border-surface-700 bg-surface-900 text-slate-300 shadow-sm transition-colors hover:border-brand-500/60 hover:text-white"
+        type="button"
+        aria-label="Toggle dark mode"
+      >
+        <!-- Sun icon (light mode indicator) -->
+        <svg
+          id="icon-sun"
+          class="h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2" />
+          <path d="M12 20v2" />
+          <path d="M4.93 4.93l1.41 1.41" />
+          <path d="M17.66 17.66l1.41 1.41" />
+          <path d="M2 12h2" />
+          <path d="M20 12h2" />
+          <path d="M4.93 19.07l1.41-1.41" />
+          <path d="M17.66 6.34l1.41-1.41" />
+        </svg>
+
+        <!-- Moon icon (dark mode indicator) -->
+        <svg
+          id="icon-moon"
+          class="hidden h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      </button>
+
+      <!-- CTA button — stands out from the nav links -->
+      <a
+        href={ctaHref}
+        class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-400"
+      >
+        {ctaLabel}
+      </a>
+    </div>
+
+    <!--
+      Mobile hamburger — only visible below md breakpoint.
+      The actual toggle logic is handled by the <script> below.
+    -->
+    <button
+      id="menu-toggle"
+      class="flex flex-col gap-1.5 p-2 md:hidden"
+      aria-label="Open menu"
+    >
+      <span class="h-0.5 w-6 bg-white transition-all"></span>
+      <span class="h-0.5 w-6 bg-white transition-all"></span>
+      <span class="h-0.5 w-6 bg-white transition-all"></span>
+    </button>
+  </nav>
+
+  <!--
+    MOBILE MENU — starts hidden (max-h-0 overflow-hidden).
+    When the button is clicked, the script below adds the "open" class
+    which expands it smoothly via CSS transition.
+  -->
+  <div
+    id="mobile-menu"
+    class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out md:hidden"
+  >
+    <ul class="flex flex-col gap-1 px-6 pb-4">
+      {navLinks.map(link => (
+        <li>
+          <a
+            href={link.href}
+            class="block rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-surface-800 hover:text-white"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+      <li class="mt-2 flex items-center justify-between gap-3">
+        <!-- Mobile theme toggle -->
+        <button
+          id="theme-toggle-mobile"
+          class="flex h-9 w-9 items-center justify-center rounded-full border border-surface-700 bg-surface-900 text-slate-300 shadow-sm transition-colors hover:border-brand-500/60 hover:text-white"
+          type="button"
+          aria-label="Toggle dark mode"
+        >
+          <svg
+            id="icon-sun-mobile"
+            class="h-4 w-4"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="M4.93 4.93l1.41 1.41" />
+            <path d="M17.66 17.66l1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="M4.93 19.07l1.41-1.41" />
+            <path d="M17.66 6.34l1.41-1.41" />
+          </svg>
+          <svg
+            id="icon-moon-mobile"
+            class="hidden h-4 w-4"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </button>
+
+        <a
+          href={ctaHref}
+          class="flex-1 rounded-lg bg-brand-500 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-brand-400"
+        >
+          {ctaLabel}
+        </a>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<!--
+  Vanilla JS island — no framework needed for a simple toggle.
+  This script runs in the browser after the page loads.
+-->
+<script>
+  const toggle = document.getElementById("menu-toggle");
+  const menu   = document.getElementById("mobile-menu");
+
+  toggle?.addEventListener("click", () => {
+    const isOpen = menu?.classList.contains("max-h-96");
+    // Swap between max-h-0 (closed) and max-h-96 (open)
+    menu?.classList.toggle("max-h-0",  isOpen);
+    menu?.classList.toggle("max-h-96", !isOpen);
+  });
+
+  // Theme toggle logic – syncs desktop & mobile buttons and persists preference.
+  const htmlEl = document.documentElement;
+
+  const desktopToggle = document.getElementById("theme-toggle");
+  const mobileToggle  = document.getElementById("theme-toggle-mobile");
+
+  const iconSun        = document.getElementById("icon-sun");
+  const iconMoon       = document.getElementById("icon-moon");
+  const iconSunMobile  = document.getElementById("icon-sun-mobile");
+  const iconMoonMobile = document.getElementById("icon-moon-mobile");
+
+  const THEME_KEY = "argo-theme";
+
+  function applyTheme(theme: "light" | "dark") {
+    htmlEl.setAttribute("data-theme", theme);
+
+    const isLight = theme === "light";
+
+    if (iconSun && iconMoon) {
+      iconSun.classList.toggle("hidden", !isLight);
+      iconMoon.classList.toggle("hidden", isLight);
+    }
+
+    if (iconSunMobile && iconMoonMobile) {
+      iconSunMobile.classList.toggle("hidden", !isLight);
+      iconMoonMobile.classList.toggle("hidden", isLight);
+    }
+  }
+
+  // Initialize theme from localStorage or system preference.
+  (function initTheme() {
+    const stored = window.localStorage.getItem(THEME_KEY);
+    if (stored === "light" || stored === "dark") {
+      applyTheme(stored);
+      return;
+    }
+    const prefersLight = window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: light)").matches;
+    applyTheme(prefersLight ? "light" : "dark");
+  })();
+
+  function toggleTheme() {
+    const current = htmlEl.getAttribute("data-theme") || "dark";
+    const next = current === "dark" ? "light" : "dark";
+    window.localStorage.setItem(THEME_KEY, next);
+    applyTheme(next);
+  }
+
+  desktopToggle?.addEventListener("click", toggleTheme);
+  mobileToggle?.addEventListener("click", toggleTheme);
+</script>

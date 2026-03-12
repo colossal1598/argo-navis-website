@@ -1,0 +1,61 @@
+---
+/*
+  PROPS — one card = one showcase / case study.
+
+    title       — project name
+    description — one-line summary of the result
+    tags        — array of small labels (e.g. ["Make", "Notion", "CRM"])
+    href        — link to the full showcase sub-page (e.g. "/automations/crm-sync")
+    metric      — an eye-catching number / stat (optional)
+                  e.g. "3× faster onboarding"
+*/
+interface Props {
+  title:       string;
+  description: string;
+  tags:        string[];
+  href:        string;
+  metric?:     string;
+}
+
+const { title, description, tags, href, metric } = Astro.props;
+---
+
+<article class="group relative flex flex-col rounded-2xl border border-surface-700 bg-surface-900 p-6 transition-all hover:border-brand-500/40 hover:bg-surface-800">
+
+  <!-- Optional metric badge — shown in the top-right corner if provided -->
+  {metric && (
+    <span class="absolute right-5 top-5 rounded-full bg-brand-500/10 px-3 py-1 text-xs font-semibold text-brand-300">
+      {metric}
+    </span>
+  )}
+
+  <!-- Title -->
+  <h3 class="pr-20 text-lg font-semibold text-white">{title}</h3>
+
+  <!-- Description -->
+  <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-400">{description}</p>
+
+  <!-- Tags -->
+  <div class="mt-4 flex flex-wrap gap-2">
+    {tags.map(tag => (
+      <span class="rounded-md bg-surface-800 px-2.5 py-1 text-xs text-slate-400">
+        {tag}
+      </span>
+    ))}
+  </div>
+
+  <!--
+    "View case study" link — the after:absolute trick makes the
+    entire card clickable without wrapping everything in an <a>.
+  -->
+  <a
+    href={href}
+    class="mt-5 inline-flex items-center gap-1 text-sm font-medium text-brand-400 transition-all after:absolute after:inset-0 after:rounded-2xl"
+  >
+    View case study
+    <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  </a>
+
+</article>

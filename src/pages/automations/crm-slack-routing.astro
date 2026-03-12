@@ -1,0 +1,97 @@
+---
+import ShowcaseLayout from "../../layouts/ShowcaseLayout.astro";
+import ShowcaseSection from "../../components/ShowcaseSection.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+/*
+  ─────────────────────────────────────────
+  ALL THE CONTENT FOR THIS CASE STUDY LIVES HERE.
+  To create a new showcase page, duplicate this file,
+  change the props and body text — nothing else needs touching.
+  ─────────────────────────────────────────
+*/
+---
+
+<ShowcaseLayout
+  title="CRM ↔ Slack Lead Routing"
+  description="How we automated lead routing from HubSpot to Slack — zero manual steps, 100% of new deals reach the right rep in seconds."
+  service="Automations"
+  serviceHref="/automations"
+  headline="Zero-Touch Lead Routing from HubSpot to Slack"
+  subheadline="New deals automatically reach the right sales rep in the right Slack channel — in under 10 seconds."
+  metric1={{ value: "0",    label: "manual steps per lead" }}
+  metric2={{ value: "<10s", label: "lead-to-notification time" }}
+  metric3={{ value: "100%", label: "routing accuracy" }}
+  tags={["HubSpot", "Slack", "Make", "Webhooks"]}
+>
+
+  <!--
+    PROBLEM SECTION
+    Describe the pain the client had before you built the solution.
+    Be specific — numbers and quotes are more compelling than generalities.
+  -->
+  <ShowcaseSection label="The Problem" heading="Deals were falling through the cracks." accent="red">
+    <p>
+      The client's sales team of eight reps was all in the same Slack channel.
+      Every new HubSpot deal triggered a manual copy-paste into Slack — when
+      someone remembered to do it. Deals were routed to the wrong rep roughly
+      30% of the time, causing delays and occasional lost opportunities.
+    </p>
+    <p>
+      They needed every new deal to instantly reach the right rep based on
+      deal value and the rep's assigned region — with no human involvement.
+    </p>
+  </ShowcaseSection>
+
+  <!--
+    SOLUTION SECTION
+    Explain what you built. Keep it readable for non-technical stakeholders —
+    focus on the outcome, not the internal mechanics.
+  -->
+  <ShowcaseSection label="The Solution" heading="A Make.com scenario triggered by HubSpot webhooks." accent="brand">
+    <p>
+      We built a Make.com automation triggered the instant a deal is created
+      or moved to "Qualified" in HubSpot. The scenario:
+    </p>
+    <ol>
+      <li>Reads the deal's region and value from HubSpot custom properties.</li>
+      <li>Looks up the assigned rep from a routing table (a simple Notion database).</li>
+      <li>Posts a formatted Slack message to the rep's personal channel and the regional channel.</li>
+      <li>Adds a note to the HubSpot deal confirming the notification was sent.</li>
+    </ol>
+    <p>
+      The routing table in Notion means the client can update territory
+      assignments themselves — no code changes needed.
+    </p>
+  </ShowcaseSection>
+
+  <!--
+    RESULTS SECTION
+    Quantify the impact. Even rough numbers ("roughly 3× faster") are better
+    than adjectives ("much faster").
+  -->
+  <ShowcaseSection label="The Results" heading="Every lead reaches the right rep in under 10 seconds." accent="gold">
+    <p>
+      In the three months since launch, 100% of new qualified deals have been
+      routed correctly with zero manual intervention. The client estimates it
+      saves the team around 45 minutes per day in copy-paste work and follow-up
+      messages to clarify ownership.
+    </p>
+    <p>
+      Two new reps were onboarded by simply adding a row to the Notion routing
+      table — no developer required.
+    </p>
+  </ShowcaseSection>
+
+</ShowcaseLayout>
+
+<!--
+  CTA form at the bottom of every showcase page.
+  source="automations-showcase" lets you see in Supabase which case
+  study drove the lead — useful for knowing which content converts.
+-->
+<ContactForm
+  heading="Want Something Like This?"
+  subheading="Tell us your workflow and we'll show you how to automate it."
+  source="automations-showcase"
+/>

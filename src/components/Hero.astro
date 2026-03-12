@@ -1,0 +1,46 @@
+---
+/* HEADLINE — biggest text on the page. ~8-12 words. */
+const headline = "Your website, campaigns, and workflows — sharp, professional, and actually working.";
+
+/* SUBLINE — smaller, slightly muted. One punchy sentence. */
+const subline = "Most businesses leak money through the cracks. We close them.";
+
+/*
+  CTA — single button. href points to the contact form below.
+  Change label or href to suit — e.g. a Calendly link.
+*/
+const cta = { label: "Contact us", href: "/#contact" };
+---
+
+<section class="relative overflow-hidden bg-surface-950 px-6 py-24 text-center md:py-36">
+
+  <div class="relative z-10 mx-auto max-w-3xl">
+
+    <!--
+      HEADLINE — h1 for SEO. Only one h1 per page.
+      The copy is intentionally long and confident — let it wrap.
+    -->
+    <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
+      {headline}
+    </h1>
+
+    <!-- SUBLINE — muted color, not competing with the headline -->
+    <p class="mx-auto mt-6 max-w-xl text-lg text-slate-400">
+      {subline}
+    </p>
+
+    <!--
+      CTA BUTTON — sharp corners (rounded-sm) per design: more serious,
+      less playful than pill or rounded-xl shapes.
+    -->
+    <div class="mt-10">
+      <a
+        href={cta.href}
+        class="inline-block rounded-sm bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
+      >
+        {cta.label}
+      </a>
+    </div>
+
+  </div>
+</section>

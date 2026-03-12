@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+/*
+  @theme is Tailwind v4's way of defining custom design tokens.
+  Every variable here becomes a Tailwind utility class automatically.
+
+  For example:
+    --color-brand-500  →  bg-brand-500, text-brand-500, border-brand-500
+    --color-surface-900 →  bg-surface-900
+    --font-sans        →  font-sans
+
+  To change the brand palette, edit the hex values below.
+  To add a new color, add a new --color-* line and it becomes a class instantly.
+*/
+
+@theme {
+  /* ─── Brand blue (primary accent) ─── */
+  --color-brand-50:  #eef4ff;
+  --color-brand-100: #d9e7ff;
+  --color-brand-200: #bcd2ff;
+  --color-brand-300: #8fb3ff;
+  --color-brand-400: #5b8aff;
+  --color-brand-500: #3a6bef;   /* main brand color */
+  --color-brand-600: #2550d4;
+  --color-brand-700: #1e40ab;
+  --color-brand-800: #1e378a;
+  --color-brand-900: #1e3370;
+
+  /* ─── Gold accent (CTAs, highlights) ─── */
+  --color-gold-400:  #fbbf24;
+  --color-gold-500:  #f59e0b;   /* main gold */
+  --color-gold-600:  #d97706;
+
+  /* ─── Dark surfaces (backgrounds, default theme) ─── */
+  --color-surface-950: #070c16;  /* page background */
+  --color-surface-900: #0d1526;  /* card backgrounds */
+  --color-surface-800: #16213e;  /* elevated sections */
+  --color-surface-700: #1e2d50;  /* borders, dividers */
+
+  /* ─── Light surfaces (for light mode) ─── */
+  --color-surface-light-50:  #f8fafc;
+  --color-surface-light-100: #f1f5f9;
+  --color-surface-light-200: #e2e8f0;
+  --color-surface-light-900: #0f172a;
+
+  /* ─── Typography ─── */
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* Smooth scrolling and base resets */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-surface-950);
+  color: #e2e8f0;  /* slate-200 — default text */
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+  Light mode overrides — when [data-theme="light"] is set on <html>,
+  swap to a light background and dark text. Existing Tailwind classes
+  still work; this just adjusts the base page feel.
+*/
+html[data-theme="light"] body {
+  background-color: var(--color-surface-light-50);
+  color: #0f172a; /* slate-900 */
+}

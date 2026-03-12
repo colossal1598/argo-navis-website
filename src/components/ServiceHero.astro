@@ -1,0 +1,69 @@
+---
+/*
+  PROPS — passed in by each service page.
+  Every service page has its own headline, sub-copy, and accent color.
+
+    eyebrow   — small label above the headline (e.g. "Service")
+    headline  — main h1 for the service
+    body      — 1-2 sentences describing the service
+    accent    — Tailwind color name: "brand" | "gold" | "slate"
+                controls the glow and badge colour
+*/
+interface Props {
+  eyebrow:  string;
+  headline: string;
+  body:     string;
+  accent?:  "brand" | "gold" | "slate";
+}
+
+const { eyebrow, headline, body, accent = "brand" } = Astro.props;
+
+/*
+  Accent colour map — same pattern as ServicesSection.astro.
+  Add a new colour here if you ever need one beyond the three defaults.
+*/
+const accentMap = {
+  brand: { glow: "bg-brand-500/10", badge: "border-brand-500/30 bg-brand-500/10 text-brand-300" },
+  gold:  { glow: "bg-gold-500/10",  badge: "border-gold-500/30  bg-gold-500/10  text-gold-300"  },
+  slate: { glow: "bg-slate-500/10", badge: "border-slate-500/30 bg-slate-500/10 text-slate-300" },
+};
+const a = accentMap[accent];
+---
+
+<section class="relative overflow-hidden bg-surface-950 px-6 py-24 text-center md:py-36">
+
+  <div class="relative z-10 mx-auto max-w-3xl">
+
+    <!-- Eyebrow badge -->
+    <div class={`mb-5 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium ${a.badge}`}>
+      {eyebrow}
+    </div>
+
+    <!-- Headline — rendered as h1 for SEO -->
+    <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
+      {headline}
+    </h1>
+
+    <!-- Body copy -->
+    <p class="mx-auto mt-6 max-w-2xl text-lg text-slate-400">
+      {body}
+    </p>
+
+    <!-- CTA anchors to the contact form lower on the page -->
+    <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+      <a
+        href="#contact"
+        class="rounded-xl bg-brand-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-brand-500/25 transition-all hover:bg-brand-400"
+      >
+        Get Started
+      </a>
+      <a
+        href="#showcases"
+        class="rounded-xl border border-surface-700 px-8 py-4 text-base font-semibold text-slate-300 transition-all hover:border-slate-500 hover:text-white"
+      >
+        See Examples
+      </a>
+    </div>
+
+  </div>
+</section>

@@ -79,11 +79,105 @@ Planned structure (Astro-style):
 
 ## Getting Started
 
-> Steps will be refined as the project is initialized.
-
 1. **Install dependencies**
 
    ```bash
    npm install
-   # or
-   pnpm install
+   ```
+
+2. **Set up environment variables**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Fill in `.env` with your Supabase credentials:
+   - `SUPABASE_URL` — found at Supabase Dashboard → Settings → API → Project URL
+   - `SUPABASE_SERVICE_ROLE_KEY` — found at Settings → API → service_role (secret)
+
+3. **Create the Supabase `leads` table**
+
+   In your Supabase project: **SQL Editor → New query**, paste the contents of
+   `src/lib/schema.sql`, and click **Run**.
+
+4. **Start the dev server**
+
+   ```bash
+   npm run dev
+   ```
+
+   The site will be at `http://localhost:4321`.
+
+5. **Deploy to Cloudflare Pages**
+
+   ```bash
+   npm run build
+   ```
+
+   Set the same env vars (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`) in
+   Cloudflare Pages → Settings → Environment variables.
+
+---
+
+## Project Structure (as built)
+
+```
+src/
+  layouts/
+    Layout.astro          ← shared HTML shell, nav, footer
+    ShowcaseLayout.astro  ← template for case-study sub-pages
+  components/
+    Navigation.astro      ← sticky top nav with mobile menu
+    Footer.astro          ← footer with link columns
+    Hero.astro            ← landing page hero section
+    ServicesSection.astro ← three service cards
+    ServiceHero.astro     ← hero for each service page
+    ShowcaseCard.astro    ← card used in service page grids
+    ShowcaseSection.astro ← Problem / Solution / Results block
+    ContactForm.astro     ← lead-capture form (posts to /api/leads)
+  pages/
+    index.astro           ← main landing page
+    automations/
+      index.astro         ← Automations service page
+      crm-slack-routing.astro  ← example showcase sub-page
+    websites/
+      index.astro         ← Websites service page
+    campaigns/
+      index.astro         ← Campaigns service page
+    api/
+      leads.ts            ← POST endpoint — saves form data to Supabase
+  lib/
+    supabase.ts           ← Supabase client (server-side only)
+    schema.sql            ← SQL to create the leads table
+  styles/
+    global.css            ← Tailwind import + brand design tokens
+```
+
+---
+
+## Customisation Quick Reference
+
+| What you want to change | Where to change it |
+|---|---|
+| Brand colours | `src/styles/global.css` → `@theme` block |
+| Nav links | `src/components/Navigation.astro` → `navLinks` array |
+| Hero headline / copy | `src/components/Hero.astro` → top variables |
+| Service cards | `src/components/ServicesSection.astro` → `services` array |
+| Footer columns | `src/components/Footer.astro` → `columns` array |
+| Form fields | `src/components/ContactForm.astro` → `fields` array |
+| Supabase table name | `src/pages/api/leads.ts` → `TABLE` constant |
+
+---
+
+## Adding a New Showcase Page
+
+1. Duplicate `src/pages/automations/crm-slack-routing.astro`
+2. Move it to the right service folder (`/websites/`, `/campaigns/`, etc.)
+3. Update the `ShowcaseLayout` props and the three `ShowcaseSection` blocks
+4. Add a `ShowcaseCard` entry to the parent service page's `showcases` array
+
+---
+
+## Original README content follows
+
+### Lead Form Generator (Concept)

@@ -1,17 +1,45 @@
 ---
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import ServicesSection from "../components/ServicesSection.astro";
+import WhyUs from "../components/WhyUs.astro";
+import ProcessBlock from "../components/ProcessBlock.astro";
+import ContactForm from "../components/ContactForm.astro";
 
+/*
+  HOMEPAGE PROCESS STEPS — the four stages of working with Argo Navis.
+  Change label or description on any step without touching the component.
+  To add a step: add another object to the array.
+*/
+const processSteps = [
+  { label: "Discovery",  description: "You tell us what's going on" },
+  { label: "Proposal",   description: "We come back with a clear plan and price" },
+  { label: "Build",      description: "We execute, you stay informed" },
+  { label: "Done",       description: "Delivered, working, yours" },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout
+  title="Home"
+  description="Argo Navis builds websites, campaigns, and automations that generate leads and scale your business."
+>
+
+  <Hero />
+
+  <ServicesSection />
+
+  <WhyUs />
+
+  <ProcessBlock
+    heading="How it works"
+    steps={processSteps}
+  />
+
+  <!--
+    Contact form — fields, heading, and reassurance text are all
+    using the component defaults (defined in ContactForm.astro).
+    Pass props here to override them for this page specifically.
+  -->
+  <ContactForm source="landing" />
+
+</Layout>

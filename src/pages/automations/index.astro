@@ -1,0 +1,73 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ServiceHero from "../../components/ServiceHero.astro";
+import ShowcaseCard from "../../components/ShowcaseCard.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+/*
+  SHOWCASES — the example projects shown on this page.
+  Each object becomes one ShowcaseCard.
+
+  To add a new showcase:
+    1. Add a new object here
+    2. Create the sub-page at src/pages/automations/your-slug.astro
+    3. Set href to "/automations/your-slug"
+
+  To remove one: delete its object.
+*/
+const showcases = [
+  {
+    title:       "CRM ↔ Slack Lead Routing",
+    description: "New deals in HubSpot auto-routed to the right Slack channel based on deal size and region.",
+    tags:        ["HubSpot", "Slack", "Make"],
+    href:        "/automations/crm-slack-routing",
+    metric:      "0 manual steps",
+  },
+  {
+    title:       "Client Onboarding Pipeline",
+    description: "Signed contract triggers Notion setup, welcome email, and calendar invite — in under 60 seconds.",
+    tags:        ["Notion", "Gmail", "Calendly", "Make"],
+    href:        "/automations/client-onboarding",
+    metric:      "3× faster",
+  },
+  {
+    title:       "Invoice & Payment Reminders",
+    description: "Stripe events trigger automatic follow-up sequences until payment is confirmed.",
+    tags:        ["Stripe", "Gmail", "Make"],
+    href:        "/automations/invoice-reminders",
+    metric:      "30% faster payment",
+  },
+];
+---
+
+<Layout
+  title="Automations"
+  description="We build workflow automations that eliminate repetitive tasks and accelerate your operations."
+>
+
+  <ServiceHero
+    eyebrow="Automations"
+    headline="Stop Doing Things Manually."
+    body="We map your workflows, build the automations, and hand them off fully running — so your team never touches the same task twice."
+    accent="brand"
+  />
+
+  <!-- Showcases grid -->
+  <section id="showcases" class="bg-surface-950 px-6 py-24">
+    <div class="mx-auto max-w-6xl">
+      <h2 class="mb-3 text-3xl font-bold text-white">Recent Projects</h2>
+      <p class="mb-12 text-slate-400">A sample of automations we've built for clients.</p>
+
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {showcases.map(s => <ShowcaseCard {...s} />)}
+      </div>
+    </div>
+  </section>
+
+  <ContactForm
+    heading="Ready to Automate?"
+    subheading="Tell us which process you want off your plate first."
+    source="automations"
+  />
+
+</Layout>

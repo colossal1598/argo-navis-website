@@ -1,0 +1,49 @@
+---
+/*
+  WHY US — a short personal statement.
+  Different from the service cards: no icons, just clean copy.
+  bg-surface-800 gives it a slightly lighter background to break
+  the page rhythm and signal a shift in tone.
+
+  HEADLINE and BODY — change these two strings to update the section.
+*/
+const headline = "High standards, every time.";
+const body     = "We treat every project like it has our name on it. Because it does.";
+---
+
+<!--
+  bg-surface-800 is intentionally lighter than the surrounding sections
+  (bg-surface-950) — it creates a visual break in the page flow.
+-->
+<section class="bg-surface-800 px-6 py-24">
+  <div class="mx-auto max-w-3xl text-center">
+
+    <!--
+      HEADLINE — the pull-quote treatment: large, slightly spaced out.
+      No icons. The copy does the work.
+    -->
+    <h2 class="text-3xl font-bold leading-snug tracking-tight text-white md:text-4xl">
+      {headline}
+    </h2>
+
+    <!-- BODY — muted but not invisible -->
+    <p class="mx-auto mt-5 max-w-xl text-lg text-slate-400">
+      {body}
+    </p>
+
+    <!--
+      FOUNDER PLACEHOLDER — uncomment and fill in when you have a
+      photo and a short personal paragraph ready.
+      A candid photo beats any stock image here.
+    -->
+    <!--
+    <div class="mt-12 flex flex-col items-center gap-4">
+      <img src="/founder.jpg" alt="Founder name" class="h-16 w-16 rounded-full object-cover" />
+      <p class="max-w-md text-sm text-slate-400 italic">
+        "One honest paragraph from the founder goes here."
+      </p>
+    </div>
+    -->
+
+  </div>
+</section>

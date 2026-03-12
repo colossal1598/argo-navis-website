@@ -1,0 +1,113 @@
+---
+import Layout from "./Layout.astro";
+
+/*
+  PROPS — every showcase sub-page passes these in.
+
+    title        — page title (browser tab + SEO)
+    description  — meta description (Google snippet)
+    service      — which service this belongs to ("Automations" / "Websites" / "Campaigns")
+    serviceHref  — link back to the parent service page
+    headline     — big h1 at the top of the case study
+    subheadline  — one sentence under the h1
+    metric1/2/3  — three key results shown as large stats
+                   shape: { value: "3×", label: "faster onboarding" }
+    tags         — technology tags shown as pills
+*/
+interface Metric { value: string; label: string; }
+
+interface Props {
+  title:        string;
+  description?: string;
+  service:      string;
+  serviceHref:  string;
+  headline:     string;
+  subheadline:  string;
+  metric1:      Metric;
+  metric2:      Metric;
+  metric3:      Metric;
+  tags:         string[];
+}
+
+const {
+  title, description,
+  service, serviceHref,
+  headline, subheadline,
+  metric1, metric2, metric3,
+  tags,
+} = Astro.props;
+---
+
+<Layout title={title} description={description}>
+
+  <!-- Back breadcrumb -->
+  <div class="bg-surface-950 px-6 pt-10">
+    <div class="mx-auto max-w-4xl">
+      <a
+        href={serviceHref}
+        class="inline-flex items-center gap-1 text-sm text-slate-500 transition-colors hover:text-slate-300"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        Back to {service}
+      </a>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="bg-surface-950 px-6 pb-16 pt-10 text-center">
+    <div class="mx-auto max-w-3xl">
+
+      <!-- Service badge -->
+      <span class="mb-4 inline-block rounded-full border border-brand-500/30 bg-brand-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-brand-300">
+        {service}
+      </span>
+
+      <h1 class="text-3xl font-extrabold leading-tight text-white md:text-5xl">
+        {headline}
+      </h1>
+      <p class="mx-auto mt-4 max-w-2xl text-slate-400">{subheadline}</p>
+
+      <!-- Tags -->
+      <div class="mt-6 flex flex-wrap justify-center gap-2">
+        {tags.map(tag => (
+          <span class="rounded-md bg-surface-800 px-3 py-1 text-xs text-slate-400">{tag}</span>
+        ))}
+      </div>
+    </div>
+  </header>
+
+  <!--
+    KEY METRICS BAR — three big numbers that instantly communicate results.
+    Change metric1/2/3 props on each showcase page to match the project.
+  -->
+  <div class="border-y border-surface-700 bg-surface-900 px-6 py-10">
+    <div class="mx-auto grid max-w-4xl grid-cols-3 gap-6 text-center">
+      {[metric1, metric2, metric3].map(m => (
+        <div>
+          <!--
+            VALUE — the big number/stat (e.g. "3×", "100", "$4.20")
+            Make it punchy — one token, not a sentence.
+          -->
+          <p class="text-3xl font-extrabold text-white md:text-4xl">{m.value}</p>
+          <!-- LABEL — explains what the number means -->
+          <p class="mt-1 text-sm text-slate-400">{m.label}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!--
+    BODY CONTENT — each showcase page puts its own sections here via <slot>.
+    We provide three named slots so pages can fill just the sections they need:
+      default slot  → the full article content
+      (additional named slots can be added later)
+  -->
+  <article class="bg-surface-950 px-6 py-20">
+    <div class="mx-auto max-w-3xl space-y-16">
+      <slot />
+    </div>
+  </article>
+
+</Layout>

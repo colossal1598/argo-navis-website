@@ -1,0 +1,209 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ProcessBlock from "../../components/ProcessBlock.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+/*
+  PROCESS STEPS — 5 steps specific to the websites service.
+  Different from the homepage steps; both reuse the same component.
+*/
+const processSteps = [
+  { label: "You send us your site",  description: "Or tell us you need one from scratch" },
+  { label: "We audit it",            description: "Speed, design, structure, messaging" },
+  { label: "We propose a plan",      description: "Clear scope, clear price" },
+  { label: "We build",               description: "You stay informed throughout" },
+  { label: "You launch",             description: "With a site that actually works" },
+];
+
+/*
+  FAQ — questions and answers shown on the page.
+  To add a question: add another { q, a } object to the array.
+  To remove one: delete its object.
+*/
+const faq = [
+  {
+    q: "Do I need to have a site already?",
+    a: "No. We build from scratch just as often as we rebuild.",
+  },
+  {
+    q: "How long does it take?",
+    a: "Depends on scope. A clean 5-page site takes 2–3 weeks. We'll tell you upfront.",
+  },
+  {
+    q: "What do you need from me?",
+    a: "Your time for one call, your logo and brand assets if you have them, and feedback when we ask for it. That's it.",
+  },
+];
+
+/*
+  WEBSITES FORM FIELDS — different from the homepage form.
+  The message field framing is more specific to this service context.
+*/
+const websiteFormFields = [
+  {
+    id:          "name",
+    label:       "Your name",
+    type:        "text" as const,
+    placeholder: "Your name",
+    required:    true,
+  },
+  {
+    id:          "website",
+    label:       "Website",
+    type:        "url" as const,
+    placeholder: "yoursite.com",
+    required:    false,
+  },
+  {
+    id:          "message",
+    label:       "What's the problem?",
+    type:        "textarea" as const,
+    placeholder: "What's not working, or what do you need?",
+    required:    true,
+  },
+];
+---
+
+<Layout
+  title="Websites"
+  description="We build sites that bring people in — and rebuild ones that push them away."
+>
+
+  <!-- ─── HERO ─── -->
+  <!--
+    No CTA button here — the design intent is to let them scroll into
+    the problem block first before presenting an offer.
+  -->
+  <section class="relative overflow-hidden bg-surface-950 px-6 py-24 md:py-36">
+    <div class="relative z-10 mx-auto max-w-3xl">
+      <!--
+        HEADLINE — intentionally confrontational.
+        "Either working for you or against you" is meant to be slightly
+        uncomfortable — it surfaces a pain most people already feel.
+      -->
+      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
+        Your website is either working for you or against you. There's no middle ground.
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg text-slate-400">
+        We build sites that bring people in — and rebuild ones that push them away.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── PROBLEM BLOCK ─── -->
+  <!--
+    Three stark lines on a dark contrasting background.
+    Raw text only — no icons, no decoration. The discomfort is intentional.
+    LINES — change each string to update the problem statements.
+  -->
+  <section class="bg-surface-900 px-6 py-20">
+    <div class="mx-auto max-w-3xl space-y-6">
+      {[
+        "A slow site loses visitors in 3 seconds.",
+        "A confusing layout kills trust before you say a word.",
+        "An outdated design tells people you stopped caring.",
+      ].map(line => (
+        <p class="text-2xl font-semibold text-white md:text-3xl">{line}</p>
+      ))}
+    </div>
+  </section>
+
+  <!-- ─── WHAT WE DO ─── -->
+  <section class="bg-surface-950 px-6 py-20">
+    <div class="mx-auto max-w-3xl">
+      <p class="text-lg text-slate-300 md:text-xl">
+        We build clean, fast websites that do one thing —{" "}
+        <!--
+          EMPHASIS — the key phrase is bolded and white.
+          Move the <strong> tags to highlight a different phrase.
+        -->
+        <strong class="text-white">turn visitors into leads.</strong>{" "}
+        No bloat, no templates that look like everyone else's.
+      </p>
+
+      <!--
+        CAPABILITY LINES — three short differentiators.
+        Change any line by editing the string in the array below.
+      -->
+      <ul class="mt-8 space-y-3">
+        {[
+          "Fast and mobile-first",
+          "Built to rank on Google",
+          "Designed around your customer, not your preferences",
+        ].map(line => (
+          <li class="flex items-start gap-3 text-slate-400">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400"></span>
+            {line}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─── PROCESS ─── -->
+  <ProcessBlock
+    heading="What working with us looks like"
+    steps={processSteps}
+  />
+
+  <!-- ─── REBUILD OFFER ─── -->
+  <!--
+    id="rebuild" — for cold outreach link directly to this section:
+    /websites#rebuild
+    This is the most important section for cold prospecting.
+    Full-width, different background to make it stand out.
+  -->
+  <section id="rebuild" class="bg-surface-800 px-6 py-24">
+    <div class="mx-auto max-w-3xl text-center">
+      <!--
+        REBUILD HEADLINE + BODY — the low-pressure offer.
+        "No pitch, no pressure" is doing heavy lifting here — keep it visible.
+      -->
+      <h2 class="text-3xl font-bold text-white md:text-4xl">
+        We'll show you what your site could look like. Before you commit to anything.
+      </h2>
+      <p class="mx-auto mt-5 max-w-xl text-slate-400">
+        Send us your site. We'll come back with a real example of what we'd do differently — no pitch, no pressure.
+      </p>
+      <!--
+        CTA — sharp corners, links to the contact form below.
+        For cold outreach: link directly to /websites#rebuild in emails.
+      -->
+      <a
+        href="#contact"
+        class="mt-8 inline-block rounded-sm bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-400"
+      >
+        Show us your site
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── FAQ ─── -->
+  <section class="bg-surface-950 px-6 py-20">
+    <div class="mx-auto max-w-3xl">
+      <h2 class="mb-10 text-2xl font-bold text-white">Common questions</h2>
+
+      <!--
+        FAQ LIST — questions and answers rendered from the faq array above.
+        Open Q&A (no accordion) — answers are always visible on a service page.
+      -->
+      <div class="space-y-8">
+        {faq.map(item => (
+          <div>
+            <p class="font-semibold text-white">{item.q}</p>
+            <p class="mt-2 text-slate-400">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CONTACT FORM ─── -->
+  <ContactForm
+    heading="Got a site that's not doing its job? Tell us."
+    source="websites"
+    fields={websiteFormFields}
+    reassurance="We usually reply within 24 hours."
+  />
+
+</Layout>

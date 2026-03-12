@@ -1,0 +1,147 @@
+---
+/*
+  SECTION HEADING — shown above the service cards.
+  Change these two strings to update the section title and sub-copy.
+*/
+/*
+  SECTION HEADING — the label above the cards.
+  Change these two strings to update the section title and sub-copy.
+*/
+const heading    = "What we do";
+const subheading = "";  /* leave empty to hide the sub-copy line */
+
+/*
+  SERVICES ARRAY — one object per service card.
+  Fields:
+    title       — name of the service
+    description — one line that does the selling
+    href        — link to the full service page
+    cta         — text on the "learn more" link
+    icon        — SVG path data for the card icon
+    accent      — "brand" | "gold" | "slate"
+
+  To reorder services: move the objects.
+  To add a 4th service: copy one object and add it to the array.
+*/
+const services = [
+  {
+    title:       "Websites",
+    description: "Your site is your first impression. Make it count.",
+    href:        "/websites",
+    cta:         "Learn more",
+    accent:      "gold",
+    icon:        "M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9",
+  },
+  {
+    title:       "Campaigns",
+    description: "Ads and content that bring people in, not just rack up impressions.",
+    href:        "/campaigns",
+    cta:         "Learn more",
+    accent:      "brand",
+    icon:        "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
+  },
+  {
+    title:       "Automation",
+    description: "Let the repetitive work run itself while you focus on growth.",
+    href:        "/automations",
+    cta:         "Learn more",
+    accent:      "slate",
+    icon:        "M13 10V3L4 14h7v7l9-11h-7z",
+  },
+];
+
+/*
+  ACCENT MAP — maps the accent string from each service to actual
+  Tailwind classes. If you add a new accent color, add it here too.
+*/
+const accentMap: Record<string, { bg: string; icon: string; border: string }> = {
+  brand: {
+    bg:     "bg-brand-500/10",
+    icon:   "text-brand-400",
+    border: "hover:border-brand-500/40",
+  },
+  gold: {
+    bg:     "bg-gold-500/10",
+    icon:   "text-gold-400",
+    border: "hover:border-gold-500/40",
+  },
+  slate: {
+    bg:     "bg-slate-500/10",
+    icon:   "text-slate-400",
+    border: "hover:border-slate-500/40",
+  },
+};
+---
+
+<!--
+  id="services" lets the CTA buttons on the Hero link to this section
+  via href="/#services" — the page scrolls smoothly to here.
+-->
+<section id="services" class="bg-surface-950 px-6 py-24">
+  <div class="mx-auto max-w-6xl">
+
+    <!-- Section heading -->
+    <div class="mb-16 text-center">
+      <h2 class="text-3xl font-bold text-white md:text-4xl">{heading}</h2>
+      {subheading && <p class="mx-auto mt-4 max-w-2xl text-slate-400">{subheading}</p>}
+    </div>
+
+    <!--
+      CARD GRID — three columns on large screens, one column on mobile.
+      lg:grid-cols-3 = side-by-side on desktop
+      gap-8 = space between cards
+    -->
+    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      {services.map(service => {
+        const a = accentMap[service.accent] ?? accentMap.brand;
+        return (
+          <article class={`group relative flex flex-col rounded-2xl border border-surface-700 bg-surface-900 p-8 transition-all duration-200 hover:bg-surface-800 ${a.border}`}>
+
+            <!--
+              ICON — the SVG path comes from the services array above.
+              The colored circle behind it uses the accent color.
+            -->
+            <div class={`mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl ${a.bg}`}>
+              <svg
+                class={`h-6 w-6 ${a.icon}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d={service.icon} />
+              </svg>
+            </div>
+
+            <!-- Card title -->
+            <h3 class="text-xl font-semibold text-white">{service.title}</h3>
+
+            <!-- Card description -->
+            <p class="mt-3 flex-1 text-sm leading-relaxed text-slate-400">
+              {service.description}
+            </p>
+
+            <!--
+              CARD LINK — sits at the bottom of the card.
+              The arrow icon nudges right on hover via group-hover:translate-x-1.
+              The entire <article> is NOT wrapped in an <a> because that is
+              bad for accessibility when there are multiple links inside —
+              instead we use the "stretched link" pattern: the ::after
+              pseudo-element of this <a> covers the whole card.
+            -->
+            <a
+              href={service.href}
+              class={`mt-6 inline-flex items-center gap-1 text-sm font-medium ${a.icon} transition-all after:absolute after:inset-0 after:rounded-2xl`}
+            >
+              {service.cta}
+              <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>

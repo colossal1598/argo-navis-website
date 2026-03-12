@@ -1,0 +1,64 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ServiceHero from "../../components/ServiceHero.astro";
+import ShowcaseCard from "../../components/ShowcaseCard.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+/*
+  SHOWCASES — campaign projects shown on this page.
+*/
+const showcases = [
+  {
+    title:       "LinkedIn Outbound System",
+    description: "Automated connection + message sequence targeting CFOs. 12% reply rate, 3 clients in 6 weeks.",
+    tags:        ["LinkedIn", "Make", "Lemlist"],
+    href:        "/campaigns/linkedin-outbound",
+    metric:      "12% reply rate",
+  },
+  {
+    title:       "Google Ads Lead Engine",
+    description: "Full-funnel Google Ads setup for a B2B SaaS — from keyword research to landing page optimisation.",
+    tags:        ["Google Ads", "Analytics", "Astro"],
+    href:        "/campaigns/google-ads-b2b",
+    metric:      "€4.20 CPA",
+  },
+  {
+    title:       "Content-to-Lead Pipeline",
+    description: "SEO content strategy with automated distribution to LinkedIn and email. Organic leads doubled in 90 days.",
+    tags:        ["SEO", "LinkedIn", "Mailchimp"],
+    href:        "/campaigns/content-pipeline",
+    metric:      "2× organic leads",
+  },
+];
+---
+
+<Layout
+  title="Campaigns"
+  description="Strategy, creative, and tracking for campaigns that compound — not one-off blasts."
+>
+
+  <ServiceHero
+    eyebrow="Campaigns"
+    headline="Campaigns That Compound."
+    body="We build lead-generation systems — not one-off ads. SEO, outbound, and paid channels wired together so every campaign feeds the next one."
+    accent="slate"
+  />
+
+  <section id="showcases" class="bg-surface-950 px-6 py-24">
+    <div class="mx-auto max-w-6xl">
+      <h2 class="mb-3 text-3xl font-bold text-white">Recent Campaigns</h2>
+      <p class="mb-12 text-slate-400">Results we've driven for clients across channels.</p>
+
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {showcases.map(s => <ShowcaseCard {...s} />)}
+      </div>
+    </div>
+  </section>
+
+  <ContactForm
+    heading="Let's Plan Your Campaign"
+    subheading="Tell us your target audience and goals and we'll map out a strategy."
+    source="campaigns"
+  />
+
+</Layout>

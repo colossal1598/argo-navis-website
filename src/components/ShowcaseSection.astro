@@ -1,0 +1,42 @@
+---
+/*
+  A single content block inside a showcase page.
+  Used three times per page: Problem, Solution, Results.
+
+    label   — the small uppercase label (e.g. "The Problem")
+    heading — the section heading
+    accent  — "brand" | "gold" | "red" — colour of the label dot
+*/
+interface Props {
+  label:   string;
+  heading: string;
+  accent?: "brand" | "gold" | "red";
+}
+
+const { label, heading, accent = "brand" } = Astro.props;
+
+const dotColor = {
+  brand: "bg-brand-400",
+  gold:  "bg-gold-400",
+  red:   "bg-red-400",
+}[accent];
+---
+
+<section>
+  <!-- Section label with coloured dot -->
+  <div class="mb-3 flex items-center gap-2">
+    <span class={`h-2 w-2 rounded-full ${dotColor}`}></span>
+    <span class="text-xs font-semibold uppercase tracking-widest text-slate-500">{label}</span>
+  </div>
+
+  <h2 class="text-2xl font-bold text-white">{heading}</h2>
+
+  <!--
+    <slot /> renders whatever content the showcase page puts between
+    the opening and closing <ShowcaseSection> tags.
+    This can be paragraphs, lists, images — anything.
+  -->
+  <div class="prose prose-invert prose-slate mt-5 max-w-none text-slate-400">
+    <slot />
+  </div>
+</section>
