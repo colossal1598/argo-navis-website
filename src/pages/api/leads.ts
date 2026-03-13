@@ -104,8 +104,8 @@ export const POST: APIRoute = async ({ request }) => {
 
   /* ── Send emails via Resend ── */
   const resendKey = env.RESEND_API_KEY;
-  const notifyEmail = env.NOTIFICATION_EMAIL;
-  
+  const hebrew = isHebrew(source);
+
   if (resendKey) {
     try {
       const resend = new Resend(resendKey);
@@ -114,34 +114,41 @@ export const POST: APIRoute = async ({ request }) => {
       await resend.emails.send({
         from: "Argo Navis <hello@argo-navis.net>",
         to: emailValue,
-        subject: leadReplySubject(source),
-        html: buildLeadReplyHtml({
-          name: name.trim(),
-          message: message.trim(),
-          source,
-          website: website?.trim() || null,
-          preferredContactMethod,
-          normalizedContactDetails,
-        }),
+        subject: hebrew ? leadReplySubjectHe(source) : leadReplySubject(source),
+        html: hebrew
+          ? buildLeadReplyHtmlHe({
+              name: name.trim(),
+              message: message.trim(),
+              source,
+              website: website?.trim() || null,
+              preferredContactMethod,
+              normalizedContactDetails,
+            })
+          : buildLeadReplyHtml({
+              name: name.trim(),
+              message: message.trim(),
+              source,
+              website: website?.trim() || null,
+              preferredContactMethod,
+              normalizedContactDetails,
+            }),
       });
 
       /* 2. Owner notification */
-      if (notifyEmail) {
-        await resend.emails.send({
-          from: "Argo Navis Leads <leads@argo-navis.net>",
-          to: notifyEmail,
-          subject: `New lead: ${name.trim()} via ${source}`,
-          html: buildOwnerNotificationHtml({
-            name: name.trim(),
-            email: emailValue,
-            website: website?.trim() || null,
-            preferredContactMethod,
-            normalizedContactDetails,
-            message: message.trim(),
-            source,
-          }),
-        });
-      }
+      await resend.emails.send({
+        from: "Argo Navis Leads <leads@argo-navis.net>",
+        to: "jason@argo-navis.net",
+        subject: `New lead: ${name.trim()} via ${source}`,
+        html: buildOwnerNotificationHtml({
+          name: name.trim(),
+          email: emailValue,
+          website: website?.trim() || null,
+          preferredContactMethod,
+          normalizedContactDetails,
+          message: message.trim(),
+          source,
+        }),
+      });
     } catch (emailError) {
       // Never blocks the form submission — lead is already saved to Supabase
       console.error("Resend error:", emailError);
@@ -309,6 +316,117 @@ function buildOwnerNotificationHtml(p: OwnerNotificationParams): string {
     </td></tr>
     <tr><td style="padding:16px 24px;background:#f8fafc;border-top:1px solid #e2e8f0;">
       <a href="https://supabase.com/dashboard" style="font-size:12px;color:#4f8ef7;">View all leads in Supabase →</a>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+/* ── Hebrew email helpers ── */
+
+function isHebrew(source: string): boolean {
+  return source.includes("-he") || source.startsWith("he-");
+}
+
+function leadReplySubjectHe(source: string): string {
+  const subjects: Record<string, string> = {
+    "websites-he":    "קיבלנו את הבריף שלך לאתר — Argo Navis",
+    "automations-he": "קיבלנו את הפנייה שלך לאוטומציה — Argo Navis",
+    "campaigns-he":   "קיבלנו את הבריף שלך לקמפיין — Argo Navis",
+  };
+  return subjects[source] ?? "קיבלנו את ההודעה שלך — Argo Navis";
+}
+
+function sourceLabelHe(source: string): string {
+  const labels: Record<string, string> = {
+    "websites-he":    "אתר חדש",
+    "automations-he": "אוטומציה עסקית",
+    "campaigns-he":   "קמפיין שיווקי",
+  };
+  return labels[source] ?? "משהו מעולה";
+}
+
+function contactMethodNoteHe(method: string, details: string | null): string {
+  if (method === "email") {
+    return "נחזור אליכם ישירות לכתובת המייל הזו.";
+  }
+  const channelNames: Record<string, string> = {
+    whatsapp: "ווטסאפ",
+    telegram: "טלגרם",
+    phone:    "טלפון",
+  };
+  const channel = channelNames[method] ?? method;
+  return details
+    ? `ניצור קשר דרך ${channel} במספר/שם המשתמש <strong>${details}</strong>.`
+    : `ניצור קשר דרך ${channel}.`;
+}
+
+function buildLeadReplyHtmlHe(p: LeadReplyParams): string {
+  const { name, message, source, website, preferredContactMethod, normalizedContactDetails } = p;
+  const escapedMessage = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const websiteNote = website
+    ? `<p style="margin:0 0 12px;">נסתכל על האתר שלכם <a href="${website}" style="color:#4f8ef7;">${website}</a> לפני שנחזור אליכם.</p>`
+    : "";
+
+  return `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;direction:rtl;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:32px 16px;">
+    <tr><td align="center">
+      <table width="100%" style="max-width:560px;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+
+        <!-- Header -->
+        <tr>
+          <td style="background:#0f172a;padding:28px 32px;text-align:right;">
+            <p style="margin:0;font-size:20px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">Argo Navis</p>
+            <p style="margin:4px 0 0;font-size:13px;color:#94a3b8;">ניווט לעסק המודרני</p>
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+          <td style="padding:32px 32px 24px;text-align:right;">
+            <p style="margin:0 0 20px;font-size:16px;color:#1e293b;">שלום <strong>${name}</strong>,</p>
+            <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.6;">
+              תודה שפנית. קיבלנו את הפנייה שלך בנושא <strong>${sourceLabelHe(source)}</strong> ואנחנו על זה.
+            </p>
+
+            <!-- Message echo -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+              <tr>
+                <td style="border-right:3px solid #e2e8f0;padding:12px 16px;background:#f8fafc;border-radius:4px 0 0 4px;">
+                  <p style="margin:0 0 6px;font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">ההודעה שלך</p>
+                  <p style="margin:0;font-size:14px;color:#475569;line-height:1.6;white-space:pre-wrap;">${escapedMessage}</p>
+                </td>
+              </tr>
+            </table>
+
+            ${websiteNote}
+            <p style="margin:0 0 12px;font-size:14px;color:#475569;">${contactMethodNoteHe(preferredContactMethod, normalizedContactDetails)}</p>
+            <p style="margin:0 0 28px;font-size:14px;color:#475569;">נחזור אליכם תוך <strong>24 שעות</strong> בימי עסקים.</p>
+
+            <hr style="border:none;border-top:1px solid #e2e8f0;margin:0 0 24px;">
+
+            <p style="margin:0;font-size:14px;color:#64748b;line-height:1.6;">
+              – צוות Argo Navis<br>
+              <a href="mailto:hello@argo-navis.net" style="color:#4f8ef7;text-decoration:none;">hello@argo-navis.net</a>
+            </p>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding:16px 32px;background:#f8fafc;border-top:1px solid #e2e8f0;">
+            <p style="margin:0;font-size:11px;color:#94a3b8;text-align:center;">
+              קיבלת מייל זה כי שלחת טופס באתר
+              <a href="https://argo-navis.net" style="color:#94a3b8;">argo-navis.net</a>
+            </p>
+          </td>
+        </tr>
+
+      </table>
     </td></tr>
   </table>
 </body>
