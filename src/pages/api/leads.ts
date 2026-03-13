@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { Resend } from "resend";
-import { supabase } from "../../lib/supabase";
+import { createSupabaseClient } from "../../lib/supabase";
 
 /*
   This file must NOT be pre-rendered — it needs to run on the server
@@ -85,6 +85,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   /* ── Insert into Supabase ── */
+  const supabase = createSupabaseClient();
   const { error } = await supabase.from(TABLE).insert({
     name:    name.trim(),
     email: emailValue,

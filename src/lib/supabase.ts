@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 /*
-  SUPABASE CLIENT — created once and reused across all API routes.
+  SUPABASE CLIENT — factory function called per-request from the API route.
 
   The two values it needs come from your Supabase project dashboard:
     SUPABASE_URL        → Settings → API → Project URL
@@ -13,19 +13,21 @@ import { createClient } from "@supabase/supabase-js";
 
   These are stored in a .env file at the project root (never commit that file).
   The .env.example file shows what keys are needed without the real values.
+
+  NOTE: We use a factory function rather than a module-level singleton so that
+  Cloudflare runtime env bindings (import.meta.env) are read at request time,
+  not at Worker initialisation time when they may not yet be injected.
 */
 
-const supabaseUrl  = import.meta.env.SUPABASE_URL         as string;
-const supabaseKey  = import.meta.env.SUPABASE_SECRET_KEY  as string;
+export function createSupabaseClient() {
+  const supabaseUrl = import.meta.env.SUPABASE_URL        as string;
+  const supabaseKey = import.meta.env.SUPABASE_SECRET_KEY as string;
 
-/*
-  If the env vars are missing (e.g. someone cloned the repo and forgot
-  to create .env), throw a clear error message instead of a cryptic crash.
-*/
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error(
-    "Missing Supabase env vars. Copy .env.example to .env and fill in your values."
-  );
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error(
+      "Missing Supabase env vars. Copy .env.example to .env and fill in your values."
+    );
+  }
+
+  return createClient(supabaseUrl, supabaseKey);
 }
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
