@@ -26,7 +26,7 @@ const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/sit
   POST handler — called when the ContactForm submits.
   Astro automatically routes POST /api/leads here.
 */
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   /*
     Parse the incoming JSON body sent by the form's fetch() call.
     Expected shape: { name, email, website, contact_method, contact_details, message, source }
@@ -40,8 +40,9 @@ export const POST: APIRoute = async ({ request }) => {
 
   const { name, email, website, message, source = "landing", contact_method: contactMethod, contact_details: contactDetails } = body;
   const turnstileToken = body["cf-turnstile-response"] ?? body.turnstileToken;
-  const turnstileSecret = import.meta.env.TURNSTILE_SECRET_KEY;
-  const isProd = import.meta.env.PROD;
+  const env = (locals.runtime as any).env;
+  const turnstileSecret = env.TURNSTILE_SECRET_KEY;
+  const isProd = import.meta.env.PROD; 
 
   if (isProd && !turnstileSecret) {
     console.error("TURNSTILE_SECRET_KEY is missing in production.");
@@ -85,8 +86,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   /* ── Insert into Supabase ── */
-  const supabase = createSupabaseClient();
-  const { error } = await supabase.from(TABLE).insert({
+  const supabase = createSupabaseClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY);  const { error } = await supabase.from(TABLE).insert({
     name:    name.trim(),
     email: emailValue,
     website: website?.trim() || null,  /* optional — null if not provided */
@@ -102,9 +102,9 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   /* ── Send emails via Resend ── */
-  const resendKey = import.meta.env.RESEND_API_KEY;
-  const notifyEmail = import.meta.env.NOTIFICATION_EMAIL;
-
+  const resendKey = env.RESEND_API_KEY;
+  const notifyEmail = env.NOTIFICATION_EMAIL;
+  
   if (resendKey) {
     try {
       const resend = new Resend(resendKey);

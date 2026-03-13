@@ -18,11 +18,7 @@ import { createClient } from "@supabase/supabase-js";
   Cloudflare runtime env bindings (import.meta.env) are read at request time,
   not at Worker initialisation time when they may not yet be injected.
 */
-
-export function createSupabaseClient() {
-  const supabaseUrl = import.meta.env.SUPABASE_URL        as string;
-  const supabaseKey = import.meta.env.SUPABASE_SECRET_KEY as string;
-
+export function createSupabaseClient(supabaseUrl: string, supabaseKey: string) {
   if (!supabaseUrl || !supabaseKey) {
     throw new Error(
       "Missing Supabase env vars. Copy .env.example to .env and fill in your values."
