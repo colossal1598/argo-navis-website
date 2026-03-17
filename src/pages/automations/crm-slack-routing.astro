@@ -83,15 +83,11 @@ import ContactForm from "../../components/ContactForm.astro";
     </p>
   </ShowcaseSection>
 
-</ShowcaseLayout>
+  <ContactForm
+    slot="cta"
+    heading="Want Something Like This?"
+    subheading="Tell us your workflow and we'll show you how to automate it."
+    source="automations-showcase"
+  />
 
-<!--
-  CTA form at the bottom of every showcase page.
-  source="automations-showcase" lets you see in Supabase which case
-  study drove the lead — useful for knowing which content converts.
--->
-<ContactForm
-  heading="Want Something Like This?"
-  subheading="Tell us your workflow and we'll show you how to automate it."
-  source="automations-showcase"
-/>
+</ShowcaseLayout>

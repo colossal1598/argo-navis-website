@@ -27,23 +27,19 @@ const { heading = "How it works", steps } = Astro.props;
   <div class="mx-auto max-w-5xl">
 
     <!-- Section heading -->
-    <h2 class="mb-16 text-center text-3xl font-bold text-text-primary md:text-4xl">
+    <h2 class="mb-12 text-center text-3xl font-bold text-text-primary md:text-4xl">
       {heading}
     </h2>
 
     <!--
       STEPS — horizontal on desktop (grid-cols-N), vertical on mobile.
-      The connecting line is drawn using a pseudo-element on the
-      inner wrapper — it sits behind the numbered circles.
+      The connecting line sits behind the numbered circles on md+.
     -->
     <div class="relative">
 
       <!--
         CONNECTING LINE — only visible on md+ screens.
-        It's a thin horizontal rule that runs through the center of the
-        numbered circles. The negative top value (-translate-y) centers
-        it on the circle height.
-        hidden md:block — invisible on mobile.
+        hidden md:block — invisible on mobile where steps stack vertically.
       -->
       <div
         class="absolute start-0 end-0 top-5 hidden h-px bg-border-subtle md:block"
@@ -51,13 +47,13 @@ const { heading = "How it works", steps } = Astro.props;
       ></div>
 
       <!--
-        STEPS GRID — the number of columns matches the number of steps.
-        We use inline style for the grid-template-columns so it works
-        for any number of steps without hardcoding breakpoint classes.
+        STEPS GRID — single column on mobile, N columns on md+.
+        The md: inline style only applies at the md breakpoint and above
+        via a wrapping <style> so mobile always gets a single column.
       -->
       <ol
-        class="relative grid gap-10 md:gap-6"
-        style={`grid-template-columns: repeat(${steps.length}, 1fr)`}
+        class="relative grid grid-cols-1 gap-10 md:gap-6"
+        style={`--process-cols: ${steps.length}`}
       >
         {steps.map((step, i) => (
           <li class="flex flex-col items-center text-center">
@@ -67,7 +63,7 @@ const { heading = "How it works", steps } = Astro.props;
               bg-surface-950 matches the page background so the line
               appears to "pass through" the circle gap.
             -->
-            <div class="relative z-10 mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-surface-700 bg-surface-950 text-sm font-bold text-brand-400">
+            <div class="relative z-10 mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-brand-500/30 bg-surface-950 text-sm font-bold text-brand-400">
               {i + 1}
             </div>
 
@@ -84,3 +80,11 @@ const { heading = "How it works", steps } = Astro.props;
 
   </div>
 </section>
+
+<style>
+  @media (min-width: 768px) {
+    ol[style*="--process-cols"] {
+      grid-template-columns: repeat(var(--process-cols), 1fr);
+    }
+  }
+</style>

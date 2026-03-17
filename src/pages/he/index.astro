@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import ServicesSection from "../../components/ServicesSection.astro";
 import ProcessBlock from "../../components/ProcessBlock.astro";
 import ContactForm from "../../components/ContactForm.astro";
 
@@ -78,41 +79,37 @@ const fields = [
   </section>
 
   <!-- SERVICES OVERVIEW — same 3 service pillars as EN homepage -->
-  <section id="services" class="bg-surface-950 px-6 py-24">
-    <div class="mx-auto max-w-6xl">
-      <div class="mb-16 text-center">
-        <h2 class="text-3xl font-bold text-text-primary md:text-4xl">מה אנחנו עושים</h2>
-      </div>
-      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        <article class="rounded-2xl border border-border-subtle bg-surface-900 p-8 transition-all hover:bg-surface-800">
-          <h3 class="text-xl font-semibold text-text-primary">אתרים</h3>
-          <p class="mt-3 text-sm leading-relaxed text-text-muted">האתר הוא הרושם הראשון שלכם. בואו נגרום לו לעבוד.</p>
-          <a href="/he/websites" class="mt-6 inline-flex items-center gap-1 text-sm font-medium text-brand-400">
-            קראו עוד
-          </a>
-        </article>
-        <article class="rounded-2xl border border-border-subtle bg-surface-900 p-8 transition-all hover:bg-surface-800">
-          <h3 class="text-xl font-semibold text-text-primary">קמפיינים</h3>
-          <p class="mt-3 text-sm leading-relaxed text-text-muted">פרסום ותוכן שמביאים פניות אמיתיות, לא רק חשיפות.</p>
-          <a href="/he/campaigns" class="mt-6 inline-flex items-center gap-1 text-sm font-medium text-brand-400">
-            קראו עוד
-          </a>
-        </article>
-        <article class="rounded-2xl border border-border-subtle bg-surface-900 p-8 transition-all hover:bg-surface-800">
-          <h3 class="text-xl font-semibold text-text-primary">אוטומציות</h3>
-          <p class="mt-3 text-sm leading-relaxed text-text-muted">לתת למשימות החוזרות לרוץ לבד, בזמן שאתם מתמקדים בצמיחה.</p>
-          <a href="/he/automations" class="mt-6 inline-flex items-center gap-1 text-sm font-medium text-brand-400">
-            קראו עוד
-          </a>
-        </article>
-      </div>
-    </div>
-  </section>
+  <ServicesSection
+    heading="מה אנחנו עושים"
+    services={[
+      {
+        title:       "אתרים",
+        description: "האתר הוא הרושם הראשון שלכם. בואו נגרום לו לעבוד.",
+        href:        "/he/websites",
+        cta:         "קראו עוד",
+        accent:      "gold",
+      },
+      {
+        title:       "קמפיינים",
+        description: "פרסום ותוכן שמביאים פניות אמיתיות, לא רק חשיפות.",
+        href:        "/he/campaigns",
+        cta:         "קראו עוד",
+        accent:      "brand",
+      },
+      {
+        title:       "אוטומציות",
+        description: "לתת למשימות החוזרות לרוץ לבד, בזמן שאתם מתמקדים בצמיחה.",
+        href:        "/he/automations",
+        cta:         "קראו עוד",
+        accent:      "slate",
+      },
+    ]}
+  />
 
   <!-- TRUST BLOCK — short brand statement, matching EN page intent -->
-  <section class="bg-surface-800 px-6 py-24">
+  <section class="bg-surface-800 px-6 py-16">
     <div class="mx-auto max-w-3xl text-center">
-      <h2 class="text-3xl font-bold leading-snug tracking-tight text-text-primary md:text-4xl">
+      <h2 class="text-3xl font-bold leading-snug tracking-tight text-text-primary md:text-4xl lg:text-5xl">
         סטנדרט גבוה. בכל פעם מחדש.
       </h2>
       <p class="mx-auto mt-5 max-w-xl text-lg text-text-muted">

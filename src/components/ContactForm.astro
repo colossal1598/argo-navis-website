@@ -204,8 +204,8 @@ const turnstileRequired = import.meta.env.PROD;
               type="button"
               data-contact-method={method.id}
               class:list={[
-                "contact-method-btn inline-flex items-center justify-center gap-2 rounded-md border border-border-subtle px-3 py-2 text-xs font-medium text-text-muted transition-colors hover:border-brand-500/60 hover:text-text-primary",
-                index === 0 && "border-brand-500/60 text-text-primary",
+                "contact-method-btn inline-flex items-center justify-center gap-2 rounded-md border border-border-subtle px-3 py-2 text-xs font-medium text-text-muted transition-colors hover:border-brand-500/60 hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950",
+                index === 0 && "border-brand-500/60 bg-brand-500/5 font-semibold text-text-primary",
               ]}
               aria-pressed={index === 0 ? "true" : "false"}
             >
@@ -274,7 +274,7 @@ const turnstileRequired = import.meta.env.PROD;
         <button
           type="submit"
           id="submit-btn"
-          class="rounded-sm bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-50"
+          class="rounded-sm bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {submitLabel}
         </button>
@@ -339,11 +339,11 @@ const turnstileRequired = import.meta.env.PROD;
       contactMethodInput.value = method;
       applyContactMethodState(method);
       contactMethodButtons.forEach((btnEl) => {
-        btnEl.classList.remove("border-brand-500/60", "text-text-primary");
+        btnEl.classList.remove("border-brand-500/60", "bg-brand-500/5", "font-semibold", "text-text-primary");
         btnEl.classList.add("border-border-subtle", "text-text-muted");
         btnEl.setAttribute("aria-pressed", "false");
       });
-      button.classList.add("border-brand-500/60", "text-text-primary");
+      button.classList.add("border-brand-500/60", "bg-brand-500/5", "font-semibold", "text-text-primary");
       button.classList.remove("border-border-subtle", "text-text-muted");
       button.setAttribute("aria-pressed", "true");
     });
