@@ -65,9 +65,15 @@ const currentLocaleFlag = isHebrew ? "he" : "en";
       LOGO — change the text or swap in an <img> tag.
       The href="/" always takes the user back to the homepage.
     -->
-    <a href={logoHref} class="text-xl font-bold tracking-tight text-text-primary">
-      Argo <span class="text-brand-400">Navis</span>
-    </a>
+    <a
+      href={logoHref}
+      class="flex items-center gap-2 text-xl font-bold tracking-tight text-text-primary"
+    >
+
+      <span>
+        Argo <span class="text-brand-400">Navis</span>
+      </span>
+         </a>
 
     <!-- Desktop nav: links + theme toggle + CTA -->
     <div class="hidden items-center gap-6 md:flex">
