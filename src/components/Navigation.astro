@@ -186,19 +186,96 @@ const currentLocaleFlag = isHebrew ? "he" : "en";
       Mobile hamburger — only visible below md breakpoint.
       The actual toggle logic is handled by the <script> below.
     -->
-    <button
-      id="menu-toggle"
-      class="flex flex-col gap-1.5 rounded-md p-2 transition-colors hover:bg-surface-800 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950 md:hidden"
-      aria-label={isHebrew ? "פתח תפריט" : "Open menu"}
-      aria-expanded="false"
-      aria-controls="mobile-menu"
-      data-label-open={isHebrew ? "פתח תפריט" : "Open menu"}
-      data-label-close={isHebrew ? "סגור תפריט" : "Close menu"}
-    >
-      <span class="h-0.5 w-6 bg-text-primary transition-all"></span>
-      <span class="h-0.5 w-6 bg-text-primary transition-all"></span>
-      <span class="h-0.5 w-6 bg-text-primary transition-all"></span>
-    </button>
+    <div class="flex items-center gap-0 md:hidden">
+      <!-- Mobile theme + locale controls -->
+      <button
+        id="theme-toggle-mobile"
+        class="inline-flex items-center justify-center rounded-md p-2 text-text-muted transition-colors hover:bg-surface-800 hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
+        type="button"
+        aria-label={isHebrew ? "החלפת מצב תאורה" : "Toggle dark mode"}
+      >
+        <svg
+          id="icon-sun-mobile"
+          class="h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2" />
+          <path d="M12 20v2" />
+          <path d="M4.93 4.93l1.41 1.41" />
+          <path d="M17.66 17.66l1.41 1.41" />
+          <path d="M2 12h2" />
+          <path d="M20 12h2" />
+          <path d="M4.93 19.07l1.41-1.41" />
+          <path d="M17.66 6.34l1.41-1.41" />
+        </svg>
+        <svg
+          id="icon-moon-mobile"
+          class="hidden h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      </button>
+
+      <a
+        data-language-toggle
+        href={localeSwitchHref}
+        class="inline-flex items-center justify-center gap-1.5 rounded-md p-2 text-xs font-medium text-text-muted transition-colors hover:bg-surface-800 hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
+        aria-label={isHebrew ? "Switch to English" : "החלף לעברית"}
+      >
+        {currentLocaleFlag === "en" ? (
+          <>
+            <svg class="h-3.5 w-5 rounded-[2px]" viewBox="0 0 60 40" aria-hidden="true">
+              <rect width="60" height="40" fill="#012169"></rect>
+              <path d="M0 0l60 40M60 0L0 40" stroke="#fff" stroke-width="8"></path>
+              <path d="M0 0l60 40M60 0L0 40" stroke="#C8102E" stroke-width="4"></path>
+              <path d="M30 0v40M0 20h60" stroke="#fff" stroke-width="14"></path>
+              <path d="M30 0v40M0 20h60" stroke="#C8102E" stroke-width="8"></path>
+            </svg>
+            <span aria-hidden="true">EN</span>
+          </>
+        ) : (
+          <>
+            <svg class="h-3.5 w-5 rounded-[2px]" viewBox="0 0 60 40" aria-hidden="true">
+              <rect width="60" height="40" fill="#fff"></rect>
+              <rect y="3" width="60" height="6" fill="#0038B8"></rect>
+              <rect y="31" width="60" height="6" fill="#0038B8"></rect>
+              <path d="M30 12l6.2 10.8H23.8z" fill="none" stroke="#0038B8" stroke-width="2"></path>
+              <path d="M30 28l-6.2-10.8h12.4z" fill="none" stroke="#0038B8" stroke-width="2"></path>
+            </svg>
+            <span aria-hidden="true">עב</span>
+          </>
+        )}
+      </a>
+
+      <!-- Mobile hamburger -->
+      <button
+        id="menu-toggle"
+        class="flex flex-col gap-1.5 rounded-md p-2 transition-colors hover:bg-surface-800 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
+        aria-label={isHebrew ? "פתח תפריט" : "Open menu"}
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-label-open={isHebrew ? "פתח תפריט" : "Open menu"}
+        data-label-close={isHebrew ? "סגור תפריט" : "Close menu"}
+      >
+        <span class="h-0.5 w-6 bg-text-primary transition-all"></span>
+        <span class="h-0.5 w-6 bg-text-primary transition-all"></span>
+        <span class="h-0.5 w-6 bg-text-primary transition-all"></span>
+      </button>
+    </div>
   </nav>
 
   <!--
@@ -221,86 +298,10 @@ const currentLocaleFlag = isHebrew ? "he" : "en";
           </a>
         </li>
       ))}
-      <li class="mt-1">
-        <!-- Mobile language switch -->
-        <a
-          data-language-toggle
-          href={localeSwitchHref}
-          class="inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium text-text-muted transition-colors hover:bg-surface-800 hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
-          aria-label={isHebrew ? "Switch to English" : "החלף לעברית"}
-        >
-          {currentLocaleFlag === "en" ? (
-            <>
-              <svg class="h-3.5 w-5 rounded-[2px]" viewBox="0 0 60 40" aria-hidden="true">
-                <rect width="60" height="40" fill="#012169"></rect>
-                <path d="M0 0l60 40M60 0L0 40" stroke="#fff" stroke-width="8"></path>
-                <path d="M0 0l60 40M60 0L0 40" stroke="#C8102E" stroke-width="4"></path>
-                <path d="M30 0v40M0 20h60" stroke="#fff" stroke-width="14"></path>
-                <path d="M30 0v40M0 20h60" stroke="#C8102E" stroke-width="8"></path>
-              </svg>
-              <span aria-hidden="true">EN</span>
-            </>
-          ) : (
-            <>
-              <svg class="h-3.5 w-5 rounded-[2px]" viewBox="0 0 60 40" aria-hidden="true">
-                <rect width="60" height="40" fill="#fff"></rect>
-                <rect y="3" width="60" height="6" fill="#0038B8"></rect>
-                <rect y="31" width="60" height="6" fill="#0038B8"></rect>
-                <path d="M30 12l6.2 10.8H23.8z" fill="none" stroke="#0038B8" stroke-width="2"></path>
-                <path d="M30 28l-6.2-10.8h12.4z" fill="none" stroke="#0038B8" stroke-width="2"></path>
-              </svg>
-              <span aria-hidden="true">עב</span>
-            </>
-          )}
-        </a>
-      </li>
-      <li class="mt-2 flex items-center justify-between gap-3">
-        <!-- Mobile theme toggle -->
-        <button
-          id="theme-toggle-mobile"
-          class="inline-flex items-center justify-center rounded-md p-2 text-text-muted transition-colors hover:bg-surface-800 hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
-          type="button"
-          aria-label={isHebrew ? "החלפת מצב תאורה" : "Toggle dark mode"}
-        >
-          <svg
-            id="icon-sun-mobile"
-            class="h-4 w-4"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2" />
-            <path d="M12 20v2" />
-            <path d="M4.93 4.93l1.41 1.41" />
-            <path d="M17.66 17.66l1.41 1.41" />
-            <path d="M2 12h2" />
-            <path d="M20 12h2" />
-            <path d="M4.93 19.07l1.41-1.41" />
-            <path d="M17.66 6.34l1.41-1.41" />
-          </svg>
-          <svg
-            id="icon-moon-mobile"
-            class="hidden h-4 w-4"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-          </svg>
-        </button>
-
+      <li class="mt-2">
         <a
           href={ctaHref}
-          class="flex-1 rounded-lg bg-brand-500 px-3 py-2 text-center text-sm font-semibold text-white transition-colors hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
+          class="block w-full rounded-lg bg-brand-500 px-3 py-2 text-center text-sm font-semibold text-white transition-colors hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
         >
           {ctaLabel}
         </a>

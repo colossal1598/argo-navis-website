@@ -1,0 +1,292 @@
+---
+import "../../styles/global.css";
+
+const services = [
+  {
+    title: "אספקת פרחים בסיטונאות",
+    description:
+      "מבחר יומי של ורדים, ליזיאנטוס, גרברות וירוקים מובחרים לחנויות, מעצבים ואולמות.",
+  },
+  {
+    title: "עיצוב פרחים לאירועים",
+    description:
+      "קונספט עיצובי מלא לחתונות, בר/בת מצווה, כנסים ואירועי חברה עם קו אחיד ומדויק.",
+  },
+  {
+    title: "משלוחים לאירועי פרימיום",
+    description:
+      "שינוע בקירור מבוקר ותיאום הגעה מדויק לאולמות, גני אירועים ומלונות בכל הארץ.",
+  },
+];
+
+const advantages = [
+  "זמינות אספקה 6 ימים בשבוע עם חלונות הזמנה נוחים לעסקים.",
+  "בקרת איכות כפולה לפני יציאה לשינוע לשמירה על טריות ונראות.",
+  "שרשרת אספקה גמישה להזמנות קטנות וגדולות כאחד.",
+  "התאמה עונתית חכמה לחיסכון בעלויות בלי להתפשר על מראה.",
+];
+
+const packages = [
+  {
+    name: "חתונה קלאסית",
+    details: "עיצוב חופה, מרכזי שולחן, בוטוניירות וזר כלה בהתאמה אישית.",
+    price: "החל מ־4,900 ש\"ח",
+  },
+  {
+    name: "אירוע חברה",
+    details: "מיתוג פרחוני ללובי, במה ועמדות קבלה כולל תחזוקה לאורך האירוע.",
+    price: "החל מ־3,200 ש\"ח",
+  },
+  {
+    name: "כנס עסקי גדול",
+    details: "פריסה מרובת אזורים, דוכנים, נקודות צילום ושילוט ירוק משלים.",
+    price: "החל מ־6,800 ש\"ח",
+  },
+];
+
+const testimonials = [
+  {
+    quote:
+      "העבודה עם פרחי נורית העלתה את רמת הנראות של האירועים שלנו בכמה דרגות. דיוק וזמינות יוצאי דופן.",
+    name: "דנה י.",
+    role: "מנהלת תפעול, אולם אירועים בהרצליה",
+  },
+  {
+    quote:
+      "קיבלנו ליווי מלא מהאפיון ועד ההקמה בשטח. הכול הגיע בזמן ונראה פשוט מושלם.",
+    name: "אורן ל.",
+    role: "מפיק חתונות פרטי",
+  },
+];
+---
+
+<html lang="he" dir="rtl" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nurit Flowers | פרחי נורית</title>
+    <meta
+      name="description"
+      content="פרחי נורית - שירותי פרחים בסיטונאות, עיצוב אירועים ומשלוחים מקצועיים לכל סוגי האירועים."
+    />
+  </head>
+  <body class="bg-surface-950 text-text-primary">
+    <main class="relative overflow-x-hidden">
+      <section class="relative isolate border-b border-border-subtle/60 px-6 py-20 md:py-28">
+        <div class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(58,107,239,0.25),_transparent_45%)]"></div>
+        <div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+          <div>
+            <p class="inline-flex rounded-full border border-gold-500/40 bg-gold-500/10 px-4 py-1 text-sm font-semibold text-gold-400">
+              שירותי פרחים לעסקים, אירועים והפקות
+            </p>
+            <h1 class="mt-6 text-4xl font-extrabold leading-tight tracking-tight md:text-6xl">
+              Nurit Flowers
+              <span class="block text-brand-300">פרחי נורית</span>
+            </h1>
+            <p class="mt-6 max-w-2xl text-lg leading-relaxed text-text-soft">
+              אנחנו מלווים עסקים ומפיקי אירועים עם אספקת פרחים איכותית, פתרונות עיצוב מותאמים ולוגיסטיקה מדויקת.
+              המטרה שלנו פשוטה: כל אירוע ייראה יוקרתי, טרי ומרשים מהכניסה ועד השולחן האחרון.
+            </p>
+            <div class="mt-10 flex flex-wrap gap-4">
+              <a
+                href="#contact"
+                class="rounded-md bg-brand-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-400"
+              >
+                קבלו הצעת מחיר
+              </a>
+              <a
+                href="#services"
+                class="rounded-md border border-border-subtle px-6 py-3 text-sm font-bold text-text-primary transition hover:border-brand-300 hover:text-brand-200"
+              >
+                השירותים שלנו
+              </a>
+            </div>
+          </div>
+
+          <aside class="rounded-2xl border border-border-subtle/70 bg-surface-900/70 p-6 backdrop-blur">
+            <h2 class="text-lg font-bold">מדדים מובילים</h2>
+            <div class="mt-6 grid grid-cols-2 gap-4 text-center">
+              <div class="rounded-xl bg-surface-800 p-4">
+                <p class="text-3xl font-extrabold text-brand-300">12+</p>
+                <p class="mt-1 text-sm text-text-muted">שנות ניסיון</p>
+              </div>
+              <div class="rounded-xl bg-surface-800 p-4">
+                <p class="text-3xl font-extrabold text-brand-300">420</p>
+                <p class="mt-1 text-sm text-text-muted">אירועים בשנה</p>
+              </div>
+              <div class="rounded-xl bg-surface-800 p-4">
+                <p class="text-3xl font-extrabold text-brand-300">98%</p>
+                <p class="mt-1 text-sm text-text-muted">לקוחות חוזרים</p>
+              </div>
+              <div class="rounded-xl bg-surface-800 p-4">
+                <p class="text-3xl font-extrabold text-brand-300">24/6</p>
+                <p class="mt-1 text-sm text-text-muted">זמינות תפעולית</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="services" class="px-6 py-16 md:py-20">
+        <div class="mx-auto max-w-6xl">
+          <h2 class="text-3xl font-bold md:text-4xl">מה אנחנו מציעים</h2>
+          <p class="mt-4 max-w-3xl text-text-muted">
+            מעטפת מלאה לעסקים ולאירועים, מהזמנה ראשונית ועד העמדה בשטח.
+          </p>
+          <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {
+              services.map((service) => (
+                <article class="rounded-2xl border border-border-subtle/70 bg-surface-900 p-6 transition hover:-translate-y-0.5 hover:border-brand-400/60">
+                  <h3 class="text-xl font-bold">{service.title}</h3>
+                  <p class="mt-3 leading-relaxed text-text-muted">{service.description}</p>
+                </article>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="border-y border-border-subtle/60 bg-surface-900/40 px-6 py-16 md:py-20">
+        <div class="mx-auto max-w-6xl">
+          <h2 class="text-3xl font-bold md:text-4xl">למה בוחרים בפרחי נורית</h2>
+          <div class="mt-8 grid gap-4 md:grid-cols-2">
+            {
+              advantages.map((item) => (
+                <div class="flex items-start gap-3 rounded-xl border border-border-subtle bg-surface-900 p-5">
+                  <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-gold-500"></span>
+                  <p class="text-text-soft">{item}</p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="px-6 py-16 md:py-20">
+        <div class="mx-auto max-w-6xl">
+          <h2 class="text-3xl font-bold md:text-4xl">חבילות אירועים מובילות</h2>
+          <p class="mt-4 max-w-2xl text-text-muted">
+            כל חבילה ניתנת להתאמה לסגנון האירוע, התקציב וקונספט המיתוג.
+          </p>
+          <div class="mt-10 grid gap-6 lg:grid-cols-3">
+            {
+              packages.map((item) => (
+                <article class="rounded-2xl border border-border-subtle/80 bg-surface-900 p-6">
+                  <p class="text-sm font-semibold text-gold-400">{item.price}</p>
+                  <h3 class="mt-2 text-2xl font-bold">{item.name}</h3>
+                  <p class="mt-4 text-text-muted">{item.details}</p>
+                </article>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="border-y border-border-subtle/60 bg-surface-900/40 px-6 py-16 md:py-20">
+        <div class="mx-auto max-w-6xl">
+          <h2 class="text-3xl font-bold md:text-4xl">מה לקוחות מספרים</h2>
+          <div class="mt-10 grid gap-6 lg:grid-cols-2">
+            {
+              testimonials.map((item) => (
+                <blockquote class="rounded-2xl border border-border-subtle bg-surface-900 p-6">
+                  <p class="text-lg leading-relaxed text-text-soft">"{item.quote}"</p>
+                  <footer class="mt-5 border-t border-border-subtle/70 pt-4">
+                    <p class="font-bold">{item.name}</p>
+                    <p class="text-sm text-text-muted">{item.role}</p>
+                  </footer>
+                </blockquote>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="px-6 py-16 md:py-20">
+        <div class="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1fr_1.1fr]">
+          <div>
+            <p class="text-sm font-semibold text-gold-400">בואו נתחיל</p>
+            <h2 class="mt-3 text-3xl font-bold md:text-4xl">נשמח לתכנן את האירוע הבא שלכם</h2>
+            <p class="mt-4 text-text-muted">
+              מלאו את הפרטים ונחזור אליכם עם כיוון מקצועי, זמינות ולוחות זמנים מוצעים.
+              הטופס כאן מיועד להדמיה בלבד.
+            </p>
+            <div class="mt-8 rounded-xl border border-border-subtle bg-surface-900 p-5 text-sm text-text-soft">
+              <p><strong>טלפון:</strong> 03-712-8841</p>
+              <p class="mt-2"><strong>וואטסאפ עסקי:</strong> 052-734-2198</p>
+              <p class="mt-2"><strong>אזורי שירות:</strong> גוש דן, השרון, שפלה וירושלים</p>
+              <p class="mt-2"><strong>שעות פעילות:</strong> א׳-ו׳ 07:00-19:00</p>
+            </div>
+          </div>
+
+          <form
+            aria-label="טופס פנייה - הדמיה"
+            class="rounded-2xl border border-border-subtle bg-surface-900 p-6 md:p-8"
+          >
+            <div class="grid gap-4 md:grid-cols-2">
+              <label class="flex flex-col gap-2 text-sm">
+                שם מלא
+                <input
+                  type="text"
+                  placeholder="לדוגמה: רוני כהן"
+                  class="rounded-md border border-border-subtle bg-surface-950 px-3 py-2.5 text-text-primary outline-none ring-brand-400 focus:ring-2"
+                />
+              </label>
+              <label class="flex flex-col gap-2 text-sm">
+                טלפון
+                <input
+                  type="tel"
+                  placeholder="050-0000000"
+                  class="rounded-md border border-border-subtle bg-surface-950 px-3 py-2.5 text-text-primary outline-none ring-brand-400 focus:ring-2"
+                />
+              </label>
+            </div>
+
+            <div class="mt-4 grid gap-4 md:grid-cols-2">
+              <label class="flex flex-col gap-2 text-sm">
+                סוג האירוע
+                <select
+                  class="rounded-md border border-border-subtle bg-surface-950 px-3 py-2.5 text-text-primary outline-none ring-brand-400 focus:ring-2"
+                >
+                  <option>חתונה</option>
+                  <option>אירוע חברה</option>
+                  <option>כנס מקצועי</option>
+                  <option>אירוע פרטי</option>
+                </select>
+              </label>
+              <label class="flex flex-col gap-2 text-sm">
+                תאריך משוער
+                <input
+                  type="date"
+                  class="rounded-md border border-border-subtle bg-surface-950 px-3 py-2.5 text-text-primary outline-none ring-brand-400 focus:ring-2"
+                />
+              </label>
+            </div>
+
+            <label class="mt-4 flex flex-col gap-2 text-sm">
+              מה חשוב לכם שנדע?
+              <textarea
+                rows="5"
+                placeholder="סגנון האירוע, כמות אורחים, תקציב משוער ועוד..."
+                class="rounded-md border border-border-subtle bg-surface-950 px-3 py-2.5 text-text-primary outline-none ring-brand-400 focus:ring-2"
+              ></textarea>
+            </label>
+
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                class="rounded-md bg-brand-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-400"
+              >
+                שליחת פנייה (מוקאפ)
+              </button>
+              <span class="text-xs text-text-muted">אין שליחה בפועל - הדמיה ויזואלית בלבד</span>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-border-subtle/60 px-6 py-8 text-center text-sm text-text-muted">
+      © 2026 Nurit Flowers | פרחי נורית - כל הזכויות שמורות (אתר הדמיה לצורכי בדיקה)
+    </footer>
+  </body>
+</html>
