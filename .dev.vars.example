@@ -1,0 +1,33 @@
+# Copy this file to .dev.vars (NOT .env) and fill in your values.
+# NEVER commit the real .dev.vars file — it contains secret keys.
+#
+# WHY THIS FILE EXISTS SEPARATELY FROM .env.example:
+# The @astrojs/cloudflare adapter runs local `astro dev` inside the actual
+# Cloudflare Workers runtime. Server-side code reads secrets via
+# `import { env } from "cloudflare:workers"` (see src/pages/api/leads.ts),
+# and that runtime ONLY receives values from .dev.vars — never from .env.
+# .env only feeds Vite's import.meta.env, which is how the browser-safe
+# PUBLIC_TURNSTILE_SITE_KEY reaches the client. Without a .dev.vars file,
+# every one of the vars below is undefined during local dev, and the
+# Supabase insert in api/leads.ts will fail every time.
+
+# Found in your Supabase project:  Settings → API → Project URL
+SUPABASE_URL=https://your-project-id.supabase.co
+
+# Found in your Supabase project:  Settings → API Keys → API Keys tab → Secret key
+# Format: sb_secret_...  (NOT the legacy service_role JWT key)
+SUPABASE_SECRET_KEY=sb_secret_your-secret-key-here
+
+# Cloudflare Turnstile secret key (server-side only, verifies the token
+# the widget sends). In dev this can be left blank — Turnstile enforcement
+# is soft in dev by design (see api/leads.ts), so the challenge is skipped
+# rather than rejected when this is unset. Fill it in only when you
+# specifically want to test the verification call itself.
+TURNSTILE_SECRET_KEY=your-turnstile-secret-key
+
+# Resend — transactional email (lead auto-reply + owner notification).
+# Leave this BLANK during routine dev/form testing: if it's set, real
+# emails will be sent to real addresses (including the owner's inbox) for
+# every test submission. Email sending is skipped entirely when this is
+# empty — the 200 response is never blocked either way.
+RESEND_API_KEY=

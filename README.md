@@ -45,7 +45,7 @@ It highlights our core services, showcases past work, and drives inbound leads v
   - Multiple form "types" possible (e.g., discovery call, audit request, custom quote).
   - On successful insert, two transactional emails fire via **Resend**:
     - **Lead auto-reply** (`hello@argo-navis.net` → submitter): branded confirmation with a dynamic subject line, service-specific copy, echoed message, website callout (if provided), and contact method acknowledgement.
-    - **Owner notification** (`leads@argo-navis.net` → `NOTIFICATION_EMAIL`): compact table of all lead fields — name, email, website, contact method, message, source, UTC timestamp — with a Supabase dashboard link.
+    - **Owner notification** (`leads@argo-navis.net` → `jason@argo-navis.net`, hardcoded in `api/leads.ts`): compact table of all lead fields — name, email, website, contact method, message, source, UTC timestamp — with a Supabase dashboard link.
 
 ## Tech Stack
 
@@ -83,17 +83,29 @@ It highlights our core services, showcases past work, and drives inbound leads v
 
 2. **Set up environment variables**
 
+   Two files are needed locally, because two different systems read env vars:
+   `.env` feeds Vite (`import.meta.env`, used for the browser-safe Turnstile
+   site key), while `.dev.vars` feeds the actual Cloudflare Workers runtime
+   that `astro dev` runs under (used for every server-side secret read via
+   `cloudflare:workers`'s `env`, e.g. in `api/leads.ts`). `.env` alone is
+   **not** enough to test the lead form locally.
+
    ```bash
    cp .env.example .env
+   cp .dev.vars.example .dev.vars
    ```
 
    Fill in `.env`:
+   - `PUBLIC_TURNSTILE_SITE_KEY` — Cloudflare Turnstile site key (safe on client)
+   - The same server-side vars below, for convenience/reference (astro dev won't actually read them from here)
+
+   Fill in `.dev.vars`:
    - `SUPABASE_URL` — Supabase Dashboard → Settings → API → Project URL
    - `SUPABASE_SECRET_KEY` — Supabase Dashboard → Settings → **API Keys** tab → **Secret key** (`sb_secret_...`). Do NOT use the legacy `service_role` JWT key.
-   - `PUBLIC_TURNSTILE_SITE_KEY` — Cloudflare Turnstile site key (safe on client)
-   - `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile secret key (server only)
-   - `RESEND_API_KEY` — Resend Dashboard → API Keys → Create API Key (Sending access). See [resend.com](https://resend.com).
-   - `NOTIFICATION_EMAIL` — the inbox where owner lead-alert emails are delivered
+   - `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile secret key (server only). Can be left blank in dev — enforcement is soft there by design.
+   - `RESEND_API_KEY` — Resend Dashboard → API Keys → Create API Key (Sending access). See [resend.com](https://resend.com). Leave blank during routine form testing to avoid sending real emails for test submissions.
+
+   The owner notification address is hardcoded in `api/leads.ts` (`jason@argo-navis.net`) — there is no env var for it.
 
 3. **Create the Supabase `leads` table**
 
@@ -115,8 +127,11 @@ It highlights our core services, showcases past work, and drives inbound leads v
    ```
 
    Set all env vars (`SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `PUBLIC_TURNSTILE_SITE_KEY`,
-   `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `NOTIFICATION_EMAIL`) in
-   Cloudflare Pages → Settings → Environment variables.
+   `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`) in Cloudflare Pages → Settings →
+   Environment variables. `PUBLIC_TURNSTILE_SITE_KEY` specifically must be set
+   as a **build-time** variable (not only a Functions-only secret) — Vite
+   inlines it into the client bundle at build time, so it will be missing
+   from the deployed widget if it's only available at request time.
 
 ---
 

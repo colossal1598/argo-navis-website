@@ -85,20 +85,33 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: "Please provide your contact details for the selected method." }, 400);
   }
 
-  /* ── Insert into Supabase ── */
-  const supabase = createSupabaseClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY);
-  const { error } = await supabase.from(TABLE).insert({
-    name:    name.trim(),
-    email: emailValue,
-    website: website?.trim() || null,  /* optional — null if not provided */
-    contact_method: preferredContactMethod,
-    contact_details: preferredContactMethod === "email" ? null : normalizedContactDetails,
-    message: message.trim(),
-    source,
-  });
+  /*
+    ── Insert into Supabase ──
+    Wrapped in try/catch: createSupabaseClient() throws synchronously when
+    SUPABASE_URL / SUPABASE_SECRET_KEY are missing (e.g. .dev.vars not set
+    up locally, or the vars unset/misconfigured in Cloudflare Pages). Without
+    this guard that throw was unhandled and surfaced as a raw 500 error page
+    instead of the same JSON error contract every other failure path uses.
+  */
+  let insertErrorMessage: string | null = null;
+  try {
+    const supabase = createSupabaseClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY);
+    const { error } = await supabase.from(TABLE).insert({
+      name:    name.trim(),
+      email: emailValue,
+      website: website?.trim() || null,  /* optional — null if not provided */
+      contact_method: preferredContactMethod,
+      contact_details: preferredContactMethod === "email" ? null : normalizedContactDetails,
+      message: message.trim(),
+      source,
+    });
+    if (error) insertErrorMessage = error.message;
+  } catch (err) {
+    insertErrorMessage = err instanceof Error ? err.message : "Unknown Supabase client error";
+  }
 
-  if (error) {
-    console.error("Supabase insert error:", error.message);
+  if (insertErrorMessage) {
+    console.error("Supabase insert error:", insertErrorMessage);
     return json({ error: "Could not save your message. Please try again." }, 500);
   }
 
