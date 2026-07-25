@@ -144,7 +144,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
 const turnstileRequired = import.meta.env.PROD;
 ---
 
-<section id="contact" class="bg-surface-950 px-6 py-24">
+<section id="contact" class="bg-surface-950 px-6 py-section-lg">
   <div class="mx-auto max-w-xl">
 
     <!-- Heading — left-aligned to feel less like a marketing push -->
@@ -165,7 +165,7 @@ const turnstileRequired = import.meta.env.PROD;
 
       {fields.map(field => (
         <div>
-          <label for={field.id} class="mb-1.5 block text-sm font-medium text-text-soft">
+          <label for={field.id} class="field-label">
             {field.label}
             {field.required && <span class="ms-1 text-brand-400">*</span>}
           </label>
@@ -177,7 +177,7 @@ const turnstileRequired = import.meta.env.PROD;
               placeholder={field.placeholder}
               required={field.required}
               rows={5}
-              class="w-full border-b border-border-subtle bg-transparent px-0 py-3 text-sm text-text-primary placeholder:text-text-muted/70 focus:border-brand-500 focus:outline-none"
+              class="input"
             />
           ) : (
             <input
@@ -186,7 +186,7 @@ const turnstileRequired = import.meta.env.PROD;
               name={field.id}
               placeholder={field.placeholder}
               required={field.required}
-              class="w-full border-b border-border-subtle bg-transparent px-0 py-3 text-sm text-text-primary placeholder:text-text-muted/70 focus:border-brand-500 focus:outline-none"
+              class="input"
             />
           )}
         </div>
@@ -197,14 +197,14 @@ const turnstileRequired = import.meta.env.PROD;
         Keep this list short so selection is quick on mobile.
       -->
       <div>
-        <p class="mb-2 block text-sm font-medium text-text-soft">{contactMethodLabel}</p>
+        <p class="field-label">{contactMethodLabel}</p>
         <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {contactMethodMeta.map((method, index) => (
             <button
               type="button"
               data-contact-method={method.id}
               class:list={[
-                "contact-method-btn inline-flex items-center justify-center gap-2 rounded-md border border-border-subtle px-3 py-2 text-xs font-medium text-text-muted transition-colors hover:border-brand-500/60 hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950",
+                "contact-method-btn inline-flex items-center justify-center gap-2 rounded-sm border border-border-subtle px-3 py-2 text-xs font-medium text-text-muted transition-colors hover:border-brand-500/60 hover:text-text-primary focus-ring",
                 index === 0 && "border-brand-500/60 bg-brand-500/5 font-semibold text-text-primary",
               ]}
               aria-pressed={index === 0 ? "true" : "false"}
@@ -245,7 +245,7 @@ const turnstileRequired = import.meta.env.PROD;
           value=""
           placeholder={contactMethodMeta.find(m => m.id === defaultContactMethod)?.detailsPlaceholder}
           required={defaultMethodNeedsDetails}
-          class="w-full border-b border-border-subtle bg-transparent px-0 py-3 text-sm text-text-primary placeholder:text-text-muted/70 focus:border-brand-500 focus:outline-none"
+          class="input"
         />
       </div>
 
@@ -267,15 +267,8 @@ const turnstileRequired = import.meta.env.PROD;
       <p id="form-error" class="hidden text-sm text-red-400"></p>
 
       <div>
-        <!--
-          SUBMIT BUTTON — sharp corners (rounded-sm), same style
-          as the hero CTA for consistency across the page.
-        -->
-        <button
-          type="submit"
-          id="submit-btn"
-          class="rounded-sm bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950 disabled:cursor-not-allowed disabled:opacity-50"
-        >
+        <!-- SUBMIT BUTTON — token button classes, same style as the hero CTA for consistency. -->
+        <button type="submit" id="submit-btn" class="btn btn-primary btn-lg">
           {submitLabel}
         </button>
 

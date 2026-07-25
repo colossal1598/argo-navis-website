@@ -22,11 +22,11 @@ interface Props {
 const { title, description, tags, href, metric } = Astro.props;
 ---
 
-<article class="group relative flex flex-col rounded-2xl border border-border-subtle bg-surface-900 p-6 transition-all hover:border-brand-500/40 hover:bg-surface-800">
+<article class="group card">
 
-  <!-- Optional metric badge — shown in the top-right corner if provided -->
+  <!-- Optional metric badge — shown in the top-right corner if provided. Token badge, never a pill. -->
   {metric && (
-    <span class="absolute end-5 top-5 rounded-full bg-brand-500/10 px-3 py-1 text-xs font-semibold text-brand-300">
+    <span class="badge badge-brand absolute end-5 top-5">
       {metric}
     </span>
   )}
@@ -40,21 +40,21 @@ const { title, description, tags, href, metric } = Astro.props;
   <!-- Tags -->
   <div class="mt-4 flex flex-wrap gap-2">
     {tags.map(tag => (
-      <span class="rounded-md bg-surface-800 px-2.5 py-1 text-xs text-text-muted">
+      <span class="badge badge-muted">
         {tag}
       </span>
     ))}
   </div>
 
   <!--
-    "View case study" link — the after:absolute trick makes the
-    entire card clickable without wrapping everything in an <a>.
+    "View case study" link — .card-link-overlay makes the entire card
+    clickable without wrapping everything in an <a>.
     Only rendered when href is set, so cards never point at 404s.
   -->
   {href && (
     <a
       href={href}
-      class="mt-5 inline-flex items-center gap-1 text-sm font-medium text-brand-400 transition-all after:absolute after:inset-0 after:rounded-2xl"
+      class="card-link-overlay mt-5 inline-flex items-center gap-1 text-sm font-medium text-brand-400 transition-all"
     >
       View case study
       <svg class="icon-chevron h-4 w-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

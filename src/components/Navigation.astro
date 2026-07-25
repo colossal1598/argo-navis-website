@@ -3,20 +3,18 @@ import { switchLocalePath, type SiteLocale, withLocale } from "../lib/locale";
 
 /*
   NAV LINKS — the array below controls every item in the navbar.
-  To add a page: add { label: "Pricing", href: "/pricing" }
+  Each link carries its own EN/HE label directly (a locale object) instead
+  of a separate ternary chain matched by href — add a language, add a
+  field; add a page, add an object.
   To remove a page: delete the object.
   The "active" highlight is automatic based on the current URL.
 */
-const navLinks = [
-  { label: "Services",    href: "/#services" },
-  { label: "Automations", href: "/automations" },
-  { label: "Websites",    href: "/websites" },
+const navLinks: { href: string; label: Record<SiteLocale, string> }[] = [
+  { href: "/#services",  label: { en: "Services",    he: "שירותים" } },
+  { href: "/automations", label: { en: "Automations", he: "אוטומציות" } },
+  { href: "/websites",    label: { en: "Websites",    he: "אתרים" } },
 ];
 
-/*
-  CTA BUTTON — the label and link for the top-right button.
-  Change href to a Calendly link, contact form anchor, or any URL.
-*/
 interface Props {
   locale?: SiteLocale;
 }
@@ -29,19 +27,45 @@ const { locale = "en" } = Astro.props;
     - EN pages link to EN paths; HE pages link to /he paths.
 */
 const isHebrew = locale === "he";
-const ctaLabel = isHebrew ? "קבעו שיחה" : "Book a Call";
-const ctaHref = withLocale("/#contact", locale);
 const logoHref = withLocale("/", locale);
+
+/*
+  CHROME COPY — every other user-facing string in this component (CTA
+  label, toggle aria-labels) lives here, keyed by the current locale, so
+  nothing is hard-coded inline in the markup below.
+  Note on switchLocaleLabel: it names the SWITCH TARGET language, written
+  in that target language — e.g. on an English page the label reads
+  "החלף לעברית" (in Hebrew) because that's what a screen reader user is
+  switching to. This preserves the original behavior, just centralized.
+*/
+const copy: Record<SiteLocale, {
+  cta:              string;
+  switchLocaleLabel: string;
+  toggleTheme:      string;
+  openMenu:         string;
+  closeMenu:        string;
+}> = {
+  en: {
+    cta:               "Book a Call",
+    switchLocaleLabel: "החלף לעברית",
+    toggleTheme:       "Toggle dark mode",
+    openMenu:          "Open menu",
+    closeMenu:         "Close menu",
+  },
+  he: {
+    cta:               "קבעו שיחה",
+    switchLocaleLabel: "Switch to English",
+    toggleTheme:       "החלפת מצב תאורה",
+    openMenu:          "פתח תפריט",
+    closeMenu:         "סגור תפריט",
+  },
+};
+const t = copy[locale];
+const ctaHref = withLocale("/#contact", locale);
 
 /* Localized navigation labels keep structure identical across both languages. */
 const localizedLinks = navLinks.map((link) => ({
-  label: isHebrew
-    ? (
-      link.href === "/#services" ? "שירותים"
-      : link.href === "/automations" ? "אוטומציות"
-      : "אתרים"
-    )
-    : link.label,
+  label: link.label[locale],
   href: withLocale(link.href, locale),
 }));
 
@@ -109,7 +133,7 @@ const currentLocaleFlag = isHebrew ? "he" : "en";
             <a
               href={link.href}
               class:list={[
-                "rounded-sm text-sm font-medium transition-colors hover:text-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950",
+                "focus-ring rounded-sm text-sm font-medium transition-colors hover:text-brand-400",
                 currentPath === link.href || (link.href !== withLocale("/#services", locale) && currentPath.startsWith(`${link.href}/`))
                   ? "text-text-primary"
                   : "text-text-muted",
@@ -125,8 +149,8 @@ const currentLocaleFlag = isHebrew ? "he" : "en";
       <a
         data-language-toggle
         href={localeSwitchHref}
-        class="inline-flex items-center justify-center gap-1.5 rounded-md p-1.5 text-xs font-medium text-text-muted transition-colors hover:bg-surface-800 hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
-        aria-label={isHebrew ? "Switch to English" : "החלף לעברית"}
+        class="btn-icon gap-1.5"
+        aria-label={t.switchLocaleLabel}
       >
         {currentLocaleFlag === "en" ? (
           <>
@@ -156,9 +180,9 @@ const currentLocaleFlag = isHebrew ? "he" : "en";
       <!-- Theme toggle button -->
       <button
         id="theme-toggle"
-        class="inline-flex items-center justify-center rounded-md p-1.5 text-text-muted transition-colors hover:bg-surface-800 hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
+        class="btn-icon"
         type="button"
-        aria-label={isHebrew ? "החלפת מצב תאורה" : "Toggle dark mode"}
+        aria-label={t.toggleTheme}
       >
         <!-- Sun icon (light mode indicator) -->
         <svg
@@ -200,11 +224,8 @@ const currentLocaleFlag = isHebrew ? "he" : "en";
       </button>
 
       <!-- CTA button — stands out from the nav links -->
-      <a
-        href={ctaHref}
-        class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
-      >
-        {ctaLabel}
+      <a href={ctaHref} class="btn btn-primary btn-md">
+        {t.cta}
       </a>
     </div>
 
@@ -216,9 +237,9 @@ const currentLocaleFlag = isHebrew ? "he" : "en";
       <!-- Mobile theme + locale controls -->
       <button
         id="theme-toggle-mobile"
-        class="inline-flex items-center justify-center rounded-md p-2 text-text-muted transition-colors hover:bg-surface-800 hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
+        class="btn-icon"
         type="button"
-        aria-label={isHebrew ? "החלפת מצב תאורה" : "Toggle dark mode"}
+        aria-label={t.toggleTheme}
       >
         <svg
           id="icon-sun-mobile"
@@ -259,8 +280,8 @@ const currentLocaleFlag = isHebrew ? "he" : "en";
       <a
         data-language-toggle
         href={localeSwitchHref}
-        class="inline-flex items-center justify-center gap-1.5 rounded-md p-2 text-xs font-medium text-text-muted transition-colors hover:bg-surface-800 hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
-        aria-label={isHebrew ? "Switch to English" : "החלף לעברית"}
+        class="btn-icon gap-1.5"
+        aria-label={t.switchLocaleLabel}
       >
         {currentLocaleFlag === "en" ? (
           <>
@@ -287,15 +308,16 @@ const currentLocaleFlag = isHebrew ? "he" : "en";
         )}
       </a>
 
-      <!-- Mobile hamburger -->
+      <!-- Mobile hamburger — stacked bars, so it keeps its own layout classes
+           rather than .btn-icon (which centers a single icon). -->
       <button
         id="menu-toggle"
-        class="flex flex-col gap-1.5 rounded-md p-2 transition-colors hover:bg-surface-800 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
-        aria-label={isHebrew ? "פתח תפריט" : "Open menu"}
+        class="focus-ring flex flex-col gap-1.5 rounded-md p-2 text-text-muted transition-colors hover:bg-surface-800"
+        aria-label={t.openMenu}
         aria-expanded="false"
         aria-controls="mobile-menu"
-        data-label-open={isHebrew ? "פתח תפריט" : "Open menu"}
-        data-label-close={isHebrew ? "סגור תפריט" : "Close menu"}
+        data-label-open={t.openMenu}
+        data-label-close={t.closeMenu}
       >
         <span class="h-0.5 w-6 bg-text-primary transition-all"></span>
         <span class="h-0.5 w-6 bg-text-primary transition-all"></span>
@@ -318,18 +340,15 @@ const currentLocaleFlag = isHebrew ? "he" : "en";
         <li>
           <a
             href={link.href}
-            class="block rounded-md px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface-800 hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
+            class="focus-ring block rounded-md px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface-800 hover:text-text-primary"
           >
             {link.label}
           </a>
         </li>
       ))}
       <li class="mt-2">
-        <a
-          href={ctaHref}
-          class="block w-full rounded-lg bg-brand-500 px-3 py-2 text-center text-sm font-semibold text-white transition-colors hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
-        >
-          {ctaLabel}
+        <a href={ctaHref} class="btn btn-primary btn-md w-full">
+          {t.cta}
         </a>
       </li>
     </ul>

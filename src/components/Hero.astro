@@ -1,18 +1,32 @@
 ---
-/* HEADLINE — biggest text on the page. ~8-12 words. */
-const headline = "Your website and workflows — sharp, professional, and actually working.";
-
-/* SUBLINE — smaller, slightly muted. One punchy sentence. */
-const subline = "Most businesses leak money through the cracks. We close them.";
-
 /*
-  CTA — single button. href points to the contact form below.
-  Change label or href to suit — e.g. a Calendly link.
+  PROPS — every string is override-able so this component works for both
+  locales (and any future landing page): the HE homepage passes Hebrew
+  copy here instead of hand-copying this section's markup.
+    headline — biggest text on the page, ~8-12 words
+    subline  — smaller, slightly muted, one punchy sentence
+    cta      — single button: { label, href }. href points at a contact
+               form section by default, but can be any URL (e.g. Calendly).
 */
-const cta = { label: "Book a Call", href: "/#contact" };
+interface HeroCta {
+  label: string;
+  href:  string;
+}
+
+interface Props {
+  headline?: string;
+  subline?:  string;
+  cta?:      HeroCta;
+}
+
+const {
+  headline = "Your website and workflows — sharp, professional, and actually working.",
+  subline  = "Most businesses leak money through the cracks. We close them.",
+  cta      = { label: "Book a Call", href: "/#contact" },
+} = Astro.props;
 ---
 
-<section class="relative overflow-hidden bg-surface-950 px-6 py-24 text-start md:py-36">
+<section class="relative overflow-hidden bg-surface-950 px-6 py-section-lg text-start md:py-section-xl">
 
   <div class="relative z-10 mx-auto max-w-3xl">
 
@@ -29,15 +43,9 @@ const cta = { label: "Book a Call", href: "/#contact" };
       {subline}
     </p>
 
-    <!--
-      CTA BUTTON — sharp corners (rounded-sm) per design: more serious,
-      less playful than pill or rounded-xl shapes.
-    -->
+    <!-- CTA BUTTON — token button classes (sharp corners, baked-in focus ring). -->
     <div class="mt-10">
-      <a
-        href={cta.href}
-        class="inline-block rounded-sm bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
-      >
+      <a href={cta.href} class="btn btn-primary btn-lg">
         {cta.label}
       </a>
     </div>
