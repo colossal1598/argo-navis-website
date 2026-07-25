@@ -172,6 +172,20 @@ body {
 }
 
 /*
+  Offset-color modifier for .focus-ring on a non-surface-950 background.
+  A plain `focus:ring-offset-surface-900` utility stacked in markup does
+  NOT win here — Tailwind emits component classes defined via @apply
+  later in the same utilities layer than plain utilities, so at equal
+  selector specificity .focus-ring's own hardcoded offset still wins
+  (verified in compiled output, Task 2.4 audit). This modifier is
+  defined after .focus-ring in this same file so it wins by source
+  order instead. Pair as `class="focus-ring ... focus-ring-on-900"`.
+*/
+.focus-ring-on-900 {
+  @apply focus:ring-offset-surface-900;
+}
+
+/*
   Buttons — one base recipe + size/variant modifiers.
   Base owns shape, weight, motion, and focus; variants own color;
   sizes own padding/type scale. Always small-radius rectangles —

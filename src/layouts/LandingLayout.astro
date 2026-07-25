@@ -44,6 +44,18 @@ const copy: Record<SiteLocale, { backToSite: string; rights: string }> = {
 };
 const t = copy[locale];
 const year = new Date().getFullYear();
+
+/*
+  FONT — unlike the main Layout (which always needs both scripts loaded,
+  since a single visitor can switch locale via the nav), a landing page
+  is locked to one locale for its whole life — there's no in-page locale
+  switcher. Loading the unused script's weights was pure dead weight on
+  every LP request (audit finding, Task 2.4) — request only what this
+  page will actually render.
+*/
+const fontFamily = locale === "he"
+  ? "family=Heebo:wght@400;500;600;700;800"
+  : "family=Inter:wght@400;500;600;700;800";
 ---
 
 <!doctype html>
@@ -74,11 +86,11 @@ const year = new Date().getFullYear();
     <meta property="og:description" content={description} />
     <meta property="og:image"       content={`${siteUrl}/og-image.png`} />
 
-    <!-- FONT — same stack as the main Layout, so LPs feel identical to the rest of the site. -->
+    <!-- FONT — same family/weights as the main Layout, just scoped to the one script this locale actually renders (see fontFamily above). -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
+      href={`https://fonts.googleapis.com/css2?${fontFamily}&display=swap`}
       rel="stylesheet"
     />
 
@@ -88,6 +100,14 @@ const year = new Date().getFullYear();
       (() => {
         const key = "argo-theme";
         const html = document.documentElement;
+
+        // Marks JS as available BEFORE first paint. `.reveal` (global.css)
+        // only hides content when `.js` is present on <html> — so a
+        // visitor with JS disabled/blocked never sees hidden content
+        // waiting on a script that will never run. Same fix as the main
+        // Layout.astro (Task 2.3) — LandingLayout didn't have it yet.
+        html.classList.add("js");
+
         const stored = localStorage.getItem(key);
         if (stored === "light" || stored === "dark") {
           html.setAttribute("data-theme", stored);
@@ -112,7 +132,13 @@ const year = new Date().getFullYear();
 
     <!-- Minimal footer — just a quiet way back to the main site. -->
     <footer class="border-t border-border-subtle bg-surface-900 px-6 py-8 text-center text-xs text-text-muted">
-      <a href={withLocale("/", locale)} class="focus-ring rounded-sm hover:text-text-primary">
+      <!--
+        .focus-ring-on-900 corrects the ring-offset color for this
+        footer's real background (surface-900, not .focus-ring's
+        hardcoded surface-950 default) — see global.css for why a plain
+        utility can't do this (audit finding, Task 2.4).
+      -->
+      <a href={withLocale("/", locale)} class="focus-ring focus-ring-on-900 rounded-sm hover:text-text-primary">
         {t.backToSite}
       </a>
       <p class="mt-2">© {year} Argo Navis. {t.rights}</p>
@@ -120,3 +146,27 @@ const year = new Date().getFullYear();
 
   </body>
 </html>
+
+<!--
+  SCROLL-REVEAL OBSERVER — same shared mechanism as the main Layout.astro
+  (Task 2.3). `.reveal` starts hidden/offset only under `.js` (see the
+  inline script above); this observer adds `.is-visible` once an element
+  scrolls into view. Lives here so any LP using `.reveal` gets it without
+  re-wiring per page.
+-->
+<script>
+  const revealItems = Array.from(document.querySelectorAll(".reveal"));
+
+  if (revealItems.length > 0) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    revealItems.forEach((item) => observer.observe(item));
+  }
+</script>

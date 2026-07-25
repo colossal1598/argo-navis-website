@@ -1,0 +1,43 @@
+---
+/*
+  PROOF SECTION — one short paragraph pointing at a real case study, as
+  a plain inline text link — never a button. An LP has exactly one
+  conversion goal (the form below); a second button here would compete
+  with it. If the case-study page doesn't exist yet, omit `caseStudyHref`
+  and only `text` renders — never link to a page that isn't live.
+
+  PROPS:
+    text            — the proof paragraph (a real, sourced result)
+    caseStudyHref?  — link to the full case study, once it exists
+    caseStudyLabel? — the link's visible text (required if href is set)
+*/
+interface Props {
+  text:            string;
+  caseStudyHref?:  string;
+  caseStudyLabel?: string;
+}
+
+const { text, caseStudyHref, caseStudyLabel } = Astro.props;
+---
+
+<section class="border-y border-border-subtle bg-surface-900 px-6 py-section-md">
+  <div class="reveal mx-auto max-w-2xl text-center">
+    <p class="text-lg leading-relaxed text-text-muted">
+      {text}
+      {caseStudyHref && caseStudyLabel && (
+        <>
+          {" "}
+          {/*
+            .focus-ring-on-900 corrects the ring-offset color for this
+            section's real background (surface-900, not .focus-ring's
+            hardcoded surface-950 default) — see global.css for why a
+            plain utility can't do this (audit finding, Task 2.4).
+          */}
+          <a href={caseStudyHref} class="focus-ring focus-ring-on-900 rounded-sm font-medium text-brand-400 hover:text-brand-300">
+            {caseStudyLabel}
+          </a>
+        </>
+      )}
+    </p>
+  </div>
+</section>

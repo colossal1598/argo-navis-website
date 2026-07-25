@@ -175,16 +175,18 @@ export const POST: APIRoute = async ({ request }) => {
 
 function leadReplySubject(source: string): string {
   const subjects: Record<string, string> = {
-    websites:    "Your website brief is with us — Argo Navis",
-    automations: "Your automation enquiry is with us — Argo Navis",
+    websites:       "Your website brief is with us — Argo Navis",
+    automations:    "Your automation enquiry is with us — Argo Navis",
+    "lp-spreadsheets": "Your spreadsheet diagnostic is with us — Argo Navis",
   };
   return subjects[source] ?? "We got your message — Argo Navis";
 }
 
 function sourceLabel(source: string): string {
   const labels: Record<string, string> = {
-    websites:    "a new website",
-    automations: "business automation",
+    websites:       "a new website",
+    automations:    "business automation",
+    "lp-spreadsheets": "moving off your spreadsheets",
   };
   return labels[source] ?? "something great";
 }
@@ -341,16 +343,18 @@ function isHebrew(source: string): boolean {
 
 function leadReplySubjectHe(source: string): string {
   const subjects: Record<string, string> = {
-    "websites-he":    "קיבלנו את הבריף שלך לאתר — Argo Navis",
-    "automations-he": "קיבלנו את הפנייה שלך לאוטומציה — Argo Navis",
+    "websites-he":       "קיבלנו את הבריף שלך לאתר — Argo Navis",
+    "automations-he":    "קיבלנו את הפנייה שלך לאוטומציה — Argo Navis",
+    "lp-spreadsheets-he": "קיבלנו את הפנייה שלך על הגיליונות — Argo Navis",
   };
   return subjects[source] ?? "קיבלנו את ההודעה שלך — Argo Navis";
 }
 
 function sourceLabelHe(source: string): string {
   const labels: Record<string, string> = {
-    "websites-he":    "אתר חדש",
-    "automations-he": "אוטומציה עסקית",
+    "websites-he":       "אתר חדש",
+    "automations-he":    "אוטומציה עסקית",
+    "lp-spreadsheets-he": "לצאת מהגיליונות האלקטרוניים",
   };
   return labels[source] ?? "משהו מעולה";
 }
