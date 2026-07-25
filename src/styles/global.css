@@ -229,6 +229,33 @@ body {
 .card-link-overlay {
   @apply after:absolute after:inset-0 after:rounded-2xl;
 }
+/*
+  Horizontal variant of .card — pair as class="card card-row" for a row
+  layout at the sm breakpoint instead of .card's hardcoded flex-col.
+  A plain `sm:flex-row` utility stacked directly on `.card` would NOT
+  reliably win — .card's own flex-col is a component class appended
+  late in the compiled utilities layer, so it can beat a plain utility
+  of equal specificity regardless of source order in the markup (the
+  same mechanism behind .focus-ring-on-900). Defining .card-row here,
+  after .card, wins by source order within the same layer instead.
+*/
+.card-row {
+  @apply flex-col sm:flex-row sm:items-center;
+}
+/*
+  Tighter-padding variant of .card (20px mobile / 24px sm+, vs .card's
+  flat 24px always) — pair as class="card card-compact". Same reason
+  as .card-row: a plain `p-5 sm:p-6` utility stacked directly on `.card`
+  would NOT win (.card's own p-6 is unlayered/appended-late and beats a
+  layered utility of equal specificity regardless of markup order) —
+  confirmed this is a real, reproducible failure, not a hypothetical:
+  it happened on this exact class in CapabilityStrips.astro during this
+  same task before this modifier existed (audit-caught, Task 2.3
+  follow-up). Defining .card-compact here, after .card, wins instead.
+*/
+.card-compact {
+  @apply p-5 sm:p-6;
+}
 
 /*
   Badges/tags — always a small-radius rectangle, never a pill.

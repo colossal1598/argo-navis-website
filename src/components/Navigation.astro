@@ -9,8 +9,17 @@ import { switchLocalePath, type SiteLocale, withLocale } from "../lib/locale";
   To remove a page: delete the object.
   The "active" highlight is automatic based on the current URL.
 */
+/*
+  NO "Services" OVERVIEW ITEM (design call, Task 2.3 follow-up): the
+  homepage rebuild removed the /#services anchor this used to point at
+  (the section it targeted no longer exists — replaced by Capability
+  Strips, which isn't a services list, it's proof facts spanning all
+  four services). Retargeting to Capability Strips would be a semantic
+  mismatch, and a generic "Services" link is redundant anyway since all
+  four services are already individually listed right here — removed
+  rather than repointed.
+*/
 const navLinks: { href: string; label: Record<SiteLocale, string> }[] = [
-  { href: "/#services",  label: { en: "Services",    he: "שירותים" } },
   { href: "/systems",     label: { en: "Systems",     he: "מערכות" } },
   { href: "/automations", label: { en: "Automations", he: "אוטומציות" } },
   { href: "/websites",    label: { en: "Websites",    he: "אתרים" } },
@@ -148,7 +157,7 @@ const currentLocaleFlag = isHebrew ? "he" : "en";
               href={link.href}
               class:list={[
                 "focus-ring rounded-sm text-sm font-medium transition-colors hover:text-brand-400",
-                currentPath === link.href || (link.href !== withLocale("/#services", locale) && currentPath.startsWith(`${link.href}/`))
+                currentPath === link.href || currentPath.startsWith(`${link.href}/`)
                   ? "text-text-primary"
                   : "text-text-muted",
               ]}
