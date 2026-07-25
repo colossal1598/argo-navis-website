@@ -1,0 +1,122 @@
+---
+/*
+  LANDING LAYOUT — chrome-free shell for standalone landing pages (ad
+  campaigns, cold-outreach links, etc). No site navigation and only a
+  minimal "back to the main site" footer link, so a visitor stays focused
+  on the LP's own CTA instead of wandering into the rest of the site.
+  Shares the same design tokens / theme system as the main Layout.
+
+  PROPS:
+    title       (required) — shown in the browser tab and used by SEO
+    description (optional) — shown in Google search snippets
+    locale      (optional) — "en" | "he", defaults to "en"
+    dir         (optional) — defaults from locale
+    noindex     (optional) — defaults to FALSE: unlike internal pages
+                             (e.g. the style guide), landing pages ARE
+                             meant to be indexed.
+*/
+import { type SiteLocale, withLocale } from "../lib/locale";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  locale?: SiteLocale;
+  dir?: "ltr" | "rtl";
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = "Argo Navis – automations and websites that grow your business.",
+  locale = "en",
+  dir = locale === "he" ? "rtl" : "ltr",
+  noindex = false,
+} = Astro.props;
+
+const siteUrl = import.meta.env.SITE ?? "https://argo-navis.net";
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+
+/* Minimal footer copy — just a way back to the main site, no nav/service links. */
+const copy: Record<SiteLocale, { backToSite: string; rights: string }> = {
+  en: { backToSite: "Argo Navis — back to the main site", rights: "All rights reserved." },
+  he: { backToSite: "Argo Navis — חזרה לאתר הראשי", rights: "כל הזכויות שמורות." },
+};
+const t = copy[locale];
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang={locale} dir={dir} class="scroll-smooth" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Primary meta -->
+    <title>{title} | Argo Navis</title>
+    <meta name="description" content={description} />
+
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- NOINDEX — opt-in only; landing pages are indexed by default -->
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!--
+      OPEN GRAPH — controls how the page looks when shared on
+      LinkedIn, Slack, WhatsApp, etc.
+    -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content={canonicalURL} />
+    <meta property="og:title"       content={`${title} | Argo Navis`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image"       content={`${siteUrl}/og-image.png`} />
+
+    <!-- FONT — same stack as the main Layout, so LPs feel identical to the rest of the site. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta name="generator" content={Astro.generator} />
+    <meta name="color-scheme" content="dark light" />
+    <script is:inline>
+      (() => {
+        const key = "argo-theme";
+        const html = document.documentElement;
+        const stored = localStorage.getItem(key);
+        if (stored === "light" || stored === "dark") {
+          html.setAttribute("data-theme", stored);
+          return;
+        }
+        const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+        html.setAttribute("data-theme", prefersLight ? "light" : "dark");
+      })();
+    </script>
+  </head>
+
+  <body class="min-h-screen bg-surface-950 text-text-primary antialiased">
+
+    <!--
+      No <Navigation /> here on purpose — landing pages have one job
+      (convert on their own CTA), so there's nothing pulling visitors
+      away to browse the rest of the site.
+    -->
+    <main>
+      <slot />
+    </main>
+
+    <!-- Minimal footer — just a quiet way back to the main site. -->
+    <footer class="border-t border-border-subtle bg-surface-900 px-6 py-8 text-center text-xs text-text-muted">
+      <a href={withLocale("/", locale)} class="focus-ring rounded-sm hover:text-text-primary">
+        {t.backToSite}
+      </a>
+      <p class="mt-2">© {year} Argo Navis. {t.rights}</p>
+    </footer>
+
+  </body>
+</html>

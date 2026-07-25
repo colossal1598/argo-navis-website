@@ -6,7 +6,41 @@ interface Props {
 }
 
 const { locale = "en" } = Astro.props;
-const isHebrew = locale === "he";
+
+/*
+  FOOTER COPY — every user-facing string lives here, keyed by locale, so
+  nothing is hard-coded inline in the markup (including the legal line,
+  which previously stayed in English even on the Hebrew page).
+*/
+const copy: Record<SiteLocale, {
+  servicesHeading: string;
+  companyHeading:  string;
+  automations:     string;
+  websites:        string;
+  contact:         string;
+  tagline:         string;
+  rights:          string;
+}> = {
+  en: {
+    servicesHeading: "Services",
+    companyHeading:  "Company",
+    automations:     "Automations",
+    websites:        "Websites",
+    contact:         "Contact",
+    tagline:         "We build systems and sites that generate leads and scale your business.",
+    rights:          "All rights reserved.",
+  },
+  he: {
+    servicesHeading: "שירותים",
+    companyHeading:  "חברה",
+    automations:     "אוטומציות",
+    websites:        "אתרים",
+    contact:         "דברו איתנו",
+    tagline:         "אנחנו בונים מערכות ואתרים שמביאים לידים ומקדמים את העסק שלכם.",
+    rights:          "כל הזכויות שמורות.",
+  },
+};
+const t = copy[locale];
 
 /*
   FOOTER COLUMNS — each object is a column in the footer.
@@ -15,16 +49,16 @@ const isHebrew = locale === "he";
 */
 const columns = [
   {
-    heading: isHebrew ? "שירותים" : "Services",
+    heading: t.servicesHeading,
     links: [
-      { label: isHebrew ? "אוטומציות" : "Automations", href: withLocale("/automations", locale) },
-      { label: isHebrew ? "אתרים" : "Websites", href: withLocale("/websites", locale) },
+      { label: t.automations, href: withLocale("/automations", locale) },
+      { label: t.websites, href: withLocale("/websites", locale) },
     ],
   },
   {
-    heading: isHebrew ? "חברה" : "Company",
+    heading: t.companyHeading,
     links: [
-      { label: isHebrew ? "דברו איתנו" : "Contact", href: withLocale("/#contact", locale) },
+      { label: t.contact, href: withLocale("/#contact", locale) },
     ],
   },
 ];
@@ -58,9 +92,7 @@ const companyName = "Argo Navis";
           Keep it under ~12 words for best readability.
         -->
         <p class="mt-3 max-w-xs text-sm text-text-muted">
-          {isHebrew
-            ? "אנחנו בונים מערכות ואתרים שמביאים לידים ומקדמים את העסק שלכם."
-            : "We build systems and sites that generate leads and scale your business."}
+          {t.tagline}
         </p>
 
         <!-- Social icons -->
@@ -71,7 +103,7 @@ const companyName = "Argo Navis";
               aria-label={s.label}
               target="_blank"
               rel="noopener noreferrer"
-              class="rounded-md p-2 text-text-muted transition-colors hover:bg-surface-700 hover:text-text-primary"
+              class="btn-icon"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
                 <path d={s.icon} />
@@ -105,7 +137,7 @@ const companyName = "Argo Navis";
 
     <!-- Bottom row: copyright -->
     <div class="mt-10 border-t border-border-subtle pt-6 text-center text-xs text-text-muted/80">
-      © {year} {companyName}. All rights reserved.
+      © {year} {companyName}. {t.rights}
     </div>
 
   </div>

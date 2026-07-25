@@ -3,39 +3,52 @@
   PROPS — passed in by each service page.
   Every service page has its own headline, sub-copy, and accent color.
 
-    eyebrow   — small label above the headline (e.g. "Service")
-    headline  — main h1 for the service
-    body      — 1-2 sentences describing the service
-    accent    — Tailwind color name: "brand" | "gold" | "slate"
-                controls the glow and badge colour
+    eyebrow      — small label above the headline (e.g. "Service")
+    headline     — main h1 for the service
+    body         — 1-2 sentences describing the service
+    accent       — "brand" | "gold" | "slate" — controls the badge colour
+    ctaPrimary   — { label, href } for the main CTA (default: contact form)
+    ctaSecondary — { label, href } for the secondary CTA (default: examples)
+
+  Every string is a prop so this component works for either locale —
+  previously the two CTA labels below were hardcoded English with no way
+  to override them at all.
 */
-interface Props {
-  eyebrow:  string;
-  headline: string;
-  body:     string;
-  accent?:  "brand" | "gold" | "slate";
+interface CtaConfig {
+  label: string;
+  href:  string;
 }
 
-const { eyebrow, headline, body, accent = "brand" } = Astro.props;
+interface Props {
+  eyebrow:       string;
+  headline:      string;
+  body:          string;
+  accent?:       "brand" | "gold" | "slate";
+  ctaPrimary?:   CtaConfig;
+  ctaSecondary?: CtaConfig;
+}
 
-/*
-  Accent colour map — same pattern as ServicesSection.astro.
-  Add a new colour here if you ever need one beyond the three defaults.
-*/
-const accentMap = {
-  brand: { glow: "bg-brand-500/10", badge: "border-brand-500/30 bg-brand-500/10 text-brand-300" },
-  gold:  { glow: "bg-gold-500/10",  badge: "border-gold-500/30  bg-gold-500/10  text-gold-300"  },
-  slate: { glow: "bg-slate-500/10", badge: "border-slate-500/30 bg-slate-500/10 text-slate-300" },
-};
-const a = accentMap[accent];
+const {
+  eyebrow, headline, body,
+  accent = "brand",
+  ctaPrimary   = { label: "Get Started",  href: "#contact" },
+  ctaSecondary = { label: "See Examples", href: "#showcases" },
+} = Astro.props;
+
+/* Accent -> badge token class. Add a new accent here if a 4th is ever needed. */
+const accentBadgeClass = {
+  brand: "badge-brand",
+  gold:  "badge-gold",
+  slate: "badge-slate",
+} as const;
 ---
 
-<section class="relative overflow-hidden bg-surface-950 px-6 py-24 text-center md:py-36">
+<section class="relative overflow-hidden bg-surface-950 px-6 py-section-lg text-center md:py-section-xl">
 
   <div class="relative z-10 mx-auto max-w-3xl">
 
-    <!-- Eyebrow badge -->
-    <div class={`mb-5 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium ${a.badge}`}>
+    <!-- Eyebrow badge — small-radius token badge, never a pill -->
+    <div class={`badge ${accentBadgeClass[accent]} mb-5`}>
       {eyebrow}
     </div>
 
@@ -49,19 +62,13 @@ const a = accentMap[accent];
       {body}
     </p>
 
-    <!-- CTA anchors to the contact form lower on the page -->
+    <!-- CTAs anchor to the contact form / examples lower on the page -->
     <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-      <a
-        href="#contact"
-        class="rounded-sm bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
-      >
-        Get Started
+      <a href={ctaPrimary.href} class="btn btn-primary btn-lg">
+        {ctaPrimary.label}
       </a>
-      <a
-        href="#showcases"
-        class="rounded-sm border border-border-subtle px-8 py-4 text-base font-semibold text-text-muted transition-colors hover:border-brand-500/50 hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-surface-950"
-      >
-        See Examples
+      <a href={ctaSecondary.href} class="btn btn-secondary btn-lg">
+        {ctaSecondary.label}
       </a>
     </div>
 

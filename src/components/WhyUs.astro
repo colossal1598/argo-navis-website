@@ -5,17 +5,26 @@
   bg-surface-800 gives it a slightly lighter background to break
   the page rhythm and signal a shift in tone.
 
-  HEADLINE and BODY — change these two strings to update the section.
+  PROPS — headline/body arrive via props so every locale (and any future
+  page) can override them instead of hand-copying this section's markup.
+  Defaults below are the EN homepage copy.
 */
-const headline = "High standards, every time.";
-const body     = "We treat every project like it has our name on it. Because it does.";
+interface Props {
+  headline?: string;
+  body?:     string;
+}
+
+const {
+  headline = "High standards, every time.",
+  body     = "We treat every project like it has our name on it. Because it does.",
+} = Astro.props;
 ---
 
 <!--
   bg-surface-800 is intentionally lighter than the surrounding sections
   (bg-surface-950) — it creates a visual break in the page flow.
 -->
-<section class="bg-surface-800 px-6 py-16">
+<section class="bg-surface-800 px-6 py-section-sm">
   <div class="mx-auto max-w-3xl text-center">
 
     <!--

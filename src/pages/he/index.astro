@@ -1,5 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Hero from "../../components/Hero.astro";
+import WhyUs from "../../components/WhyUs.astro";
 import ServicesSection from "../../components/ServicesSection.astro";
 import ProcessBlock from "../../components/ProcessBlock.astro";
 import ContactForm from "../../components/ContactForm.astro";
@@ -8,6 +10,9 @@ import ContactForm from "../../components/ContactForm.astro";
   PAGE GOAL (HE HOMEPAGE):
   Mirror the English homepage structure for Hebrew users, keeping the same
   funnel flow: value prop -> services -> trust -> process -> contact form.
+  Hero and WhyUs are the shared components (architecture fix — this page
+  used to hand-copy their markup instead of passing Hebrew copy via props;
+  the copy itself is unchanged, just relocated into the shared components).
 */
 
 /*
@@ -59,24 +64,11 @@ const fields = [
   dir="rtl"
 >
   <!-- HERO — first value statement and primary CTA -->
-  <section class="relative overflow-hidden bg-surface-950 px-6 py-24 text-start md:py-36">
-    <div class="relative z-10 mx-auto max-w-3xl">
-      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
-        האתר והתהליכים שלכם - חדים, מקצועיים ועובדים באמת.
-      </h1>
-      <p class="mt-6 max-w-xl text-lg text-text-muted">
-        רוב העסקים מאבדים כסף בין הסדקים. אנחנו סוגרים אותם.
-      </p>
-      <div class="mt-10">
-        <a
-          href="/he/#contact"
-          class="inline-block rounded-sm bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-400"
-        >
-          דברו איתנו
-        </a>
-      </div>
-    </div>
-  </section>
+  <Hero
+    headline="האתר והתהליכים שלכם - חדים, מקצועיים ועובדים באמת."
+    subline="רוב העסקים מאבדים כסף בין הסדקים. אנחנו סוגרים אותם."
+    cta={{ label: "דברו איתנו", href: "/he/#contact" }}
+  />
 
   <!-- SERVICES OVERVIEW — same 3 service pillars as EN homepage -->
   <ServicesSection
@@ -100,16 +92,10 @@ const fields = [
   />
 
   <!-- TRUST BLOCK — short brand statement, matching EN page intent -->
-  <section class="bg-surface-800 px-6 py-16">
-    <div class="mx-auto max-w-3xl text-center">
-      <h2 class="text-3xl font-bold leading-snug tracking-tight text-text-primary md:text-4xl lg:text-5xl">
-        סטנדרט גבוה. בכל פעם מחדש.
-      </h2>
-      <p class="mx-auto mt-5 max-w-xl text-lg text-text-muted">
-        כל פרויקט נבנה כאילו השם שלנו עליו. כי הוא באמת.
-      </p>
-    </div>
-  </section>
+  <WhyUs
+    headline="סטנדרט גבוה. בכל פעם מחדש."
+    body="כל פרויקט נבנה כאילו השם שלנו עליו. כי הוא באמת."
+  />
 
   <!-- PROCESS — "How it works" localized to Hebrew -->
   <ProcessBlock heading="איך זה עובד" steps={processSteps} />
