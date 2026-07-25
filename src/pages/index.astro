@@ -1,86 +1,127 @@
 ---
 /*
-  PAGE GOAL: Homepage. REVISED 2026-07-26 per owner redirect — the
-  homepage represents the business, its values and basics: "no hard
-  numbers, just vibes and vision." Hero and Vision carry ZERO numbers
-  and no case-study reference — depth (numbers, proof) lives in a
-  dedicated Capability Strips section instead, each strip pairing one
-  real fact with a link to where the full story lives. No developer
-  metrics anywhere on this page — only business numbers, and only
-  inside the strips (see CLAUDE.md, Content honesty).
+  PAGE GOAL: Homepage. REVISED 2026-07-26, Round 3, per owner rejection
+  of the Round-2 build:
+    (a) Hero read as messy and the headline was too long — replaced
+        with the recommended short, numberless, single-beat headline
+        option (Option 1 of 3 in the copy file; owner picks the final
+        wording at review). Hero.astro itself was also tightened
+        (narrower container, tighter spacing, removed dead unused
+        overflow-hidden/z-10 scaffolding) since the rejection was as
+        much visual as textual.
+    (b) The "capability strips" section misread the direction — six
+        single-fact rows was not what was asked. Restored the ORIGINAL
+        achievements-strip presentation (bordered stats-row, several
+        numbers side by side, each with one line of context) the owner
+        explicitly liked — now repeated ONCE PER CASE STUDY (4 strips),
+        each linking to its case study/product page. See
+        AchievementsStrip.astro (replaces CapabilityStrips.astro, which
+        is now deleted — it had zero remaining callers).
+  Vision/Attitude, Way of Working, and Contact are UNCHANGED from the
+  prior revision (verified word-for-word against the copy file below,
+  not assumed).
 
   Copy source: .apm/memory/copy/homepage-en.md — re-read that file
   before editing any string below; it is the approved source of truth,
-  not this file. This supersedes the single-case-study-focused version
-  from Task 2.3 — the owner reviewed that build and redirected the
-  content structure (craft wasn't the issue, direction was).
+  not this file.
 
-  No imagery yet — CapabilityStrips already has an image slot ready for
-  the owner's screenshots (sharpening pass); nothing to do here until
-  then.
+  PLACEHOLDER NUMBERS — owner-requested, NOT final, DO NOT SHIP:
+  the Reception and marketing-agency strips each had 3 stat slots
+  marked [OWNER NUMBER NEEDED] in the copy file (no real figures were
+  ever verified for them). The owner explicitly asked to see the
+  approximate shape of the page before supplying real numbers. Every
+  placeholder value below is marked inline with a
+  "PLACEHOLDER — awaiting owner's real number, DO NOT SHIP" comment.
+  Full list — six values across two strips, all in the `strips` const:
+    - Reception: response time, client/scale count, build time.
+    - Marketing agency: tools/systems-replaced count, team size, build
+      time.
+  None of these placeholder values were copied back into
+  .apm/memory/copy/homepage-en.md — that file keeps the
+  [OWNER NUMBER NEEDED] markers as the source of truth. Do not ship
+  this page to production until all six are replaced with real,
+  owner-supplied numbers.
+
+  No imagery — round 3 dropped the image-slot idea along with
+  CapabilityStrips; nothing to reserve here.
 */
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
-import CapabilityStrips from "../components/CapabilityStrips.astro";
+import AchievementsStrip from "../components/AchievementsStrip.astro";
 import VisionSection from "../components/VisionSection.astro";
 import StepsSection from "../components/StepsSection.astro";
 import ContactForm from "../components/ContactForm.astro";
 
-/* CAPABILITY STRIPS — six real, independently verified facts, each a
-   different part of how the business works. Do not add, round, or
-   invent a number here without a traceable source. Link targets are
-   canonical per the approved copy's header comment. */
+/* ACHIEVEMENT STRIPS — one bordered stats-row block per case study.
+   Every value must be traceable to a real project source (see
+   CLAUDE.md, Content honesty) EXCEPT the six PLACEHOLDER values below,
+   which are a deliberate, owner-requested, clearly marked exception —
+   see the PAGE GOAL comment above. */
 const strips = [
   {
-    fact:       "21 → 1",
-    capability: "Twenty-one spreadsheets, replaced by one custom system built around the business.",
-    href:       "/systems/fuel-distribution",
-    linkLabel:  "See the system",
+    heading: "A family fuel-distribution business",
+    subline: "One week, ground up — spreadsheets replaced with a system that runs the whole operation.",
+    stats: [
+      { value: "21 → 1",      description: "Twenty-one spreadsheets, replaced by one system built around the business. Nothing was thrown away — every row migrated." },
+      { value: "1 week",      description: "From first meeting to a working system, start to finish." },
+      { value: "~1,900",      description: "Delivery records untangled and matched during the investigation into how the business actually operated." },
+      { value: "₪0 / month",  description: "Infrastructure cost. Runs entirely on free-tier hosting — no server bill, ever." },
+    ],
+    href:      "/systems/fuel-distribution",
+    linkLabel: "Read the full story",
   },
   {
-    fact:       "1 week",
-    capability: "From first meeting to a working system — that's the speed a focused build moves at.",
-    href:       "/systems",
-    linkLabel:  "How we build",
+    heading: "A travel agency, two systems built back to back",
+    subline: "Two custom systems, not a template — an internal tools portal and a from-scratch WhatsApp inbox.",
+    stats: [
+      { value: "2",          description: "Custom systems built: an internal tools portal and a from-scratch WhatsApp inbox." },
+      { value: "~1 week",    description: "To build the internal tools portal — every staff tool behind one login." },
+      { value: "~2 months",  description: "To build the WhatsApp inbox from scratch, on Meta's own Cloud API — not a wrapper around someone else's product." },
+    ],
+    href:      "/automations/travel-agency",
+    linkLabel: "Read the full story",
   },
   {
-    fact:       "~1,900 records",
-    capability: "Untangled and matched during the investigation into how the business actually operated.",
-    href:       "/systems/fuel-distribution",
-    linkLabel:  "See the investigation",
+    heading: "Reception — automatic WhatsApp replies for missed calls",
+    subline: "Built by us, running for clients today.",
+    stats: [
+      // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: response time — how fast the reply goes out after a missed call)
+      { value: "< 1 min",   description: "How fast the WhatsApp reply goes out after a missed call." },
+      // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: scale — clients running Reception today, or replies sent)
+      { value: "6 clients", description: "Running Reception today." },
+      // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: build time — how long Reception took to build)
+      { value: "2 weeks",   description: "From first idea to a working, bilingual product." },
+    ],
+    href:      "/automations/reception",
+    linkLabel: "We can build the same for your business",
   },
   {
-    fact:       "~940 documents",
-    capability: "Synced automatically between accounting and delivery records — no manual matching, ever.",
-    href:       "/automations",
-    linkLabel:  "How we connect systems",
-  },
-  {
-    fact:       "₪0 / month",
-    capability: "Real infrastructure cost for a live business system. Free-tier hosting, no bloated fees.",
-    href:       "/websites",
-    linkLabel:  "How we build websites",
-  },
-  {
-    fact:       "Reception",
-    capability: "An automatic WhatsApp reply for missed calls — built once, running for clients today.",
-    href:       "/ai-agents",
-    linkLabel:  "How we use AI",
+    heading: "A digital marketing agency — one connected system instead of four",
+    subline: "Content planning, sales work, financial oversight, and hiring — all in one place.",
+    stats: [
+      // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: how many tools/spreadsheets/systems this replaced)
+      { value: "4 → 1",     description: "Separate tools for content, sales, finance, and hiring — replaced with one connected system." },
+      // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: team size using the system — reps, workers, or sales staff)
+      { value: "12 people", description: "Sales reps, workers, and hiring staff using the system day to day." },
+      // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: build time, in days or weeks)
+      { value: "3 weeks",   description: "To design and build all four connected pieces." },
+    ],
+    href:      "/systems/marketing-agency",
+    linkLabel: "Read the full story",
   },
 ];
 
-/* VISION / ATTITUDE — tightened to roughly half the prior length per
-   the owner's redirect. No heading in the approved copy — don't add
-   one. Zero numbers, zero case-study reference. */
+/* VISION / ATTITUDE — unchanged from the prior revision, verified
+   word-for-word against the copy file. No heading in the approved
+   copy — don't add one. Zero numbers, zero case-study reference. */
 const visionParagraphs = [
   "Most small businesses still run the way they did twenty years ago — one spreadsheet only one person understands, a notebook for the rest, an evening a month lost to reconciling them. That's not a technology problem. It's just what happens when nobody's had time to fix it.",
   "We fix it without selling you more software to manage. You own your data and your system — no climbing monthly fees, no vendor you can't leave, no enterprise contract built for a business twenty times your size.",
   "Where AI genuinely saves time, we use it — narrow, precise, for one real job. Where it doesn't, we don't force it in.",
 ];
 
-/* WAY OF WORKING — compact one-liners now (was a full paragraph each
-   in the prior version); depth on each step lives on the service
-   pages, not here. */
+/* WAY OF WORKING — unchanged from the prior revision, verified against
+   the copy file. Depth on each step lives on the service pages. */
 const wayOfWorkingSteps = [
   {
     label:       "Diagnosis first.",
@@ -102,21 +143,20 @@ const wayOfWorkingSteps = [
   description="Argo Navis builds one system that connects what you already use, pulls your business out of the spreadsheets, and runs from your phone."
 >
 
-  <!-- HERO — the disconnect the reader already lives with. Single CTA, zero numbers, no case-study reference. -->
+  <!-- HERO — the disconnect the reader already lives with. Single CTA, zero numbers, tightened composition. -->
   <Hero
-    headline="The orders land in WhatsApp. The invoices sit in Morning. You're the only thing connecting them."
-    subline="We build one system that connects what you already use, pulls your business out of the spreadsheets, and runs from your phone. No new software to learn. No enterprise contract. No lock-in."
+    headline="You're the only thing connecting WhatsApp and Morning."
+    subline="We build one system that connects what you already use and runs from your phone. No new software, no lock-in."
     cta={{ label: "Talk to us about your setup", href: "#contact" }}
   />
 
-  <!-- CAPABILITY STRIPS — every real number on the homepage lives here, each one linked to its full story. -->
-  <CapabilityStrips
-    intro="Six real facts. Each one is a different part of how we work — click through to see it in context."
+  <!-- ACHIEVEMENT STRIPS — restored round-1 presentation, one strip per case study, each linking to its full story. -->
+  <AchievementsStrip
+    intro="Real projects, by the numbers. Straight from the work — nothing invented."
     strips={strips}
-    note="Every number here is real, from real projects — nothing invented. Full stories live behind each link."
   />
 
-  <!-- VISION / ATTITUDE — the editorial "why us" statement, tightened, no numbers. -->
+  <!-- VISION / ATTITUDE — the editorial "why us" statement. -->
   <VisionSection paragraphs={visionParagraphs} />
 
   <!-- WAY OF WORKING — three compact one-liners. -->

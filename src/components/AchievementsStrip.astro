@@ -1,0 +1,153 @@
+---
+/*
+  ACHIEVEMENTS STRIP — restores the round-1 stats-row presentation the
+  owner explicitly liked (small uppercase intro label, several big
+  numbers side by side, each with one short context line, staggered
+  reveal) after round 2's single-fact "capability strips" misread the
+  direction. Extended, per the round-3 correction, to repeat that exact
+  presentation ONCE PER CASE STUDY within one shared section — each
+  block gets its own heading + one-line subline, its own 2-4 stats, and
+  a closing inline link out to where the full story lives.
+
+  Every value must be traceable to a real source (see CLAUDE.md, Content
+  honesty) — never invent or round a number to make it look better. The
+  one exception is deliberate, owner-requested, and marked inline: see
+  the [OWNER NUMBER NEEDED] placeholders wired up in index.astro, never
+  in this component.
+
+  STAT-CELL LOOK — preserved exactly from round 1, do not restyle:
+  `border-s-2 border-brand-500/40 ps-4`, 3xl/4xl extrabold value, muted
+  description, `--reveal-delay` stagger.
+
+  GRID SHAPE — must look intentional at both 3 and 4 stats, not like a
+  4-column grid with an empty cell. 4 stats: 2 cols mobile, 4 cols sm+.
+  3 stats: 1 col mobile (stacked), 3 cols sm+. Never stretch 3 across 4.
+
+  CASCADE-LAYER NOTE: nothing here stacks a plain utility on `.card`/
+  `.badge`/`.btn`/`.focus-ring` for a property the base class already
+  sets — the closing link uses `.focus-ring` + `.focus-ring-on-900`
+  (this section's bg-surface-900 needs the offset variant; see
+  global.css for why a plain `focus:ring-offset-surface-900` utility
+  would silently lose here).
+
+  LINK, NOT A STRETCHED CARD: unlike round 2's CapabilityStrips (whole
+  row as a single stretched-link target), each block here has real
+  content beyond the link (heading, subline, several stats) — a plain
+  inline text link at the end reads more honestly than making the
+  numbers themselves seem clickable. Matches the copy's own presentation
+  ("Read the full story → ...").
+
+  PROPS:
+    intro?  — small label above all strips; doubles as this section's
+              <h2> (same pattern as round 2's landmark fix) — omit only
+              if the copy genuinely has no intro line.
+    strips  — array of case-study blocks:
+                heading — case-study label (e.g. "A family
+                          fuel-distribution business")
+                subline — one line of context under the heading
+                stats   — 2-4 { value, description } pairs
+                href       — link target (case study or product page)
+                linkLabel  — visible link text (e.g. "Read the full story")
+    note?   — optional small closing line under all strips.
+    id?     — optional anchor id.
+*/
+interface Stat {
+  value:       string;
+  description: string;
+}
+
+interface Strip {
+  heading:   string;
+  subline:   string;
+  stats:     Stat[];
+  href:      string;
+  linkLabel: string;
+}
+
+interface Props {
+  intro?: string;
+  strips: Strip[];
+  note?:  string;
+  id?:    string;
+}
+
+const { intro, strips, note, id } = Astro.props;
+
+// Grid shape depends on stat count so 3-stat strips never stretch
+// across a 4-column layout with an empty cell.
+function statGridClass(count: number): string {
+  return count >= 4
+    ? "grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-4"
+    : "grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-0";
+}
+---
+
+<section id={id} class="border-y border-border-subtle bg-surface-900 px-6 py-section-md">
+  <div class="mx-auto max-w-5xl">
+
+    <!-- Intro label — doubles as the section's <h2> landmark -->
+    {intro && (
+      <h2 class="reveal text-center text-xs font-semibold uppercase tracking-widest text-text-muted">
+        {intro}
+      </h2>
+    )}
+
+    <!-- ONE BLOCK PER CASE STUDY — divided, not carded; each block cascades in after the previous. -->
+    <div class:list={["divide-y divide-border-subtle", intro && "mt-10"]}>
+      {strips.map((strip, i) => (
+        <article class="reveal py-10 first:pt-0 last:pb-0" style={`--reveal-delay: ${i * 120}`}>
+
+          <h3 class="text-lg font-semibold text-text-primary sm:text-xl">
+            {strip.heading}
+          </h3>
+          <p class="mt-1.5 text-sm text-text-muted">
+            {strip.subline}
+          </p>
+
+          <!-- STAT GRID — the preserved round-1 stat-cell look -->
+          <div class:list={["mt-6 grid", statGridClass(strip.stats.length)]}>
+            {strip.stats.map((stat, j) => (
+              <div
+                class="reveal border-s-2 border-brand-500/40 ps-4 text-start"
+                style={`--reveal-delay: ${i * 120 + j * 80}`}
+              >
+                <p class="text-3xl font-extrabold tracking-tight text-text-primary md:text-4xl">
+                  {stat.value}
+                </p>
+                <p class="mt-1.5 text-sm leading-relaxed text-text-muted">
+                  {stat.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <!--
+            CLOSING LINK — plain inline text link, not a stretched card
+            target. `py-1 -my-1` on the anchor widens the tap target a
+            little on mobile without adding visible gap around the line
+            (the negative margin cancels the padding's layout effect).
+          -->
+          <p class="mt-6 text-sm">
+            <a
+              href={strip.href}
+              class="focus-ring focus-ring-on-900 chip-accent-text group -my-1 inline-flex items-center gap-1 rounded-sm py-1 font-medium hover:text-brand-300"
+            >
+              {strip.linkLabel}
+              <svg class="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </p>
+
+        </article>
+      ))}
+    </div>
+
+    {note && (
+      <p class="reveal mt-10 text-center text-xs text-text-muted">
+        {note}
+      </p>
+    )}
+
+  </div>
+</section>

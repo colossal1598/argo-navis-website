@@ -308,6 +308,24 @@ html[data-theme="light"] .badge-slate {
 html[data-theme="light"] .chip-accent-text {
   color: var(--color-brand-700);
 }
+/*
+  Light-theme hover state (round-3 homepage audit finding): a plain
+  `hover:text-brand-300` utility stacked alongside `.chip-accent-text`
+  is silently dead in light theme — verified in compiled CSS by
+  specificity, not source order this time: the override rule above
+  (`html[data-theme="light"] .chip-accent-text`, specificity 0-2-1)
+  outranks `.hover\:text-brand-300:hover` (0-2-0) regardless of markup
+  order, so hovering never changes color in light theme. Dark theme is
+  unaffected (no override exists there to compete). Fixed with an
+  explicit light-theme hover rule at matching-or-higher specificity;
+  goes one step DARKER than the resting brand-700 (brand-800,
+  ≈10.2:1) — the light-theme mirror of dark theme's hover going one
+  step LIGHTER (brand-400 resting → brand-300 hover), since light
+  theme's resting color is already the higher-contrast, darker step.
+*/
+html[data-theme="light"] .chip-accent-text:hover {
+  color: var(--color-brand-800);
+}
 
 /*
   Long-form narrative prose (ShowcaseSection's slot content: <p>, <ul>/

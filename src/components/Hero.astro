@@ -31,25 +31,28 @@ const {
 } = Astro.props;
 ---
 
-<section class="relative overflow-hidden bg-surface-950 px-6 py-section-lg text-start md:py-section-xl">
+<section class="bg-surface-950 px-6 py-section-md text-start md:py-section-lg">
 
-  <div class="relative z-10 mx-auto max-w-3xl">
+  <div class="mx-auto max-w-2xl">
 
     <!--
-      HEADLINE — h1 for SEO. Only one h1 per page.
-      The copy is intentionally long and confident — let it wrap.
+      HEADLINE — h1 for SEO. Only one h1 per page. Tightened container
+      (max-w-2xl, was max-w-3xl) and rhythm below so a short, punchy
+      headline reads as a deliberately tight composition rather than a
+      long line of text stretched across a wide, sparse column — let it
+      wrap onto two lines if it's short.
     -->
     <h1 class="reveal text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
       {headline}
     </h1>
 
     <!-- SUBLINE — muted color, not competing with the headline -->
-    <p class="reveal mt-6 max-w-xl text-lg text-text-muted" style="--reveal-delay: 80">
+    <p class="reveal mt-5 max-w-xl text-lg text-text-muted" style="--reveal-delay: 80">
       {subline}
     </p>
 
     <!-- CTAS — token button classes (sharp corners, baked-in focus ring). Secondary is optional. -->
-    <div class="reveal mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center" style="--reveal-delay: 160">
+    <div class="reveal mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center" style="--reveal-delay: 160">
       <a href={cta.href} class="btn btn-primary btn-lg">
         {cta.label}
       </a>
