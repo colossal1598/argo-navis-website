@@ -1,0 +1,76 @@
+---
+/*
+  PAGE GOAL (HE): mirrors /systems/marketing-agency exactly — renders
+  ONLY the owner-approved "מה בנינו" content from the copy file, verbatim.
+  No metrics bar, no decisions table, no results table, no takeaways:
+  the copy has none of that content, so none is invented here. The
+  copy file's own "סטטוס" section (draft-meta about owner sign-off, not
+  customer-facing) is intentionally omitted, matching the EN page.
+
+  Copy source: .apm/memory/copy/he/case-study-marketing-he.md —
+  re-read that file before editing any string below; it is the
+  approved source of truth, not this file. Source tag:
+  systems-marketing-agency-he (existing leads.ts key).
+*/
+import ShowcaseLayout from "../../../layouts/ShowcaseLayout.astro";
+import ShowcaseSection from "../../../components/ShowcaseSection.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+---
+
+<ShowcaseLayout
+  title="מערכת משולבת לחברת שיווק דיגיטלי"
+  description="מערכת אחת מחוברת במקום כלים נפרדים ומנותקים לתכנון תוכן, עבודת מכירות שוטפת, פיקוח כספי, וגיוס — לחברת שיווק דיגיטלי."
+  locale="he"
+  dir="rtl"
+  service="מערכות"
+  serviceHref="/he/systems"
+  headline="מערכת משולבת לחברת שיווק דיגיטלי"
+  subheadline="מערכת אחת מחוברת במקום כלים נפרדים ומנותקים לתכנון תוכן, עבודת מכירות שוטפת, פיקוח כספי, וגיוס."
+  metaLine={{
+    project:     "מערכת משולבת של Notion, אוטומציה, ודף HTML לחברת שיווק דיגיטלי.",
+    scope:       "משרתת את הלקוחות, אנשי המכירות, עובדי המכירות, וצינור הגיוס של החברה.",
+    result:      "מערכת אחת מחוברת במקום כלים נפרדים ומנותקים לתכנון תוכן, עבודת מכירות שוטפת, פיקוח כספי, וגיוס.",
+    disclaimer:  "מוצג באנונימיות כ\"חברת שיווק דיגיטלי\". בלי שם לקוח, בלי דומיין.",
+  }}
+  tags={["Notion", "HTML"]}
+>
+
+  <!-- מה בנינו — נשמר קצר ומאושר על ידי הבעלים, לפי הוראות המשימה -->
+  <ShowcaseSection label="המערכת" heading="מה בנינו">
+    <p>ארבעה חלקים מחוברים, כולם בנויים ב-Notion ובשכבת HTML מותאמת, במקום מה שהיו כלים נפרדים ומנותקים:</p>
+    <ul>
+      <li><strong>דשבורד תוכן ותכנון</strong> — מקום שבו תוכן קמפיינים מתוכנן ונעקב במקום אחד, במקום מפוזר בין מסמכים.</li>
+      <li><strong>דשבורד עובדים</strong>, עם חלונות קופצים וטפסים משלו — מרחב העבודה היומיומי של אנשי המכירות והנציגים בחברה.</li>
+      <li><strong>דשבורד כספי ופאנל בקרה</strong> — המספרים והבקרות שבעל העסק צריך, במקום אחד.</li>
+      <li><strong>אוטומציית משפך לגיוס</strong> — צינור אוטומטי שמביא ומסנן פניות של עובדים ומועמדים, במקום טיפול ידני בכל אחת.</li>
+    </ul>
+  </ShowcaseSection>
+
+  <ContactForm
+    slot="cta"
+    heading="מזהים את העסק שלכם בסיפור הזה?"
+    subheading="שיחה קצרה על איך העסק שלכם באמת מתפקד היום — בלי מצגת מוכנה מראש."
+    submitLabel="התחילו שיחת אבחון"
+    reassurance="בלי עלות, בלי התחייבות — רק מבט כנה על המערכת שלכם."
+    source="systems-marketing-agency-he"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactMethods={[
+      { id: "email", label: "אימייל" },
+      { id: "phone", label: "טלפון" },
+      { id: "telegram", label: "טלגרם" },
+      { id: "whatsapp", label: "ווטסאפ" },
+    ]}
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+
+</ShowcaseLayout>

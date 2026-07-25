@@ -1,0 +1,164 @@
+---
+/*
+  PAGE GOAL (HE): mirrors /systems exactly, section for section, via the
+  same shared components (Layout, ProcessBlock, FAQBlock, ContactForm) —
+  no hand-copied markup. Draft-quality Hebrew copy is acceptable (the
+  owner sharpens post-launch).
+
+  Copy source: .apm/memory/copy/he/service-systems-he.md — re-read that
+  file before editing any string below; it is the approved source of
+  truth, not this file. Source tag: systems-he (matches the existing
+  leads.ts key added in Task 3.4/3.6).
+*/
+import Layout from "../../../layouts/Layout.astro";
+import ProcessBlock from "../../../components/ProcessBlock.astro";
+import FAQBlock from "../../../components/FAQBlock.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+
+const processSteps = [
+  {
+    label:       "מראים לנו איך זה באמת עובד",
+    description: "הגיליונות והפנקסים כמו שהם, לא הגרסה המסודרת.",
+  },
+  {
+    label:       "ממפים את הנתונים האמיתיים",
+    description: "מעבר מלא על מה שבאמת יש שם לפני שבונים סכמה.",
+  },
+  {
+    label:       "בונים את המערכת",
+    description: "הנתונים שלכם עוברים פנימה, הכלים הקיימים שלכם מחוברים, נבדק לפני המסירה.",
+  },
+  {
+    label:       "מריצים אותה מהטלפון",
+    description: "מסירה בתוספת סיור קצר, כדי שזה יישאר.",
+  },
+];
+
+const faq = [
+  {
+    q: "אאבד את הנתונים הישנים שלי?",
+    a: "לא. כל שורה שיש לכם היום עוברת פנימה — שום דבר לא נשאר מאחור בגיליון הישן.",
+  },
+  {
+    q: "מה אם העסק שלי לא מתאים לתוכנה סטנדרטית?",
+    a: "בדיוק בגלל זה אנחנו לא משתמשים בתוכנה סטנדרטית. המערכת נבנית סביב העסק שלכם, לא להפך.",
+  },
+  {
+    q: "כמה זמן זה לוקח?",
+    a: "תלוי בהיקף — המערכת של הפצת הדלק למעלה לקחה שבוע פיתוח אחד. נעריך את שלכם בכנות לפני שמתחילים.",
+  },
+];
+
+const systemsFormFields = [
+  { id: "name", label: "שם מלא", type: "text" as const, placeholder: "איך קוראים לך?", required: true },
+  { id: "email", label: "אימייל", type: "email" as const, placeholder: "you@company.com", required: true },
+  {
+    id:          "current-setup",
+    label:       "במה אתם משתמשים היום?",
+    type:        "text" as const,
+    placeholder: "אקסל, מורנינג, וואטסאפ, פנקס — מה שזה לא יהיה",
+    required:    false,
+  },
+  {
+    id:          "message",
+    label:       "מה כואב הכי הרבה כרגע?",
+    type:        "textarea" as const,
+    placeholder: "",
+    required:    true,
+  },
+];
+---
+
+<Layout
+  title="מערכות"
+  description="אנחנו בונים מערכת אחת בצורת העסק שלכם — הנתונים הקיימים שלכם עוברים פנימה, היא מתחברת למה שכבר יש לכם, והיא רצה מהטלפון."
+  locale="he"
+  dir="rtl"
+>
+
+  <!-- HERO — בלי כפתור CTA, כמו ב-/automations וב-/websites -->
+  <section class="relative overflow-hidden bg-surface-950 px-6 py-section-lg text-start md:py-section-xl">
+    <div class="relative z-10 mx-auto max-w-3xl">
+      <h1 class="reveal text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+        כל גיליון אקסל התחיל כרעיון טוב. במקום מסוים, שלכם הפך לכל התפעול.
+      </h1>
+      <p class="reveal mt-6 max-w-2xl text-lg text-text-muted" style="--reveal-delay: 80">
+        אנחנו בונים מערכת אחת בצורת העסק שלכם — הנתונים הקיימים שלכם עוברים פנימה, היא מתחברת למה שכבר יש לכם, והיא רצה מהטלפון.
+      </p>
+    </div>
+  </section>
+
+  <!-- PROBLEM BLOCK -->
+  <section class="bg-surface-900 px-6 py-section-md">
+    <div class="mx-auto max-w-3xl space-y-6">
+      {[
+        "רק אדם אחד מבין את הגיליון. מה קורה כשהוא לא בסביבה?",
+        "החשבוניות במורנינג. ההזמנות בוואטסאפ. אף אחד לא בנה את הגשר ביניהם.",
+        "כל לקוח חדש, כל חודש חדש, זה עוד רשומה ידנית — לתמיד.",
+      ].map((line, i) => (
+        <p class="reveal text-2xl font-semibold text-text-primary md:text-3xl" style={`--reveal-delay: ${i * 80}`}>{line}</p>
+      ))}
+    </div>
+  </section>
+
+  <!-- WHAT WE DO -->
+  <section class="bg-surface-950 px-6 py-section-md">
+    <div class="mx-auto max-w-3xl">
+      <p class="reveal text-lg text-text-soft md:text-xl">
+        אנחנו לא מוכרים תוכנה מהמדף. אנחנו בונים מערכת אחת סביב העסק האמיתי שלכם — הלקוחות, המוצרים, התהליך שלכם — ומעבירים פנימה כל מה שכבר יש לכם. שום דבר לא נזרק. היא מתחברת למה שכבר יש לכם, ורצה מהטלפון, כי שם אתם באמת נמצאים.
+      </p>
+    </div>
+  </section>
+
+  <!-- PROOF — נקודת ההוכחה של הדגל, קישור ל-/he/systems/fuel-distribution -->
+  <section class="border-y border-border-subtle bg-surface-900 px-6 py-section-md">
+    <div class="mx-auto max-w-3xl">
+      <p class="reveal badge badge-brand mb-4">פרויקט אמיתי</p>
+      <p class="reveal text-lg leading-relaxed text-text-muted" style="--reveal-delay: 60">
+        עשינו בדיוק את זה לעסק משפחתי להפצת דלק: 21 גיליונות אקסל, הוחלפו במערכת עובדת אחת תוך שבוע פיתוח אחד, ~1,900 רשומות משלוח שהועברו פנימה, רץ ב-₪0 לחודש בעלות תשתית.
+      </p>
+      <a href="/he/systems/fuel-distribution" class="focus-ring reveal mt-4 inline-flex items-center gap-1 rounded-sm text-sm font-medium text-brand-400" style="--reveal-delay: 120">
+        קראו את הקייס סטאדי המלא
+        <svg class="h-4 w-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <ProcessBlock
+    heading="איך העבודה איתנו נראית"
+    steps={processSteps}
+  />
+
+  <!-- FAQ -->
+  <FAQBlock heading="שאלות נפוצות" items={faq} />
+
+  <!-- CONTACT FORM -->
+  <ContactForm
+    heading="מוכנים לראות למה הגיליונות שלכם יכולים להפוך?"
+    source="systems-he"
+    fields={systemsFormFields}
+    reassurance="בדרך כלל נחזור אליכם תוך 24 שעות."
+    submitLabel="בואו נדבר"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactMethods={[
+      { id: "email", label: "אימייל" },
+      { id: "phone", label: "טלפון" },
+      { id: "telegram", label: "טלגרם" },
+      { id: "whatsapp", label: "ווטסאפ" },
+    ]}
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+</Layout>

@@ -1,0 +1,118 @@
+---
+/*
+  PAGE GOAL (HE): mirrors /lp/missed-calls exactly, section for section,
+  via the same shared components — no hand-copied markup, no nav
+  chrome. Reception rules in force (copy already complies — preserved
+  verbatim below): no pricing, no plan offers, no product/demo links;
+  "running for clients today" + "we can build it for you" framing only.
+  Source tag: lp-missed-calls-he (existing leads.ts key).
+
+  Copy source: .apm/memory/copy/he/lp-missed-calls-he.md — re-read that
+  file before editing any string below; it is the approved source of
+  truth, not this file.
+
+  INTEGRATION NOTE (same as the EN page, see lp-pattern.md): email
+  added (backend-required, not in copy); WhatsApp leads the contact-
+  method picker (this page's whole angle is the WhatsApp auto-reply);
+  "business type" + "pain point" combined into one required message field.
+*/
+import LandingLayout from "../../../layouts/LandingLayout.astro";
+import LPHero from "../../../components/LPHero.astro";
+import ChecklistSection from "../../../components/ChecklistSection.astro";
+import ProofSection from "../../../components/ProofSection.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+
+const painItems = [
+  { label: "אתם בעבודה, בפגישה, או סתם לא ליד הטלפון עשר דקות — ובדיוק אז מישהו מתקשר." },
+  { label: "שיחה שלא נענתה מלקוח חדש כמעט אף פעם לא מקבלת ניסיון שני. הוא פשוט מתקשר לשם הבא ברשימה." },
+  { label: "להחזיר שיחה שעה אחר כך זה לא כמו לענות. רוב האנשים כבר המשיכו הלאה." },
+  { label: "אי אפשר להיות זמינים כל דקה בכל יום. אף אחד לא יכול." },
+];
+
+const changesItems = [
+  { label: "ברגע ששיחה לא נענית, המתקשר מקבל תגובת וואטסאפ", description: "נשלחת מהמספר של העסק עצמו, לא מבוט גנרי." },
+  { label: "המתקשר יודע שהבחינו בו ויודע מה לעשות הלאה.", description: "שום דבר לא הולך לאיבוד בזמן שאתם לא זמינים." },
+  { label: "בלי שרתים, בלי דמי תחזוקה מנופחים", description: "מערכת שרצה לבד ברגע שהיא מוגדרת." },
+  { label: "אתם מחזירים שיחה כשבאמת יש לכם דקה.", description: "התגובה כבר יצאה." },
+];
+
+const fields = [
+  { id: "name", label: "השם שלכם", type: "text" as const, placeholder: "איך קוראים לכם?", required: true },
+  { id: "email", label: "אימייל", type: "email" as const, placeholder: "you@business.com", required: true },
+  {
+    id:          "message",
+    label:       "מה העסק שלכם עושה, ומה קורה כשאתם מפספסים שיחה היום?",
+    type:        "textarea" as const,
+    placeholder: "לדוגמה: אינסטלטור שעובד כמעט תמיד בשטח — שיחות עוברות לתא הקולי ולעיתים רחוקות מוחזרות בזמן",
+    required:    true,
+  },
+];
+
+const contactMethods = [
+  { id: "whatsapp" as const, label: "וואטסאפ" },
+  { id: "phone" as const, label: "טלפון" },
+  { id: "email" as const, label: "אימייל" },
+  { id: "telegram" as const, label: "טלגרם" },
+];
+---
+
+<LandingLayout
+  title="שיחה שלא נענתה לא מצלצלת פעמיים. היא פשוט עוברת למתחרה שלכם."
+  description="כבר בנינו את הפתרון: תגובת וואטסאפ אוטומטית, נשלחת מהמספר של העסק עצמו, ברגע ששיחה לא נענית."
+  locale="he"
+  dir="rtl"
+>
+
+  <!-- HERO -->
+  <LPHero
+    headline="שיחה שלא נענתה לא מצלצלת פעמיים. היא פשוט עוברת למתחרה שלכם."
+    subline="כבר בנינו את הפתרון: תגובת וואטסאפ אוטומטית, נשלחת מהמספר של העסק עצמו, ברגע ששיחה לא נענית."
+  />
+
+  <!-- PAIN -->
+  <ChecklistSection
+    intro="תזהו לפחות אחד מאלה:"
+    items={painItems}
+    tone="tonal"
+  />
+
+  <!-- WHAT CHANGES -->
+  <ChecklistSection
+    heading="מה משתנה"
+    items={changesItems}
+  />
+
+  <!--
+    PROOF — כללי Reception נשמרים במדויק: "רצה עבור לקוחות כבר היום" +
+    "אנחנו יכולים לבנות", בלי מחיר, בלי הצעת תוכנית, בלי קישור למוצר.
+  -->
+  <ProofSection
+    text="זה לא היפותטי. בנינו את Reception, מערכת שעושה בדיוק את זה — תגובת וואטסאפ אוטומטית מהמספר של העסק עצמו, נשלחת ברגע ששיחה לא נענית — והיא רצה עבור לקוחות כבר היום. אנחנו לא מפרטים כאן מחיר, אבל אנחנו יכולים לבנות את אותו הדבר, בהתאמה לעסק שלכם."
+    caseStudyHref="/he/automations/reception"
+    caseStudyLabel="ראו איך Reception עובדת ←"
+  />
+
+  <!-- START THE CONVERSATION -->
+  <ContactForm
+    heading="מפספסים שיחות שאתם לא יכולים להרשות לעצמכם לאבד?"
+    subheading="ספרו לנו איך שיחות מגיעות היום ומה קורה כשאתם לא יכולים לענות. נגיד לכם בכנות אם הפתרון הזה הגיוני לעסק שלכם."
+    fields={fields}
+    contactMethods={contactMethods}
+    submitLabel="התחילו את שיחת האבחון שלי"
+    reassurance="בלי מצגת מוכנה מראש. קודם שואלים על השיחות שלכם."
+    source="lp-missed-calls-he"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+
+</LandingLayout>

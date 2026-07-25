@@ -1,0 +1,97 @@
+---
+/*
+  PAGE GOAL (HE): mirrors /automations/reception exactly, section for
+  section, via the same ShowcaseLayout structured props and narrative
+  ShowcaseSection blocks — no hand-copied markup. Reception rules in
+  force (copy already complies — preserved verbatim below): no pricing,
+  no plan offers, no product/demo links; "running for clients today" +
+  "we can build it for you" framing only. No usage/volume figures —
+  none were ever verified, so none are cited or invented here.
+
+  Copy source: .apm/memory/copy/he/case-study-reception-he.md — re-read
+  that file before editing any string below; it is the approved source
+  of truth, not this file. Source tag: automations-reception-he
+  (existing leads.ts key).
+*/
+import ShowcaseLayout from "../../../layouts/ShowcaseLayout.astro";
+import ShowcaseSection from "../../../components/ShowcaseSection.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+
+const takeaways = [
+  "מוצר צר, בנוי בדיוק למשימה אחת, לא צריך הרבה מתחתיו — תהליך אחד, משימה אחת, נעשית טוב.",
+  "דמו שווה יותר מרשימת פיצ'רים — הוא נותן למבקר להרגיש את המוצר האמיתי לפני שהוא מחליט משהו.",
+  "דו-לשוני מהיום הראשון (בסיס באנגלית, מראה עברית RTL) עולה מעט תוספת כשזה מתוכנן מההתחלה.",
+  "מערכת שכבר רצה עבור לקוחות אמיתיים היא הוכחה חזקה יותר מכל אב-טיפוס.",
+];
+---
+
+<ShowcaseLayout
+  title="Reception — תגובת וואטסאפ אוטומטית לשיחות עסקיות שלא נענו"
+  description="Reception שולחת תגובת וואטסאפ אוטומטית מהמספר של העסק עצמו ברגע ששיחה לא נענית. בנויה צר, בדיוק למשימה אחת, ורצה עבור לקוחות כבר היום."
+  locale="he"
+  dir="rtl"
+  service="אוטומציות"
+  serviceHref="/he/automations"
+  headline="Reception — תגובת וואטסאפ אוטומטית לשיחות עסקיות שלא נענו"
+  subheadline="תגובת וואטסאפ אוטומטית שמופעלת על ידי שיחה עסקית שלא נענתה, נשלחת מהמספר של העסק עצמו."
+  metaLine={{
+    project:     "Reception — מערכת תגובה אוטומטית בוואטסאפ שנבנתה על ידי Argo Navis.",
+    scope:       "תגובת וואטסאפ אוטומטית שמופעלת על ידי שיחה עסקית שלא נענתה, נשלחת מהמספר של העסק עצמו.",
+    result:      "בנויה, ורצה עבור לקוחות כבר היום.",
+    disclaimer:  "זו מערכת של Argo Navis עצמה, מוצגת כאן כהוכחה לדפוס — בלי מחיר, בלי קישור הרשמה, ובלי שמות תוכניות.",
+  }}
+  takeaways={takeaways}
+>
+
+  <!-- למה בנינו את זה -->
+  <ShowcaseSection label="הבעיה" heading="למה בנינו את זה">
+    <p>שיחה שלא נענתה כמעט אף פעם לא מקבלת ניסיון שני. לעסק קטן או עצמאי, לענות לכל שיחה תוך כדי עבודה או עם לקוח זה לא ריאלי — והמתקשר בדרך כלל פשוט עובר לשם הבא ברשימה. Reception נבנתה כדי לסגור את הפער הזה: כששיחה לא נענית, המתקשר מקבל תגובת וואטסאפ מיידית, כך שלפחות הוא יודע שהבחינו בו ויודע מה לעשות הלאה.</p>
+  </ShowcaseSection>
+
+  <!-- מה זה עושה -->
+  <ShowcaseSection label="הפתרון" heading="מה זה עושה" accent="gold">
+    <p>ברגע שעסק מפספס שיחה, Reception שולחת הודעת וואטסאפ אוטומטית מהמספר של העסק עצמו — לא ממספר משותף או גנרי, כך שהיא נקראת אצל המתקשר כתגובה אמיתית מהעסק, לא בוט ממקום אחר. היא נבנתה כמוצר דו-לשוני, באנגלית ובעברית, עם דמו שנבנה במיוחד כדי שמבקר יוכל להרגיש בדיוק מה המתקשרים שלו שלא נענו היו מקבלים.</p>
+  </ShowcaseSection>
+
+  <!-- איך זה בנוי -->
+  <ShowcaseSection label="ארכיטקטורה" heading="איך זה בנוי">
+    <p>ארכיטקטורה פשוטה, קטנה בכוונה: טופס לכידת לידים מוגן בבדיקת בוט בלתי נראית, שמוגש לתהליך רקע שמטפל בכל מה שאחרי — שומר על מספר החלקים הנעים מינימלי למוצר שנבנה כל כך צר.</p>
+  </ShowcaseSection>
+
+  <!--
+    איפה זה עומד — משפט כללי Reception נשמר במדויק: "רצה עבור לקוחות
+    כבר היום" + "אנחנו יכולים לבנות בשבילכם", בלי מחיר, בלי הצעת
+    תוכנית, בלי קישור למוצר/דמו.
+  -->
+  <ShowcaseSection label="סטטוס" heading="איפה זה עומד">
+    <p>Reception היא מערכת אמיתית ועובדת, רצה היום עבור הלקוחות שמשתמשים בה. אנחנו לא מפרטים כאן מחיר או קישור הרשמה — אבל אם משהו כזה יעזור לעסק שלכם, אנחנו יכולים לבנות אותו במיוחד בשבילכם, בהתאמה לאיך שאתם באמת עובדים.</p>
+  </ShowcaseSection>
+
+  <ContactForm
+    slot="cta"
+    heading="מזהים את העסק שלכם בסיפור הזה?"
+    subheading="שיחה קצרה על איך העסק שלכם באמת מתפקד היום — בלי מצגת מוכנה מראש."
+    submitLabel="התחילו שיחת אבחון"
+    reassurance="בלי עלות, בלי התחייבות — רק מבט כנה על המערכת שלכם."
+    source="automations-reception-he"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactMethods={[
+      { id: "email", label: "אימייל" },
+      { id: "phone", label: "טלפון" },
+      { id: "telegram", label: "טלגרם" },
+      { id: "whatsapp", label: "ווטסאפ" },
+    ]}
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+
+</ShowcaseLayout>

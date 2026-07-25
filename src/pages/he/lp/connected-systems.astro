@@ -1,0 +1,115 @@
+---
+/*
+  PAGE GOAL (HE): mirrors /lp/connected-systems exactly, section for
+  section, via the same shared components — no hand-copied markup, no
+  nav chrome. Draft-quality Hebrew copy is acceptable. Source tag:
+  lp-connected-systems-he (existing leads.ts key). Hero lines are the
+  authentic Hebrew originals per the copy file's own note, not a
+  re-translation from EN.
+
+  Copy source: .apm/memory/copy/he/lp-connected-systems-he.md —
+  re-read that file before editing any string below; it is the
+  approved source of truth, not this file.
+
+  INTEGRATION NOTE (same as the EN page, see lp-pattern.md): email
+  added (backend-required, not in copy); phone leads the contact-method
+  picker (copy's own field label is "טלפון / וואטסאפ", phone-first);
+  "current tools" + "message" combined into one required message field.
+*/
+import LandingLayout from "../../../layouts/LandingLayout.astro";
+import LPHero from "../../../components/LPHero.astro";
+import ChecklistSection from "../../../components/ChecklistSection.astro";
+import ProofSection from "../../../components/ProofSection.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+
+const painItems = [
+  { label: "אתם כבר משלמים על תוכנת הנהלת חשבונות, והיא עדיין לא יודעת מה קרה בוואטסאפ היום." },
+  { label: "כל הזמנה מוקלדת פעמיים — פעם אחת איפה שהלקוח שלח אותה, פעם שנייה איפה שאתם עוקבים אחריה." },
+  { label: "אף אחד לא בנה את הגשר בין הכלים שכבר יש לכם, אז אתם הגשר." },
+  { label: "עוד אפליקציה תהיה רק עוד דבר אחד שגם הוא לא מדבר עם השאר." },
+];
+
+const changesItems = [
+  { label: "אנחנו מחברים את מה שכבר יש לכם", description: "מורנינג, וואטסאפ, הגיליונות שלכם — במקום להחליף משהו מזה." },
+  { label: "בלי שרתים, בלי דמי תחזוקה מנופחים.", description: "מערכת שרצה לבד, עם גיבוי אוטומטי." },
+  { label: "הנתונים עוברים בין הכלים שלכם לבד", description: "אתם מפסיקים להיות החוליה הידנית." },
+  { label: "שום דבר חדש ללמוד", description: "הכלים נשארים אותו דבר, הם פשוט מתחילים לדבר אחד עם השני." },
+];
+
+const fields = [
+  { id: "name", label: "השם שלכם", type: "text" as const, placeholder: "איך קוראים לכם?", required: true },
+  { id: "email", label: "אימייל", type: "email" as const, placeholder: "you@business.com", required: true },
+  {
+    id:          "message",
+    label:       "במה אתם משתמשים היום, ומה לא מדבר עם מה?",
+    type:        "textarea" as const,
+    placeholder: "לדוגמה: מורנינג, וואטסאפ, גיליונות — והיכן הפערים",
+    required:    true,
+  },
+];
+
+const contactMethods = [
+  { id: "phone" as const, label: "טלפון" },
+  { id: "whatsapp" as const, label: "וואטסאפ" },
+  { id: "email" as const, label: "אימייל" },
+  { id: "telegram" as const, label: "טלגרם" },
+];
+---
+
+<LandingLayout
+  title="אתה לא צריך עוד תוכנה. אתה צריך שמה שיש יתחיל לדבר אחד עם השני."
+  description="החשבוניות במורנינג, ההזמנות בוואטסאפ, המלאי בראש. אפשר לחבר."
+  locale="he"
+  dir="rtl"
+>
+
+  <!-- HERO -->
+  <LPHero
+    headline="אתה לא צריך עוד תוכנה. אתה צריך שמה שיש יתחיל לדבר אחד עם השני."
+    subline="החשבוניות במורנינג, ההזמנות בוואטסאפ, המלאי בראש. אפשר לחבר."
+  />
+
+  <!-- PAIN -->
+  <ChecklistSection
+    intro="תזהו לפחות אחד מאלה:"
+    items={painItems}
+    tone="tonal"
+  />
+
+  <!-- WHAT CHANGES -->
+  <ChecklistSection
+    heading="מה משתנה"
+    items={changesItems}
+  />
+
+  <!-- PROOF -->
+  <ProofSection
+    text="לעסק משפחתי להפצת דלק חיברנו את תוכנת הנהלת החשבונות שלהם (מורנינג / חשבונית ירוקה) ישירות למערכת החדשה — חשבוניות, קבלות, ויתרות לקוחות מסונכרנים אוטומטית, בלי שום התאמה ידנית. כ-940 מסמכים מסתנכרנים כיום לבד. אותו דפוס מתרחב גם לקליטת הזמנות מוואטסאפ."
+    caseStudyHref="/he/systems/fuel-distribution"
+    caseStudyLabel="קייס סטאדי מלא: מאקסל כאוטי למערכת ניהול מלאה בשבוע אחד ←"
+  />
+
+  <!-- START THE CONVERSATION -->
+  <ContactForm
+    heading="נמאס להיות הגשר בין המערכות שלכם?"
+    subheading="ספרו לנו במה אתם כבר משתמשים — נגיד לכם בכנות מה באמת אפשר לחבר."
+    fields={fields}
+    contactMethods={contactMethods}
+    submitLabel="הראו לי מה אפשר לחבר"
+    reassurance="בלי מצגת מוכנה מראש. קודם שואלים על המערכת שלכם."
+    source="lp-connected-systems-he"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+
+</LandingLayout>

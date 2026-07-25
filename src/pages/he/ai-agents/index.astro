@@ -1,0 +1,145 @@
+---
+/*
+  PAGE GOAL (HE): mirrors /ai-agents exactly, section for section, via
+  the same shared components — no hand-copied markup. Draft-quality
+  Hebrew copy is acceptable (the owner sharpens post-launch).
+
+  Copy source: .apm/memory/copy/he/service-ai-agents-he.md — re-read
+  that file before editing any string below; it is the approved source
+  of truth, not this file. Source tag: ai-agents-he (matches the
+  existing leads.ts key).
+*/
+import Layout from "../../../layouts/Layout.astro";
+import ProcessBlock from "../../../components/ProcessBlock.astro";
+import FAQBlock from "../../../components/FAQBlock.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+
+const processSteps = [
+  { label: "מספרים לנו על החלק המעצבן והחוזר", description: "" },
+  { label: "בודקים אם AI באמת עוזר", description: "בכנות, כולל כשהוא לא." },
+  { label: "בונים את זה צר, חד, ובדוק", description: "" },
+  { label: "מקבלים דבר אחד שעובד מושלם", description: "לא דשבורד מלא בפיצ'רים שלא תשתמשו בהם." },
+];
+
+const faq = [
+  {
+    q: "אני צריך צ'אטבוט?",
+    a: "כנראה לא. רוב העסקים לא. תגידו לנו מה באמת אוכל לכם את הזמן, ונגיד לכם אם AI הוא התשובה.",
+  },
+  {
+    q: "יקר להריץ את זה?",
+    a: "אנחנו בונים כלים צרים למשימה אחת, לא פלטפורמה — זה שומר את זה זול להריץ וקל להבין.",
+  },
+  {
+    q: "מה אם ה-AI טועה?",
+    a: "אנחנו שמים נקודת בקרה אנושית בכל מקום שטעות תעלה לכם משהו. ה-AI מטפל בחלק החוזר, אדם עדיין מאשר את מה שחשוב.",
+  },
+];
+
+/* שדות הטופס — 3 שדות בלבד, בלי שדה "אתר", לפי קובץ המקור */
+const aiAgentsFormFields = [
+  { id: "name", label: "שם מלא", type: "text" as const, placeholder: "איך קוראים לך?", required: true },
+  { id: "email", label: "אימייל", type: "email" as const, placeholder: "you@company.com", required: true },
+  {
+    id:          "message",
+    label:       "מה המשימה החוזרת?",
+    type:        "textarea" as const,
+    placeholder: "הדבר שאתם או הצוות שלכם עושים שוב ושוב, שמחשב יכול לעשות במקום",
+    required:    true,
+  },
+];
+---
+
+<Layout
+  title="סוכני AI"
+  description="אנחנו בונים כלי AI צרים וחדים רק במקום שבו הם מחליפים עבודה משעממת ואמיתית — בלי לתייג משהו 'מבוסס AI' רק כדי להישמע מודרני."
+  locale="he"
+  dir="rtl"
+>
+
+  <!-- HERO — בלי כפתור CTA, כמו ב-/automations וב-/websites -->
+  <section class="relative overflow-hidden bg-surface-950 px-6 py-section-lg text-start md:py-section-xl">
+    <div class="relative z-10 mx-auto max-w-3xl">
+      <h1 class="reveal text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+        רוב העסקים לא צריכים AI. לחלק יש בדיוק דבר אחד ש-AI טוב בו.
+      </h1>
+      <p class="reveal mt-6 max-w-2xl text-lg text-text-muted" style="--reveal-delay: 80">
+        אנחנו בונים כלי AI צרים וחדים רק במקום שבו הם מחליפים עבודה משעממת ואמיתית — בלי לתייג משהו "מבוסס AI" רק כדי להישמע מודרני.
+      </p>
+    </div>
+  </section>
+
+  <!-- PROBLEM BLOCK -->
+  <section class="bg-surface-900 px-6 py-section-md">
+    <div class="mx-auto max-w-3xl space-y-6">
+      {[
+        "כל ספק מוכר משהו \"מבוסס AI\". רוב זה לא עושה שום דבר שאתם באמת צריכים.",
+        "שיחה שלא נענתה אחרי שעות העבודה זה לקוח שאבד — ואף אחד לא עונה לטלפון ב-9 בערב.",
+        "ערימת מסמכים שלאף אחד אין זמן לקרוא, קל וחומר לחלץ מהם נתונים.",
+      ].map((line, i) => (
+        <p class="reveal text-2xl font-semibold text-text-primary md:text-3xl" style={`--reveal-delay: ${i * 80}`}>{line}</p>
+      ))}
+    </div>
+  </section>
+
+  <!-- WHAT WE DO -->
+  <section class="bg-surface-950 px-6 py-section-md">
+    <div class="mx-auto max-w-3xl">
+      <p class="reveal text-lg text-text-soft md:text-xl">
+        אנחנו לא מוסיפים AI כי זה טרנדי. אנחנו מחפשים את המשימה החוזרת והמוגדרת שבה AI באמת חוסך זמן — תגובה מיידית לשיחה שלא נענתה, חילוץ נתונים מובנים ממסמך מבולגן — ובונים בדיוק את זה, צר ומדויק. אם AI הוא לא הכלי הנכון למה שאתם צריכים, נגיד את זה, ונבנה משהו פשוט יותר במקום.
+      </p>
+    </div>
+  </section>
+
+  <!-- PROOF — Reception, קישור ל-/he/automations/reception -->
+  <section class="border-y border-border-subtle bg-surface-900 px-6 py-section-md">
+    <div class="mx-auto max-w-3xl">
+      <p class="reveal badge badge-brand mb-4">רץ כבר היום</p>
+      <p class="reveal text-lg leading-relaxed text-text-muted" style="--reveal-delay: 60">
+        דוגמה אחת: Reception, מערכת שבנינו ששולחת תגובת וואטסאפ אוטומטית מהמספר של העסק עצמו ברגע ששיחה לא נענית — בנויה בדיוק למשימה אחת, ורצה עבור לקוחות כבר היום.
+      </p>
+      <a href="/he/automations/reception" class="focus-ring reveal mt-4 inline-flex items-center gap-1 rounded-sm text-sm font-medium text-brand-400" style="--reveal-delay: 120">
+        ראו איך Reception עובדת
+        <svg class="h-4 w-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <ProcessBlock
+    heading="איך העבודה איתנו נראית"
+    steps={processSteps}
+  />
+
+  <!-- FAQ -->
+  <FAQBlock heading="שאלות נפוצות" items={faq} />
+
+  <!-- CONTACT FORM -->
+  <ContactForm
+    heading="סקרנים אם AI באמת עוזר לעסק שלכם — או לא?"
+    source="ai-agents-he"
+    fields={aiAgentsFormFields}
+    reassurance="בדרך כלל נחזור אליכם תוך 24 שעות."
+    submitLabel="בואו נדבר"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactMethods={[
+      { id: "email", label: "אימייל" },
+      { id: "phone", label: "טלפון" },
+      { id: "telegram", label: "טלגרם" },
+      { id: "whatsapp", label: "ווטסאפ" },
+    ]}
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+</Layout>
