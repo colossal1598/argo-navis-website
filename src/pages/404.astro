@@ -1,15 +1,74 @@
 ---
 /*
-  PAGE GOAL: Branded 404 page. Keeps users on-site when they hit a broken
-  or mistyped URL. Cloudflare Pages serves this file automatically for any
-  unmatched route. Offers a clear path back to the homepage and services.
+  PAGE GOAL: Branded, locale-aware 404 page. Keeps users on-site when they
+  hit a broken or mistyped URL, in whichever language they were browsing.
+
+  LOCALE-AWARE 404 — HOW/WHY: Cloudflare Pages/Workers serves one 404
+  response for any unmatched path (there's no separate /he/404.html). This
+  project's Worker (via the Astro Cloudflare adapter) already runs
+  on-demand for any request that doesn't match a prerendered static asset
+  — exactly what happens on a bad URL — so `export const prerender = false`
+  below (the same technique already used by /api/leads.ts) makes this page
+  render dynamically per request instead of being baked once at build
+  time. That gives it the REAL requested pathname via Astro.url, so
+  /he/whatever-does-not-exist gets genuine server-rendered Hebrew (correct
+  <html lang/dir>, translated copy, /he-prefixed links) instead of a
+  client-side language-swap hack after an English flash.
 */
 import Layout from "../layouts/Layout.astro";
+import { localeFromPath, withLocale, type SiteLocale } from "../lib/locale";
+
+export const prerender = false;
+
+const locale: SiteLocale = localeFromPath(Astro.url.pathname);
+
+const copy: Record<SiteLocale, {
+  title:        string;
+  description:  string;
+  heading:      string;
+  body:         string;
+  homeCta:      string;
+  serviceIntro: string;
+  services:     { href: string; label: string }[];
+}> = {
+  en: {
+    title:       "Page Not Found",
+    description: "The page you're looking for doesn't exist.",
+    heading:     "This page doesn't exist.",
+    body:        "The link might be broken, the page may have moved, or you may have typed the URL incorrectly.",
+    homeCta:     "← Back to homepage",
+    serviceIntro: "Or go to a service page:",
+    services: [
+      { href: "/systems",     label: "Systems" },
+      { href: "/automations", label: "Automations" },
+      { href: "/websites",    label: "Websites" },
+      { href: "/ai-agents",   label: "AI Agents" },
+    ],
+  },
+  he: {
+    title:       "העמוד לא נמצא",
+    description: "העמוד שחיפשתם לא קיים.",
+    heading:     "העמוד הזה לא קיים.",
+    body:        "יכול להיות שהקישור שבור, העמוד הועבר, או שכתובת ה-URL הוקלדה לא נכון.",
+    homeCta:     "→ חזרה לעמוד הבית",
+    serviceIntro: "או עברו לעמוד שירות:",
+    services: [
+      { href: "/systems",     label: "מערכות" },
+      { href: "/automations", label: "אוטומציות" },
+      { href: "/websites",    label: "אתרים" },
+      { href: "/ai-agents",   label: "סוכני AI" },
+    ],
+  },
+};
+const t = copy[locale];
+const homeHref = withLocale("/", locale);
 ---
 
 <Layout
-  title="Page Not Found"
-  description="The page you're looking for doesn't exist."
+  title={t.title}
+  description={t.description}
+  locale={locale}
+  noindex
 >
 
   <!-- 404 Hero -->
@@ -19,34 +78,27 @@ import Layout from "../layouts/Layout.astro";
     <p class="text-8xl font-black text-brand-400 sm:text-9xl">404</p>
 
     <h1 class="mt-4 text-3xl font-bold text-text-primary sm:text-4xl">
-      This page doesn't exist.
+      {t.heading}
     </h1>
 
     <p class="mt-4 max-w-md text-text-muted">
-      The link might be broken, the page may have moved, or you may have typed the URL incorrectly.
+      {t.body}
     </p>
 
     <!-- Primary CTA -->
-    <a href="/" class="btn btn-primary btn-md mt-8">
-      ← Back to homepage
+    <a href={homeHref} class="btn btn-primary btn-md mt-8">
+      {t.homeCta}
     </a>
 
     <!-- Secondary links -->
     <div class="mt-12 border-t border-border-subtle pt-10">
-      <p class="mb-5 text-sm font-medium text-text-muted">Or go to a service page:</p>
+      <p class="mb-5 text-sm font-medium text-text-muted">{t.serviceIntro}</p>
       <div class="flex flex-wrap justify-center gap-3">
-        <a href="/systems" class="btn btn-secondary btn-md">
-          Systems
-        </a>
-        <a href="/automations" class="btn btn-secondary btn-md">
-          Automations
-        </a>
-        <a href="/websites" class="btn btn-secondary btn-md">
-          Websites
-        </a>
-        <a href="/ai-agents" class="btn btn-secondary btn-md">
-          AI Agents
-        </a>
+        {t.services.map((service) => (
+          <a href={withLocale(service.href, locale)} class="btn btn-secondary btn-md">
+            {service.label}
+          </a>
+        ))}
       </div>
     </div>
 

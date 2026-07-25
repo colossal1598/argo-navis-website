@@ -44,7 +44,7 @@ const faq = [
 const websiteFormFields = [
   { id: "name", label: "שם מלא", type: "text" as const, placeholder: "איך קוראים לך?", required: true },
   { id: "email", label: "אימייל", type: "email" as const, placeholder: "you@company.com", required: true },
-  { id: "website", label: "אתר", type: "url" as const, placeholder: "example.com", required: false },
+  { id: "website", label: "אתר", type: "url" as const, placeholder: "yoursite.com", required: false },
   {
     id:          "message",
     label:       "מה הבעיה?",
@@ -130,7 +130,7 @@ const websiteFormFields = [
       <p class="reveal mx-auto mt-5 max-w-xl text-text-muted" style="--reveal-delay: 80">
         שלחו לנו את האתר שלכם. נחזור עם דוגמה אמיתית למה שהיינו משנים — בלי שום התחייבות.
       </p>
-      <a href="/he/#contact" class="reveal btn btn-primary btn-lg mt-8" style="--reveal-delay: 160">
+      <a href="#contact" class="reveal btn btn-primary btn-lg mt-8" style="--reveal-delay: 160">
         הראו לנו את האתר שלכם
       </a>
     </div>
