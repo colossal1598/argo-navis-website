@@ -1,0 +1,167 @@
+---
+/*
+  PAGE GOAL: The flagship proof asset for the whole site — a considered
+  visitor's chance to verify the achievements-strip/LP claims are real
+  before booking a diagnostic conversation. Converts to the same
+  diagnostic-conversation form as everywhere else.
+
+  Copy source: .apm/memory/copy/case-study-fuel-en.md — re-read that file
+  before editing any string below; it is the approved source of truth,
+  not this file. Anonymized throughout as "a family fuel-distribution
+  business" — no client name, no domain, anywhere on this page (headline,
+  body, meta tags, slug). Business numbers only, no developer/commit
+  metrics (see CLAUDE.md, Content honesty).
+
+  serviceHref points at /systems — the core custom-system-build service
+  page. That page is being built in parallel by another agent (per the
+  Task 2.5 Task Prompt) and doesn't exist in this worktree yet; the link
+  will resolve once both branches merge to main.
+*/
+import ShowcaseLayout from "../../layouts/ShowcaseLayout.astro";
+import ShowcaseSection from "../../components/ShowcaseSection.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+const metrics = [
+  { value: "7 days", label: "development time" },
+  { value: "~870", label: "delivery notes in the database" },
+  { value: "~1,180", label: "customers after deduplication" },
+  { value: "₪0/month", label: "infrastructure cost" },
+];
+
+const decisions = [
+  {
+    decision: "No backend — Next.js static export + managed Supabase",
+    why:      "Two authenticated users; row-level security (RLS) handles access. Zero server maintenance for a family business.",
+  },
+  {
+    decision: "Cloudflare Pages for hosting",
+    why:      "Static files, free, fast — the client's own domain stays with their registrar.",
+  },
+  {
+    decision: "A single Edge Function for the Morning sync",
+    why:      "The one place that needs a secret (API keys) — never shipped in client-side code.",
+  },
+  {
+    decision: "Untitled UI (React + Tailwind), customized",
+    why:      "No generic-AI look; full right-to-left support, no pill shapes, Hebrew-friendly typography.",
+  },
+  {
+    decision: "Mobile-first on the one critical flow",
+    why:      "Logging a delivery from the field, on a phone — the feature everything else was built around.",
+  },
+  {
+    decision: "Provenance on every record",
+    why:      "Every imported row carries its original sheet and row number, so any figure can be traced back to the source.",
+  },
+];
+
+const resultsTable = [
+  { metric: "Development time", value: "7 days" },
+  { metric: "Delivery notes in the database", value: "~870 (all of 2026)" },
+  { metric: "Supplier loads recorded", value: "~160" },
+  { metric: "Customers after deduplication", value: "~1,180 (from ~916 spreadsheet spelling variants plus Morning's own customer list)" },
+  { metric: "Aliases preserved", value: "~1,400" },
+  { metric: "Morning documents synced", value: "~940" },
+  { metric: "Servers to maintain", value: "0" },
+  { metric: "Monthly infrastructure cost", value: "₪0 (free tiers: Supabase, Cloudflare Pages, GitHub Actions)" },
+];
+
+const takeaways = [
+  "Analyze the data before you design the schema. A full day of profiling the spreadsheet saved weeks of surprises later — the schema came from what the data actually was, not from assumptions.",
+  "Free text is never \"just a field.\" One \"paid\" column broke down into status, method, installment plan, and notes. That decomposition was most of the extraction work.",
+  "Hebrew deduplication needs a human in the loop. The algorithm proposes, the data owner approves — and every old spelling stays searchable as an alias.",
+  "The best architecture for a small business is the one with nothing to maintain. Zero servers, zero infrastructure cost, automatic backups.",
+  "A weak development machine is a planning feature, not a limitation. It forced discipline: typecheck instead of full builds, one process running at a time, cloud-first thinking.",
+  "Written rules beat memory. Working with AI agents, every rule written into a guidance file stopped getting broken — the ones that stayed unwritten kept coming back.",
+];
+---
+
+<ShowcaseLayout
+  title="From Chaotic Spreadsheets to a Full Management System in One Week"
+  description="A family fuel-distribution business ran on 21 spreadsheets. Here's the full story of the system that replaced them in one development week — real numbers, real architecture decisions, no invented client details."
+  service="Systems"
+  serviceHref="/systems"
+  headline="From Chaotic Spreadsheets to a Full Management System in One Week"
+  subheadline="A family business distributing fuel to commercial and private customers: diesel for construction companies, bakeries, and farms; heating oil for homes in winter."
+  metaLine={{
+    project:     "Management system for a family fuel-distribution business (diesel and heating oil)",
+    scope:       "One development week, one developer + AI agents",
+    result:      "In production — ~870 delivery notes, ~1,180 customers, ~940 synced accounting documents",
+    disclaimer:  "Every figure in this document is a real order of magnitude — no names, no financial data.",
+  }}
+  metrics={metrics}
+  tags={["Next.js", "Supabase", "Cloudflare Pages", "Morning API"]}
+  decisions={decisions}
+  resultsTable={resultsTable}
+  resultsCallout={"What the numbers don't show: a delivery gets logged from the field, on a phone. \"Who hasn't paid\" is a query now, not an evening with the spreadsheets. A post-dated check shows up on the dashboard before it's due. And the gap between what came in from the supplier and what went out is visible for the first time."}
+  takeaways={takeaways}
+>
+
+  <!-- BACKGROUND -->
+  <ShowcaseSection label="Background" heading="A Real Business, Old-School Tools">
+    <p>Two people run the whole operation, no technical background, mostly from their phones.</p>
+    <p>Every operation lived in one spreadsheet: 21 sheets, one per month per product. Each row was a delivery — date, delivery-note number, liters, town, customer name, invoice number, and a free-text payment status. Alongside it: cloud accounting software (Morning / Green Invoice) that didn't talk to the spreadsheet at all. Every match between a delivery note, an invoice, and a receipt happened by hand, from memory.</p>
+    <p>The exact pains the business described:</p>
+    <ul>
+      <li>"Who still hasn't paid?" — no answer without going sheet by sheet.</li>
+      <li>Post-dated checks, sometimes six months out, noted in a free-text comment and forgotten.</li>
+      <li>No inventory picture: how much came in from the supplier versus how much went out.</li>
+      <li>Logging a delivery from the field meant waiting for the evening and a computer.</li>
+    </ul>
+  </ShowcaseSection>
+
+  <!-- THE RESEARCH -->
+  <ShowcaseSection label="The Research" heading="What Was Actually in the File">
+    <p>Before a single line of code: a deep, script-based analysis of the file. The file itself was never opened "by hand" — it was too big and too fragile for that. The findings dictated the entire architecture.</p>
+    <p>There was no master data at all. No customer list, no supplier list, no invoice table. Every business entity existed only as free text inside delivery rows. The schema had to be derived, not copied.</p>
+    <p>Real scope: ~1,900 delivery rows a year. Diesel — few large deliveries (commercial, hundreds to thousands of liters); heating oil — many small deliveries (retail heating). A sharp seasonal pattern: heating-oil sheets exist only October through March. Two product lines with opposite characters, in the same file.</p>
+    <p>Data quality — a real minefield:</p>
+    <ul>
+      <li>Dates in 4 different formats, including malformed entries like <code>26/11*2025</code> and <code>16/092025</code>, plus outright wrong years (<code>2925</code>, <code>3036</code>); the header row sat on a different line number in every sheet.</li>
+      <li>~916 different spellings for customer names — the same customer appearing in 3+ variants.</li>
+      <li>The "invoice" column held a real number in newer sheets and the word "issued" (a status word, not a number) in older ones.</li>
+      <li>Multi-value cells ("697+698" — two delivery notes crammed into one cell), and two separate "quantity" columns in the same sheet (in vs. out).</li>
+      <li>The "paid" column mixed status, payment method, installment plan, and reminders ("pick up check 05.03") — all in a single cell.</li>
+    </ul>
+    <p>A surprising finding worth its own feature: tucked in the corner of every sheet was a free-text note about that month's purchase-price change ("up 22 agorot," "down 46 agorot"). A genuinely critical business figure, living as a margin note. In the new system, it became its own table with a dedicated screen.</p>
+  </ShowcaseSection>
+
+  <!-- HARDEST PROBLEM -->
+  <ShowcaseSection label="The Hardest Problem" heading="Deduplicating Hebrew Names" accent="gold">
+    <p>Merging ~916 name variants down to a few hundred real customers, in Hebrew, without steamrolling anyone:</p>
+    <ol>
+      <li>Round 1 — normalization: stripped extra spaces, spacing around hyphens, stray quote marks.</li>
+      <li>Round 2 — spacing-independent similarity: unified hyphenated and compound-word variants.</li>
+      <li>Round 3 — Levenshtein distance + word order + clustering: caught misspellings and word-order swaps. 40 merges came out of this round alone.</li>
+      <li>A human stayed in the loop: every round produced a CSV of proposed merges — nothing merged automatically without sign-off. Rejected merges were remembered, so they wouldn't be proposed a second time.</li>
+      <li>An aliases table: every historical spelling is kept and mapped to its canonical customer, so search and tagging work on the old spelling too. Today: ~1,400 aliases.</li>
+    </ol>
+  </ShowcaseSection>
+
+  <!-- THE MORNING INTEGRATION -->
+  <ShowcaseSection label="Integrations" heading="The Morning Integration">
+    <p>The official API documentation is a single-page app that doesn't load with a plain fetch request — pulling out the actual reference meant reverse-engineering it from the page's own JavaScript. The output was a full mapping document of every relevant endpoint, kept in the project so future work never has to repeat that.</p>
+    <p>The sync itself: a JWT token, then pulling documents (invoices, receipts, credits), then an upsert keyed on the Morning document ID, then linking those documents to customers and balances. Reconciling the historical backlog used a script that verified counts against Morning directly. Delivery-note-to-invoice-to-receipt relationships are modeled many-to-many, because in the real data one invoice can cover several delivery notes, and one delivery note can be split across invoices.</p>
+  </ShowcaseSection>
+
+  <!-- WORKING WITH AI AGENTS -->
+  <ShowcaseSection label="Process" heading="Working With AI Agents — What It Looked Like in Practice">
+    <p>The project was built developer-led, with AI agents doing the work, on a few principles that held up:</p>
+    <ul>
+      <li>Hard rules in guidance files: never open the spreadsheet in the main working context (it burns context budget), never run a heavy process without approval (the machine is load-sensitive), no pill shapes in the design. A rule written once got enforced in every session after.</li>
+      <li>Internal skills for repeated procedures: how to run a migration, how to verify results without overloading the machine, Morning-specific conventions — written once as reusable skills, loaded by any agent when needed.</li>
+      <li>Memory across sessions: decisions and constraints are kept in memory files. Even when a session got wiped mid-project (it happened), the context survived.</li>
+      <li>A human approves, an agent executes: customer merges, data deletions, and deployments always went through a human sign-off at the decision point.</li>
+    </ul>
+  </ShowcaseSection>
+
+  <ContactForm
+    slot="cta"
+    heading="Recognize your own business in this?"
+    subheading="A short conversation about how your business actually runs today — no pitch prepared in advance."
+    submitLabel="Start a diagnostic conversation"
+    reassurance="No cost, no commitment — just an honest look at your setup."
+    source="systems-fuel-distribution"
+  />
+
+</ShowcaseLayout>
