@@ -1,0 +1,120 @@
+---
+/*
+  CAPABILITY STRIPS — replaces AchievementsStrip on the homepage per the
+  owner's redirect: no single case-study focus, no numbers in the hero
+  or vision. Instead, several compact strips, each pairing ONE real fact
+  with the capability it demonstrates and a link out to where the full
+  story lives (a case study or service page) — depth lives there, not
+  on the homepage.
+
+  Each strip is a whole clickable row (stretched-link pattern, like
+  ShowcaseCard) — the visible "linkLabel" text is the affordance, but
+  the entire row is the hit target. Built on `.card` + the `.card-row`
+  and `.card-compact` modifiers (global.css) for the horizontal layout
+  and tighter padding — never stack a plain `sm:flex-row`/`p-5 sm:p-6`
+  utility directly on `.card` (its own flex-col/p-6 are component-class
+  properties and silently win at equal specificity — this bit exactly
+  this file once already; see the modifiers' comments in global.css).
+
+  Section sits on bg-surface-950 (not surface-900) specifically so
+  `.card`'s own surface-900 background reads as a raised step, not a
+  same-tone block with only a border (audit/critique finding).
+
+  IMAGERY: the owner will supply screenshots later (sharpening pass,
+  styled softer/rounder than UI chrome). `imageSrc`/`imageAlt` are
+  already on the Strip type and the layout already reserves a flex slot
+  for one — pass them later and it slots in with no restructuring.
+  Never render a placeholder box when they're absent.
+
+  PROPS:
+    intro?  — small label above the strips. Doubles as this section's
+              <h2> (promoted from a plain <p>, same visual styling) so
+              screen-reader heading navigation has a landmark here —
+              omit only if the copy genuinely has no intro line.
+    strips  — array of:
+                fact       — the headline number/fact (e.g. "21 → 1")
+                capability — one line: what it demonstrates
+                href       — link target (case study or service page)
+                linkLabel  — the visible link text (e.g. "See the system")
+                imageSrc?  — reserved for the later imagery pass
+                imageAlt?  — required alongside imageSrc once it's used
+    note?   — small closing line under the strips (e.g. the
+              no-rounding/verification note)
+*/
+interface Strip {
+  fact:       string;
+  capability: string;
+  href:       string;
+  linkLabel:  string;
+  imageSrc?:  string;
+  imageAlt?:  string;
+}
+
+interface Props {
+  intro?:  string;
+  strips:  Strip[];
+  note?:   string;
+}
+
+const { intro, strips, note } = Astro.props;
+---
+
+<section class="bg-surface-950 px-6 py-section-md">
+  <div class="mx-auto max-w-4xl">
+
+    {intro && (
+      <h2 class="reveal text-center text-xs font-semibold uppercase tracking-widest text-text-muted">
+        {intro}
+      </h2>
+    )}
+
+    <div class:list={["flex flex-col gap-3", intro && "mt-8"]}>
+      {strips.map((strip, i) => (
+        <article
+          class="card card-row card-compact reveal group gap-4 sm:gap-6"
+          style={`--reveal-delay: ${i * 80}`}
+        >
+          <!-- FACT — fixed-width column so capability text lines up across strips -->
+          <p class="shrink-0 text-2xl font-extrabold tracking-tight text-text-primary sm:w-40 sm:text-3xl">
+            {strip.fact}
+          </p>
+
+          <!-- CAPABILITY + LINK — takes the remaining row width -->
+          <div class="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+            <p class="text-text-muted">{strip.capability}</p>
+
+            <a
+              href={strip.href}
+              class="card-link-overlay focus-ring focus-ring-on-900 chip-accent-text inline-flex shrink-0 items-center gap-1 rounded-sm text-sm font-medium hover:text-brand-300"
+            >
+              {strip.linkLabel}
+              <svg class="icon-chevron h-4 w-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+
+          <!--
+            IMAGE SLOT — reserved, not rendered until imagery exists.
+            Sits after the text content in DOM order (mirrors correctly
+            under dir="rtl" without any rtl: overrides needed here).
+          -->
+          {strip.imageSrc && (
+            <img
+              src={strip.imageSrc}
+              alt={strip.imageAlt ?? ""}
+              class="h-24 w-full shrink-0 rounded-md object-cover sm:h-16 sm:w-24"
+            />
+          )}
+        </article>
+      ))}
+    </div>
+
+    {note && (
+      <p class="reveal mt-6 text-center text-xs text-text-muted">
+        {note}
+      </p>
+    )}
+
+  </div>
+</section>

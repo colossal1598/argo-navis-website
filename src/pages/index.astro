@@ -1,76 +1,98 @@
 ---
 /*
-  PAGE GOAL: Homepage. State the positioning in the reader's own words
-  (the WhatsApp/Morning/spreadsheet disconnect they already live with),
-  prove it with one real, number-backed story, and move the visitor to a
-  diagnostic conversation — or to the fuel-distribution proof further
-  down the page if they need convincing first. Every claim below is
-  either a stated value or traceable to that fuel-distribution case
-  study (see .apm/memory/content-brief.md §"Facts Verification
-  Summary"). No developer/commit metrics anywhere on this page — only
-  business numbers (see CLAUDE.md, Content honesty).
+  PAGE GOAL: Homepage. REVISED 2026-07-26 per owner redirect — the
+  homepage represents the business, its values and basics: "no hard
+  numbers, just vibes and vision." Hero and Vision carry ZERO numbers
+  and no case-study reference — depth (numbers, proof) lives in a
+  dedicated Capability Strips section instead, each strip pairing one
+  real fact with a link to where the full story lives. No developer
+  metrics anywhere on this page — only business numbers, and only
+  inside the strips (see CLAUDE.md, Content honesty).
 
   Copy source: .apm/memory/copy/homepage-en.md — re-read that file
   before editing any string below; it is the approved source of truth,
-  not this file.
+  not this file. This supersedes the single-case-study-focused version
+  from Task 2.3 — the owner reviewed that build and redirected the
+  content structure (craft wasn't the issue, direction was).
 
-  The fuel-distribution case study now exists at /systems/fuel-distribution
-  (Task 2.5) — the hero's secondary CTA points there. It previously
-  anchored to the achievements strip on this same page (Task 2.3) because
-  the case-study page didn't exist yet.
+  No imagery yet — CapabilityStrips already has an image slot ready for
+  the owner's screenshots (sharpening pass); nothing to do here until
+  then.
 */
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
-import AchievementsStrip from "../components/AchievementsStrip.astro";
+import CapabilityStrips from "../components/CapabilityStrips.astro";
 import VisionSection from "../components/VisionSection.astro";
 import StepsSection from "../components/StepsSection.astro";
 import ContactForm from "../components/ContactForm.astro";
 
-/* ACHIEVEMENTS STRIP — all four numbers are from the same real project
-   (a family fuel-distribution business). Do not add, round, or invent
-   a number here without a traceable source. */
-const achievements = [
+/* CAPABILITY STRIPS — six real, independently verified facts, each a
+   different part of how the business works. Do not add, round, or
+   invent a number here without a traceable source. Link targets are
+   canonical per the approved copy's header comment. */
+const strips = [
   {
-    value:       "21 → 1",
-    description: "21 spreadsheets, replaced by one database. Nothing was thrown away — every row migrated.",
+    fact:       "21 → 1",
+    capability: "Twenty-one spreadsheets, replaced by one custom system built around the business.",
+    href:       "/systems/fuel-distribution",
+    linkLabel:  "See the system",
   },
   {
-    value:       "1 week",
-    description: "From first meeting to a working system, start to finish.",
+    fact:       "1 week",
+    capability: "From first meeting to a working system — that's the speed a focused build moves at.",
+    href:       "/systems",
+    linkLabel:  "How we build",
   },
   {
-    value:       "~1,900 / year",
-    description: "Delivery records migrated out of the spreadsheets and into the new system, automatically deduplicated.",
+    fact:       "~1,900 records",
+    capability: "Untangled and matched during the investigation into how the business actually operated.",
+    href:       "/systems/fuel-distribution",
+    linkLabel:  "See the investigation",
   },
   {
-    value:       "₪0 / month",
-    description: "Infrastructure cost. Runs entirely on free-tier hosting — no server bill, ever.",
+    fact:       "~940 documents",
+    capability: "Synced automatically between accounting and delivery records — no manual matching, ever.",
+    href:       "/automations",
+    linkLabel:  "How we connect systems",
+  },
+  {
+    fact:       "₪0 / month",
+    capability: "Real infrastructure cost for a live business system. Free-tier hosting, no bloated fees.",
+    href:       "/websites",
+    linkLabel:  "How we build websites",
+  },
+  {
+    fact:       "Reception",
+    capability: "An automatic WhatsApp reply for missed calls — built once, running for clients today.",
+    href:       "/ai-agents",
+    linkLabel:  "How we use AI",
   },
 ];
 
-/* VISION / ATTITUDE — the site's one editorial statement. No heading in
-   the approved copy — don't add one. */
+/* VISION / ATTITUDE — tightened to roughly half the prior length per
+   the owner's redirect. No heading in the approved copy — don't add
+   one. Zero numbers, zero case-study reference. */
 const visionParagraphs = [
-  "Most small businesses are still run the way they were twenty years ago: a spreadsheet only one person understands, a notebook for the rest, and an evening every month spent reconciling the two. That's not a technology problem — it's just what happens when nobody's had time to fix it.",
-  "We think that's worth fixing, but not by selling you more software to manage. The point is to give you back the evenings — the reconciliation, the retyping, the \"did I already invoice this customer\" — not to add another system to babysit.",
-  "Independence matters as much as the fix itself. You own your data and your system. No monthly fee that keeps climbing, no vendor you can't leave, no enterprise contract sized for a company twenty times your size.",
-  "Where AI genuinely saves time — replying instantly to a missed call, pulling structured data out of a messy document — we use it, built narrow and precise for that one job. Where it doesn't, we don't force it in. Most of what a small business needs isn't AI at all. It's just its own data, connected.",
+  "Most small businesses still run the way they did twenty years ago — one spreadsheet only one person understands, a notebook for the rest, an evening a month lost to reconciling them. That's not a technology problem. It's just what happens when nobody's had time to fix it.",
+  "We fix it without selling you more software to manage. You own your data and your system — no climbing monthly fees, no vendor you can't leave, no enterprise contract built for a business twenty times your size.",
+  "Where AI genuinely saves time, we use it — narrow, precise, for one real job. Where it doesn't, we don't force it in.",
 ];
 
-/* WAY OF WORKING — three real steps, each a full paragraph (StepsSection,
-   not ProcessBlock — see that component's doc comment for why). */
+/* WAY OF WORKING — compact one-liners now (was a full paragraph each
+   in the prior version); depth on each step lives on the service
+   pages, not here. */
 const wayOfWorkingSteps = [
   {
-    label:       "A short diagnosis, not a sales call.",
-    description: "An hour or two going through your spreadsheets and how you actually work. You get a short, concrete document back: where the time and money are leaking, what's worth automating first, what isn't. Low cost, low risk — meant to be easy to say yes to.",
+    label:       "Diagnosis first.",
+    description: "A short, low-cost look at where the time and money leak.",
   },
   {
-    label:       "Build the system.",
-    description: "A system built around how your business already runs — not the other way around. Your existing data migrates in, nothing is lost. It connects to what you already use (Morning, WhatsApp, whatever else is in the mix), and it works from a phone, because that's where you actually are during the day.",
+    label:       "Then we build.",
+    description: "Your data migrates in, connects to what you use, runs from your phone.",
   },
   {
-    label:       "Stay reachable.",
-    description: "Once it's running, small changes and new features come as needed, on a light retainer — not a bloated support contract. Backups run automatically. If something breaks, there's one person to call.",
+    label:       "Then we stay reachable.",
+    description: "Small changes as needed, automatic backups, one person to call.",
   },
 ];
 ---
@@ -80,26 +102,24 @@ const wayOfWorkingSteps = [
   description="Argo Navis builds one system that connects what you already use, pulls your business out of the spreadsheets, and runs from your phone."
 >
 
-  <!-- HERO — the disconnect the reader already lives with, not a feature pitch. -->
+  <!-- HERO — the disconnect the reader already lives with. Single CTA, zero numbers, no case-study reference. -->
   <Hero
     headline="The orders land in WhatsApp. The invoices sit in Morning. You're the only thing connecting them."
     subline="We build one system that connects what you already use, pulls your business out of the spreadsheets, and runs from your phone. No new software to learn. No enterprise contract. No lock-in."
     cta={{ label: "Talk to us about your setup", href: "#contact" }}
-    ctaSecondary={{ label: "See how it worked for a fuel-distribution business →", href: "/systems/fuel-distribution" }}
   />
 
-  <!-- ACHIEVEMENTS STRIP — the one section on the site allowed to look like a stats row, because every number here is real and from one project. -->
-  <AchievementsStrip
-    id="achievements"
-    intro="One real project. No rounded numbers."
-    stats={achievements}
-    note="All four numbers are from the same project — a family fuel-distribution business. Full story below."
+  <!-- CAPABILITY STRIPS — every real number on the homepage lives here, each one linked to its full story. -->
+  <CapabilityStrips
+    intro="Six real facts. Each one is a different part of how we work — click through to see it in context."
+    strips={strips}
+    note="Each fact is exact and independently verified — no rounding, no estimates. Full stories live behind each link."
   />
 
-  <!-- VISION / ATTITUDE — the editorial "why us" statement, in full paragraphs. -->
+  <!-- VISION / ATTITUDE — the editorial "why us" statement, tightened, no numbers. -->
   <VisionSection paragraphs={visionParagraphs} />
 
-  <!-- WAY OF WORKING — the three real steps of engaging Argo Navis. -->
+  <!-- WAY OF WORKING — three compact one-liners. -->
   <StepsSection
     heading="Way of Working"
     steps={wayOfWorkingSteps}
@@ -107,8 +127,8 @@ const wayOfWorkingSteps = [
 
   <!--
     CONTACT — converts to the same diagnostic conversation as every other
-    page. `source="landing"` matches the previous homepage's tag so lead
-    attribution stays consistent.
+    page. Unchanged from the prior version; no source tag defined on the
+    homepage, consistent with earlier drafts.
   -->
   <ContactForm
     heading="Still doing this by hand?"
