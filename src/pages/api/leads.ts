@@ -181,6 +181,9 @@ function leadReplySubject(source: string): string {
     "ai-agents": "Your AI enquiry is with us — Argo Navis",
     "lp-spreadsheets":           "Your spreadsheet diagnostic is with us — Argo Navis",
     "systems-fuel-distribution": "Your diagnostic conversation is with us — Argo Navis",
+    "lp-ai-agents":              "Your AI diagnostic is with us — Argo Navis",
+    "lp-connected-systems":      "Your systems diagnostic is with us — Argo Navis",
+    "lp-missed-calls":           "Your missed-calls diagnostic is with us — Argo Navis",
   };
   return subjects[source] ?? "We got your message — Argo Navis";
 }
@@ -193,6 +196,9 @@ function sourceLabel(source: string): string {
     "ai-agents": "an AI tool",
     "lp-spreadsheets":           "moving off your spreadsheets",
     "systems-fuel-distribution": "a custom system for your business",
+    "lp-ai-agents":              "figuring out if AI helps your business",
+    "lp-connected-systems":      "connecting your systems",
+    "lp-missed-calls":           "not missing another call",
   };
   return labels[source] ?? "something great";
 }
@@ -355,6 +361,9 @@ function leadReplySubjectHe(source: string): string {
     "ai-agents-he":   "קיבלנו את הפנייה שלך ל-AI — Argo Navis",
     "lp-spreadsheets-he":           "קיבלנו את הפנייה שלך על הגיליונות — Argo Navis",
     "systems-fuel-distribution-he": "קיבלנו את הפנייה שלך לשיחת אבחון — Argo Navis",
+    "lp-ai-agents-he":              "קיבלנו את הפנייה שלך בנושא AI — Argo Navis",
+    "lp-connected-systems-he":      "קיבלנו את הפנייה שלך לחיבור המערכות — Argo Navis",
+    "lp-missed-calls-he":           "קיבלנו את הפנייה שלך על שיחות שהוחמצו — Argo Navis",
   };
   return subjects[source] ?? "קיבלנו את ההודעה שלך — Argo Navis";
 }
@@ -367,6 +376,9 @@ function sourceLabelHe(source: string): string {
     "ai-agents-he":   "כלי AI",
     "lp-spreadsheets-he":           "לצאת מהגיליונות האלקטרוניים",
     "systems-fuel-distribution-he": "מערכת מותאמת אישית לעסק שלך",
+    "lp-ai-agents-he":              "האם AI מתאים לעסק שלך",
+    "lp-connected-systems-he":      "לחבר בין המערכות שלך",
+    "lp-missed-calls-he":           "לא לפספס עוד שיחה",
   };
   return labels[source] ?? "משהו מעולה";
 }

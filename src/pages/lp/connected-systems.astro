@@ -1,0 +1,125 @@
+---
+/*
+  PAGE GOAL: High-intent LP for businesses with 2-3 disconnected tools
+  (accounting software, WhatsApp, spreadsheets) doing manual double-entry
+  between them. Single conversion goal: submit the lead form. Angle
+  lines carried verbatim per the copy file. Built on the pattern in
+  .apm/memory/lp-pattern.md — re-read that file, not this one, before
+  changing structure.
+
+  Copy source: .apm/memory/copy/lp-connected-systems-en.md — re-read
+  that file before editing any string below; it is the approved source
+  of truth.
+
+  INTEGRATION NOTE (lp-pattern.md "Leads.ts checklist"): the approved
+  copy asks for 4 fields (name, phone/WhatsApp, current tools, message).
+  The shared /api/leads endpoint only saves name/email/message by exact
+  field name, so: email is added (not in the approved copy, but the
+  backend hard-requires it); phone/WhatsApp goes through ContactForm's
+  built-in contact-method picker, reordered to lead with Phone (the
+  copy's own field label is "Phone / WhatsApp", phone-first) instead of
+  a new custom field that would silently lose the data; "current tools"
+  and "message" combine into one required message textarea — the one
+  open-ended field the backend actually saves and emails. (The backend
+  hard-requires a non-empty message, so this combined field can't stay
+  optional the way the copy's original two half-fields were.)
+*/
+import LandingLayout from "../../layouts/LandingLayout.astro";
+import LPHero from "../../components/LPHero.astro";
+import ChecklistSection from "../../components/ChecklistSection.astro";
+import ProofSection from "../../components/ProofSection.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+const painItems = [
+  { label: "You already pay for accounting software, and it still doesn't know what happened on WhatsApp today." },
+  { label: "Every order gets typed in twice — once where the customer sent it, once where you track it." },
+  { label: "Nobody built the bridge between the tools you already have, so you're the bridge." },
+  { label: "Adding yet another app would just mean one more thing that doesn't talk to the others either." },
+];
+
+/* Each item is one sentence from the copy, split at its own existing
+   punctuation into a bold lead-in + the rest — no wording added. */
+const changesItems = [
+  {
+    label:       "We connect what you already use",
+    description: "Morning, WhatsApp, your spreadsheets — instead of replacing any of it.",
+  },
+  {
+    label:       "No servers, no inflated maintenance fees.",
+    description: "A system that runs itself, with automatic backup.",
+  },
+  {
+    label:       "Data moves between your tools on its own",
+    description: "you stop being the manual link.",
+  },
+  {
+    label:       "Nothing new to learn",
+    description: "the tools stay the same, they just start talking to each other.",
+  },
+];
+
+const fields = [
+  { id: "name", label: "Your name", type: "text" as const, placeholder: "Your name", required: true },
+  { id: "email", label: "Email", type: "email" as const, placeholder: "you@business.com", required: true },
+  {
+    id:          "message",
+    label:       "What do you use today, and what doesn't talk to what?",
+    type:        "textarea" as const,
+    placeholder: "e.g. Morning, WhatsApp, spreadsheets — and where the gaps are",
+    required:    true,
+  },
+];
+
+/* Phone leads the contact-method picker — the copy's own field label is
+   "Phone / WhatsApp", phone-first. */
+const contactMethods = [
+  { id: "phone" as const, label: "Phone" },
+  { id: "whatsapp" as const, label: "WhatsApp" },
+  { id: "email" as const, label: "Email" },
+  { id: "telegram" as const, label: "Telegram" },
+];
+---
+
+<LandingLayout
+  title="You don't need another program. You need what you already have to start talking to each other."
+  description="The invoices are in Morning. The orders are on WhatsApp. The inventory's in your head. They can be connected."
+>
+
+  <!-- HERO -->
+  <LPHero
+    headline="You don't need another program. You need what you already have to start talking to each other."
+    subline="The invoices are in Morning. The orders are on WhatsApp. The inventory's in your head. They can be connected."
+  />
+
+  <!-- PAIN — tonal break from the hero -->
+  <ChecklistSection
+    intro="You'll recognize at least one of these:"
+    items={painItems}
+    tone="tonal"
+  />
+
+  <!-- WHAT CHANGES -->
+  <ChecklistSection
+    heading="What Changes"
+    items={changesItems}
+  />
+
+  <!-- PROOF — plain inline link to the flagship case study, never a button -->
+  <ProofSection
+    text="For a family fuel-distribution business, we connected their accounting software (Morning / Green Invoice) directly to their new system — invoices, receipts, and customer balances synced automatically, no manual matching. About 940 documents now sync on their own. The same pattern extends to WhatsApp order intake."
+    caseStudyHref="/systems/fuel-distribution"
+    caseStudyLabel="Full case study: From Chaotic Spreadsheets to a Full Management System in One Week →"
+  />
+
+  <!-- START THE CONVERSATION — the one and only conversion action on this page -->
+  <ContactForm
+    heading="Tired of being the bridge between your own systems?"
+    subheading="Tell us what you're already using — we'll tell you honestly what can actually be connected."
+    fields={fields}
+    contactMethods={contactMethods}
+    submitLabel="Show me what can connect"
+    reassurance="No pitch prepared in advance. We ask about your setup first."
+    source="lp-connected-systems"
+  />
+
+</LandingLayout>

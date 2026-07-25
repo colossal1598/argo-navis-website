@@ -1,0 +1,129 @@
+---
+/*
+  PAGE GOAL: LP for solo/small service businesses losing calls while on
+  a job or with a client. Reception rules in force (copy already
+  complies — preserved verbatim below): no pricing, no plan offers, no
+  product/demo links; "running for clients today" + "we can build it
+  for you" framing only. Single conversion goal: submit the lead form.
+  Built on the pattern in .apm/memory/lp-pattern.md — re-read that file,
+  not this one, before changing structure.
+
+  Copy source: .apm/memory/copy/lp-missed-calls-en.md — re-read that
+  file before editing any string below; it is the approved source of
+  truth.
+
+  INTEGRATION NOTE (lp-pattern.md "Leads.ts checklist"): the approved
+  copy asks for 4 fields (name, phone/WhatsApp, business type, pain
+  point). The shared /api/leads endpoint only saves name/email/message
+  by exact field name, so: email is added (not in the approved copy, but
+  the backend hard-requires it); phone/WhatsApp goes through
+  ContactForm's built-in contact-method picker, reordered to lead with
+  WhatsApp (this page's whole angle is the WhatsApp auto-reply); business
+  type + pain point combine into one required message textarea — the one
+  open-ended field the backend actually saves and emails. (The backend
+  hard-requires a non-empty message, so this combined field can't stay
+  optional the way the copy's original two half-fields were.)
+*/
+import LandingLayout from "../../layouts/LandingLayout.astro";
+import LPHero from "../../components/LPHero.astro";
+import ChecklistSection from "../../components/ChecklistSection.astro";
+import ProofSection from "../../components/ProofSection.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+const painItems = [
+  { label: "You're on a job, in a meeting, or just off the phone for ten minutes — and that's exactly when someone calls." },
+  { label: "A missed call from a new customer rarely gets a second try. They just call the next name on the list." },
+  { label: "Calling back an hour later isn't the same as answering. Most people have already moved on." },
+  { label: "You can't be reachable every minute of every day. Nobody can." },
+];
+
+/* Each item is one sentence from the copy, split at its own existing
+   punctuation into a bold lead-in + the rest — no wording added. */
+const changesItems = [
+  {
+    label:       "The instant a call is missed, the caller gets a WhatsApp reply",
+    description: "sent from the business's own number, not a generic bot.",
+  },
+  {
+    label:       "The caller knows they were seen and knows what to do next.",
+    description: "Nothing is lost while you're unreachable.",
+  },
+  {
+    label:       "No servers, no inflated maintenance fees",
+    description: "a system that runs itself once it's set up.",
+  },
+  {
+    label:       "You call back when you actually have a minute.",
+    description: "The reply already went out.",
+  },
+];
+
+const fields = [
+  { id: "name", label: "Your name", type: "text" as const, placeholder: "Your name", required: true },
+  { id: "email", label: "Email", type: "email" as const, placeholder: "you@business.com", required: true },
+  {
+    id:          "message",
+    label:       "What does your business do, and what happens when you miss a call today?",
+    type:        "textarea" as const,
+    placeholder: "e.g. a plumber, fully booked most days — calls go to voicemail and rarely get returned in time",
+    required:    true,
+  },
+];
+
+/* WhatsApp leads the contact-method picker — this LP's entire angle is
+   the WhatsApp auto-reply, so it's the natural default channel. */
+const contactMethods = [
+  { id: "whatsapp" as const, label: "WhatsApp" },
+  { id: "phone" as const, label: "Phone" },
+  { id: "email" as const, label: "Email" },
+  { id: "telegram" as const, label: "Telegram" },
+];
+---
+
+<LandingLayout
+  title="A missed call doesn't ring twice. It just goes to your competitor."
+  description="We've already built the fix: an automatic WhatsApp reply, sent from a business's own number, the instant a call goes unanswered."
+>
+
+  <!-- HERO -->
+  <LPHero
+    headline="A missed call doesn't ring twice. It just goes to your competitor."
+    subline="We've already built the fix: an automatic WhatsApp reply, sent from a business's own number, the instant a call goes unanswered."
+  />
+
+  <!-- PAIN — tonal break from the hero -->
+  <ChecklistSection
+    intro="You'll recognize at least one of these:"
+    items={painItems}
+    tone="tonal"
+  />
+
+  <!-- WHAT CHANGES -->
+  <ChecklistSection
+    heading="What Changes"
+    items={changesItems}
+  />
+
+  <!--
+    PROOF — Reception rules preserved verbatim: "running for clients
+    today" + "we can build it for you," no pricing, no plan offers, no
+    product/demo link. Plain inline link to the case study, never a button.
+  -->
+  <ProofSection
+    text="This isn't hypothetical. We built Reception, a system that does exactly this — automatic WhatsApp reply from a business's own number, sent the moment a call is missed — and it's running for clients today. We're not listing pricing here, but we can build the same thing, shaped to your business."
+    caseStudyHref="/automations/reception"
+    caseStudyLabel="See how Reception works →"
+  />
+
+  <!-- START THE CONVERSATION — the one and only conversion action on this page -->
+  <ContactForm
+    heading="Missing calls you can't afford to lose?"
+    subheading="Tell us how calls come in today and what happens when you can't answer. We'll tell you honestly whether this fix makes sense for your business."
+    fields={fields}
+    contactMethods={contactMethods}
+    submitLabel="Start my diagnostic conversation"
+    reassurance="No pitch prepared in advance. We ask about your calls first."
+    source="lp-missed-calls"
+  />
+
+</LandingLayout>

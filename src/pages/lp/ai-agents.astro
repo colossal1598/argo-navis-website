@@ -1,0 +1,112 @@
+---
+/*
+  PAGE GOAL: High-intent LP for "custom AI agents" traffic — visitors
+  already searching or comparing AI vendors. Job here is to qualify/
+  filter: differentiate immediately from generic "AI solutions" pitches,
+  using the owner's actual stance. Single conversion goal: submit the
+  lead form. Built on the pattern in .apm/memory/lp-pattern.md — re-read
+  that file, not this one, before changing structure.
+
+  Copy source: .apm/memory/copy/lp-ai-agents-en.md — re-read that file
+  before editing any string below; it is the approved source of truth.
+
+  INTEGRATION NOTE (lp-pattern.md "Leads.ts checklist"): the approved
+  copy asks for a combined "Email or phone" field. The shared /api/leads
+  endpoint requires its own `email` field by exact name (regex-validated,
+  hard 400 without it) and doesn't support a free-text "or phone"
+  alternative — so this page keeps a standard required email field and
+  leaves the contact-method picker at its default order (this LP's angle
+  isn't phone/WhatsApp-specific the way missed-calls or connected-systems
+  is). The "task" field is deliberately `type: "text"` (not textarea) per
+  the copy's own "(short text)" note, but still uses field id `message`
+  — the one field the backend actually saves and emails.
+*/
+import LandingLayout from "../../layouts/LandingLayout.astro";
+import LPHero from "../../components/LPHero.astro";
+import ChecklistSection from "../../components/ChecklistSection.astro";
+import ProofSection from "../../components/ProofSection.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+const painItems = [
+  { label: "Every vendor pitch starts with \"AI-powered\" and ends with nothing you can actually use." },
+  { label: "A call missed after hours turns into a lost customer, and there's no one there to answer it." },
+  { label: "Someone still reads through documents by hand, pulling out the same few fields every time." },
+  { label: "You've been burned before by a \"smart\" tool that just added one more dashboard to check." },
+];
+
+/* Each item is one sentence from the copy, split at its own existing
+   punctuation into a bold lead-in + the rest — no wording added. */
+const changesItems = [
+  {
+    label:       "We find the one repetitive task AI is actually good at in your business",
+    description: "not all of them, one.",
+  },
+  {
+    label:       "It gets built narrow and sharp",
+    description: "tested against your real cases, not a demo.",
+  },
+  {
+    label:       "Anywhere a mistake would cost you something",
+    description: "a person still checks it before it goes out.",
+  },
+  {
+    label:       "If AI isn't the right tool for the job",
+    description: "we say so, and build something simpler instead.",
+  },
+];
+
+const fields = [
+  { id: "name", label: "Your name", type: "text" as const, placeholder: "Your name", required: true },
+  { id: "email", label: "Email", type: "email" as const, placeholder: "you@business.com", required: true },
+  {
+    id:          "message",
+    label:       "What's the repetitive task?",
+    type:        "text" as const,
+    placeholder: "The thing you or your team does over and over, that a computer could do instead",
+    required:    true,
+  },
+];
+---
+
+<LandingLayout
+  title="AI is not the point. Saving you time is."
+  description="We build one narrow AI tool for one real, tedious task — nothing labeled 'AI-powered' just to sound modern."
+>
+
+  <!-- HERO -->
+  <LPHero
+    headline="AI is not the point. Saving you time is."
+    subline="We build one narrow AI tool for one real, tedious task — nothing labeled &quot;AI-powered&quot; just to sound modern."
+  />
+
+  <!-- PAIN — tonal break from the hero -->
+  <ChecklistSection
+    intro="You'll recognize at least one of these:"
+    items={painItems}
+    tone="tonal"
+  />
+
+  <!-- WHAT CHANGES -->
+  <ChecklistSection
+    heading="What Changes"
+    items={changesItems}
+  />
+
+  <!-- PROOF — plain inline link to the Reception case study, never a button -->
+  <ProofSection
+    text="One example: Reception, a system we built that sends an automatic WhatsApp reply from a business's own number the moment a call is missed — built narrow, for exactly one job, and running for clients today."
+    caseStudyHref="/automations/reception"
+    caseStudyLabel="See how Reception works →"
+  />
+
+  <!-- START THE CONVERSATION — the one and only conversion action on this page -->
+  <ContactForm
+    heading="Not sure if AI is even the right call for your business?"
+    subheading="Tell us the repetitive part of your day. We'll tell you honestly whether AI helps — or whether something simpler does the job just as well."
+    fields={fields}
+    submitLabel="Ask us honestly"
+    reassurance="No pitch prepared in advance. We check before we build anything."
+    source="lp-ai-agents"
+  />
+
+</LandingLayout>

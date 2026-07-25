@@ -15,6 +15,7 @@ const { locale = "en" } = Astro.props;
 const copy: Record<SiteLocale, {
   servicesHeading: string;
   companyHeading:  string;
+  guidesHeading:   string;
   systems:         string;
   automations:     string;
   websites:        string;
@@ -22,10 +23,15 @@ const copy: Record<SiteLocale, {
   contact:         string;
   tagline:         string;
   rights:          string;
+  lpSpreadsheets:      string;
+  lpAiAgents:          string;
+  lpConnectedSystems:  string;
+  lpMissedCalls:       string;
 }> = {
   en: {
     servicesHeading: "Services",
     companyHeading:  "Company",
+    guidesHeading:   "Guides",
     systems:         "Systems",
     automations:     "Automations",
     websites:        "Websites",
@@ -33,10 +39,15 @@ const copy: Record<SiteLocale, {
     contact:         "Contact",
     tagline:         "We build systems and sites that generate leads and scale your business.",
     rights:          "All rights reserved.",
+    lpSpreadsheets:      "Off the Spreadsheets",
+    lpAiAgents:          "Custom AI Agents",
+    lpConnectedSystems:  "Connected Systems",
+    lpMissedCalls:       "Missed Calls",
   },
   he: {
     servicesHeading: "שירותים",
     companyHeading:  "חברה",
+    guidesHeading:   "מדריכים",
     systems:         "מערכות",
     automations:     "אוטומציות",
     websites:        "אתרים",
@@ -44,6 +55,10 @@ const copy: Record<SiteLocale, {
     contact:         "דברו איתנו",
     tagline:         "אנחנו בונים מערכות ואתרים שמביאים לידים ומקדמים את העסק שלכם.",
     rights:          "כל הזכויות שמורות.",
+    lpSpreadsheets:      "לצאת מהגיליונות",
+    lpAiAgents:          "AI מותאם אישית",
+    lpConnectedSystems:  "לחבר מערכות",
+    lpMissedCalls:       "שיחות שלא מפספסים",
   },
 };
 const t = copy[locale];
@@ -69,10 +84,25 @@ function routeExists(href: string): boolean {
 }
 
 /*
+  GUIDES COLUMN — restrained main-site link to the otherwise-orphaned
+  landing pages (LandingLayout has no nav/footer of its own by design —
+  see lp-pattern.md). Filtered the same way as the Services column, so
+  it simply doesn't render at all on a locale with no /lp pages yet
+  (self-healing once /he/lp/* ships) instead of showing an empty column.
+*/
+const lpLinks = [
+  { label: t.lpSpreadsheets, href: withLocale("/lp/spreadsheets", locale) },
+  { label: t.lpAiAgents, href: withLocale("/lp/ai-agents", locale) },
+  { label: t.lpConnectedSystems, href: withLocale("/lp/connected-systems", locale) },
+  { label: t.lpMissedCalls, href: withLocale("/lp/missed-calls", locale) },
+].filter((link) => routeExists(link.href));
+
+/*
   FOOTER COLUMNS — each object is a column in the footer.
   To add a column: add another { heading, links: [...] } object.
   To add a link inside a column: add { label, href } to its links array.
-  Links are filtered to routes that actually exist in this locale.
+  Links are filtered to routes that actually exist in this locale; a
+  column with zero surviving links is dropped entirely (see Guides).
 */
 const columns = [
   {
@@ -90,7 +120,8 @@ const columns = [
       { label: t.contact, href: withLocale("/#contact", locale) },
     ],
   },
-];
+  ...(lpLinks.length > 0 ? [{ heading: t.guidesHeading, links: lpLinks }] : []),
+].filter((col) => col.links.length > 0);
 
 /*
   SOCIAL LINKS — add/remove social platforms here.
