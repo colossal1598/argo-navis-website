@@ -1,12 +1,45 @@
 ---
+/*
+  PAGE GOAL: /automations service page. Convert visitors doing manual,
+  repetitive data-shuffling (WhatsApp orders retyped, invoices matched by
+  hand) into diagnostic leads. Same lead source tag ("automations") as the
+  page this replaces — only the wording changed, not the funnel.
+
+  Copy source: .apm/memory/copy/service-automations-en.md — re-read that
+  file before editing any string below; it is the approved source of
+  truth, not this file. Rebuilt on the Task 2.3 homepage exemplar's token
+  set and motion language (py-section-*, .reveal + --reveal-delay).
+*/
 import Layout from "../../layouts/Layout.astro";
 import ProcessBlock from "../../components/ProcessBlock.astro";
+import FAQBlock from "../../components/FAQBlock.astro";
 import ContactForm from "../../components/ContactForm.astro";
 
-/*
-  PROCESS STEPS — specific to the automations service.
-  Mirrors the "What working with us looks like" block in the copy.
-*/
+/* WHAT WE AUTOMATE — four tiles. "System integrations" replaces the old
+   "Social scheduling" tile per the copy file — closer to what this ICP
+   actually asks for, and it's where the one real proof point lives. */
+const automateTiles = [
+  {
+    title: "Reporting",
+    body:  "Automated reports delivered to your inbox, no spreadsheet wrangling.",
+  },
+  {
+    title: "Invoicing and admin",
+    body:  "Deliveries and orders matched to invoices automatically, not by memory at month-end.",
+  },
+  {
+    title: "Messaging",
+    body:  "Automatic WhatsApp follow-ups, so no lead or client falls through the cracks.",
+  },
+  {
+    title: "System integrations",
+    body:  "Morning, WhatsApp, and your spreadsheets, made to talk to each other instead of you being the bridge.",
+  },
+];
+
+/* PROCESS — same four steps as before, step 3's description sharpened
+   per the copy file (replaces the vaguer "Systems connected, tested, and
+   running"). */
 const processSteps = [
   {
     label:       "You show us your workflow",
@@ -18,7 +51,7 @@ const processSteps = [
   },
   {
     label:       "We build it",
-    description: "Systems connected, tested, and running.",
+    description: "Connected to what you already use, tested before handover.",
   },
   {
     label:       "You get time back",
@@ -26,13 +59,10 @@ const processSteps = [
   },
 ];
 
-/*
-  FAQ — based directly on the automation page draft.
-*/
 const faq = [
   {
     q: "I don't even know what could be automated in my business.",
-    a: "We do. That's literally the first step — you walk us through your day and we spot what shouldn't need a human.",
+    a: "We do. That's the first step — you walk us through your day and we spot what shouldn't need a human.",
   },
   {
     q: "What happens if something breaks?",
@@ -44,10 +74,8 @@ const faq = [
   },
 ];
 
-/*
-  AUTOMATIONS FORM FIELDS — tailored to the automation service.
-  Framing matches the copy: "Tell us what you're doing manually".
-*/
+/* FORM FIELDS — message placeholder sharpened per the copy file
+   (from the generic "Tell us what you're doing manually"). */
 const automationFormFields = [
   {
     id:          "name",
@@ -74,7 +102,7 @@ const automationFormFields = [
     id:          "message",
     label:       "What do you want to automate?",
     type:        "textarea" as const,
-    placeholder: "Tell us what you're doing manually",
+    placeholder: "Tell us what you're copying by hand right now",
     required:    true,
   },
 ];
@@ -82,105 +110,74 @@ const automationFormFields = [
 
 <Layout
   title="Automations"
-  description="We build the systems that run your business while you're not looking."
+  description="We connect what you already use — Morning, WhatsApp, your spreadsheets — so nothing gets typed in twice."
 >
 
-  <!-- ─── HERO ─── -->
-  <!-- No CTA button — let them scroll into the problem first. -->
-  <section class="relative overflow-hidden bg-surface-950 px-6 py-24 md:py-36">
+  <!-- HERO — headline kept verbatim (already passes the voice bar); subhead sharpened to name the actual systems. No CTA — let them scroll into the problem first. -->
+  <section class="relative overflow-hidden bg-surface-950 px-6 py-section-lg text-start md:py-section-xl">
     <div class="relative z-10 mx-auto max-w-3xl">
-      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+      <h1 class="reveal text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
         Why spend 10 hours on work a computer can do in 10 minutes?
       </h1>
-      <p class="mt-6 max-w-2xl text-lg text-text-muted">
-        We build the systems that run your business while you're not looking.
+      <p class="reveal mt-6 max-w-2xl text-lg text-text-muted" style="--reveal-delay: 80">
+        We connect what you already use — Morning, WhatsApp, your spreadsheets — so nothing gets typed in twice.
       </p>
     </div>
   </section>
 
-  <!-- ─── PROBLEM BLOCK ─── -->
-  <section class="bg-surface-900 px-6 py-20">
+  <!-- PROBLEM BLOCK — three concrete pain lines, no adjectives doing the work. -->
+  <section class="bg-surface-900 px-6 py-section-md">
     <div class="mx-auto max-w-3xl space-y-6">
       {[
-        "Every hour spent on manual reporting is an hour not spent on growth.",
-        "Leads going cold because nobody followed up in time.",
-        "Admin work that piles up instead of running itself.",
-      ].map(line => (
-        <p class="text-2xl font-semibold text-text-primary md:text-3xl">{line}</p>
+        "Orders come in on WhatsApp. Someone still retypes them into a spreadsheet.",
+        "Invoices sit in Morning, deliveries get tracked somewhere else — matched by hand, every month.",
+        "A follow-up that slips costs a client. A forgotten check costs money.",
+      ].map((line, i) => (
+        <p class="reveal text-2xl font-semibold text-text-primary md:text-3xl" style={`--reveal-delay: ${i * 80}`}>{line}</p>
       ))}
     </div>
   </section>
 
-  <!-- ─── WHAT WE DO ─── -->
-  <section class="bg-surface-950 px-6 py-16">
+  <!-- WHAT WE DO — includes the one real proof point (~940 synced documents, from the flagship system). -->
+  <section class="bg-surface-950 px-6 py-section-md">
     <div class="mx-auto max-w-3xl">
-      <p class="text-lg text-text-soft md:text-xl">
-        We map out everything you're doing manually and build systems that handle it for you. The result — your team stops firefighting, your clients get faster responses, and your business runs like it's supposed to.
+      <p class="reveal text-lg text-text-soft md:text-xl">
+        We map out everything you're doing manually — copying orders, matching invoices, chasing follow-ups — and connect the systems you already have so it happens on its own. On one project, that meant syncing about 940 accounting documents automatically, with zero manual matching.
         <br />
         <span class="mt-3 inline-block font-semibold text-text-primary">Without you babysitting it.</span>
       </p>
     </div>
   </section>
 
-  <!-- ─── WHAT WE AUTOMATE ─── -->
-  <section class="bg-surface-950 px-6 py-20">
+  <!-- WHAT WE AUTOMATE — four static info tiles, not clickable, so no hover/link affordance. -->
+  <section class="bg-surface-950 px-6 py-section-md">
     <div class="mx-auto max-w-5xl border-t border-border-subtle pt-16">
-      <h2 class="text-3xl font-bold text-text-primary md:text-4xl">What we automate</h2>
-      <p class="mt-3 max-w-2xl text-text-muted">
+      <h2 class="reveal text-3xl font-bold text-text-primary md:text-4xl">What we automate</h2>
+      <p class="reveal mt-3 max-w-2xl text-text-muted" style="--reveal-delay: 60">
         Four of the most common places we start. The specifics change, the outcome doesn't — less manual work, more time back.
       </p>
 
       <div class="mt-10 grid gap-8 md:grid-cols-2">
-        <div class="rounded-lg border border-border-subtle bg-surface-950/60 p-6">
-          <h3 class="text-lg font-semibold text-text-primary">Reporting</h3>
-          <p class="mt-2 text-text-muted">
-            Automated reports delivered to your inbox — no spreadsheet wrangling.
-          </p>
-        </div>
-        <div class="rounded-lg border border-border-subtle bg-surface-950/60 p-6">
-          <h3 class="text-lg font-semibold text-text-primary">Invoicing and admin</h3>
-          <p class="mt-2 text-text-muted">
-            Invoices sent, tracked, and followed up on without touching them.
-          </p>
-        </div>
-        <div class="rounded-lg border border-border-subtle bg-surface-950/60 p-6">
-          <h3 class="text-lg font-semibold text-text-primary">Social scheduling</h3>
-          <p class="mt-2 text-text-muted">
-            Your content goes out on time, every time, without the daily login.
-          </p>
-        </div>
-        <div class="rounded-lg border border-border-subtle bg-surface-950/60 p-6">
-          <h3 class="text-lg font-semibold text-text-primary">Messaging</h3>
-          <p class="mt-2 text-text-muted">
-            Automatic follow-ups so no lead or client falls through the cracks.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── PROCESS ─── -->
-  <ProcessBlock
-    heading="What working with us looks like"
-    steps={processSteps}
-  />
-
-  <!-- ─── FAQ ─── -->
-  <section class="bg-surface-950 px-6 py-20">
-    <div class="mx-auto max-w-3xl">
-      <h2 class="mb-10 text-3xl font-bold text-text-primary md:text-4xl">Common questions</h2>
-      <div class="space-y-8">
-        {faq.map(item => (
-          <div>
-            <p class="font-semibold text-text-primary">{item.q}</p>
-            <p class="mt-2 text-text-muted">{item.a}</p>
+        {automateTiles.map((tile, i) => (
+          <div class="reveal rounded-2xl border border-border-subtle bg-surface-900 p-6" style={`--reveal-delay: ${100 + i * 80}`}>
+            <h3 class="text-lg font-semibold text-text-primary">{tile.title}</h3>
+            <p class="mt-2 text-text-muted">{tile.body}</p>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- ─── CONTACT FORM ─── -->
+  <!-- PROCESS -->
+  <ProcessBlock
+    heading="What working with us looks like"
+    steps={processSteps}
+  />
+
+  <!-- FAQ -->
+  <FAQBlock items={faq} />
+
+  <!-- CONTACT FORM -->
   <ContactForm
     heading="Not sure where to start? That's what the first conversation is for."
     source="automations"

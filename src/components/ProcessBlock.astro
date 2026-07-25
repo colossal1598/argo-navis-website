@@ -27,7 +27,7 @@ const { heading = "How it works", steps } = Astro.props;
   <div class="mx-auto max-w-5xl">
 
     <!-- Section heading -->
-    <h2 class="mb-12 text-center text-3xl font-bold text-text-primary md:text-4xl">
+    <h2 class="reveal mb-12 text-center text-3xl font-bold text-text-primary md:text-4xl">
       {heading}
     </h2>
 
@@ -56,7 +56,7 @@ const { heading = "How it works", steps } = Astro.props;
         style={`--process-cols: ${steps.length}`}
       >
         {steps.map((step, i) => (
-          <li class="flex flex-col items-center text-center">
+          <li class="reveal flex flex-col items-center text-center" style={`--reveal-delay: ${i * 100}`}>
 
             <!--
               NUMBER CIRCLE — sits on top of the connecting line (z-10).

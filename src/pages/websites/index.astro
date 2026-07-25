@@ -1,12 +1,22 @@
 ---
+/*
+  PAGE GOAL: /websites service page. Get owners with an embarrassing or
+  non-functional site into a rebuild conversation. Same lead source tag
+  ("websites") as the page this replaces. The confrontational hero and
+  stark problem block already pass the voice bar and are kept verbatim;
+  the main change is the one real proof point the page was missing.
+
+  Copy source: .apm/memory/copy/service-websites-en.md — re-read that
+  file before editing any string below; it is the approved source of
+  truth, not this file. Rebuilt on the Task 2.3 homepage exemplar's token
+  set and motion language (py-section-*, .reveal + --reveal-delay).
+*/
 import Layout from "../../layouts/Layout.astro";
 import ProcessBlock from "../../components/ProcessBlock.astro";
+import FAQBlock from "../../components/FAQBlock.astro";
 import ContactForm from "../../components/ContactForm.astro";
 
-/*
-  PROCESS STEPS — 5 steps specific to the websites service.
-  Different from the homepage steps; both reuse the same component.
-*/
+/* PROCESS STEPS — 5 steps specific to the websites service, unchanged. */
 const processSteps = [
   { label: "You send us your site",  description: "Or tell us you need one from scratch" },
   { label: "We audit it",            description: "Speed, design, structure, messaging" },
@@ -15,11 +25,6 @@ const processSteps = [
   { label: "You launch",             description: "With a site that actually works" },
 ];
 
-/*
-  FAQ — questions and answers shown on the page.
-  To add a question: add another { q, a } object to the array.
-  To remove one: delete its object.
-*/
 const faq = [
   {
     q: "Do I need to have a site already?",
@@ -35,10 +40,6 @@ const faq = [
   },
 ];
 
-/*
-  WEBSITES FORM FIELDS — different from the homepage form.
-  The message field framing is more specific to this service context.
-*/
 const websiteFormFields = [
   {
     id:          "name",
@@ -76,136 +77,85 @@ const websiteFormFields = [
   description="We build sites that bring people in — and rebuild ones that push them away."
 >
 
-  <!-- ─── HERO ─── -->
-  <!--
-    No CTA button here — the design intent is to let them scroll into
-    the problem block first before presenting an offer.
-  -->
-  <section class="relative overflow-hidden bg-surface-950 px-6 py-24 md:py-36">
+  <!-- HERO — intentionally confrontational, kept verbatim. No CTA — let them scroll into the problem first. -->
+  <section class="relative overflow-hidden bg-surface-950 px-6 py-section-lg text-start md:py-section-xl">
     <div class="relative z-10 mx-auto max-w-3xl">
-      <!--
-        HEADLINE — intentionally confrontational.
-        "Either working for you or against you" is meant to be slightly
-        uncomfortable — it surfaces a pain most people already feel.
-      -->
-      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+      <h1 class="reveal text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
         Your website is either working for you or against you. There's no middle ground.
       </h1>
-      <p class="mt-6 max-w-2xl text-lg text-text-muted">
+      <p class="reveal mt-6 max-w-2xl text-lg text-text-muted" style="--reveal-delay: 80">
         We build sites that bring people in — and rebuild ones that push them away.
       </p>
     </div>
   </section>
 
-  <!-- ─── PROBLEM BLOCK ─── -->
-  <!--
-    Three stark lines on a dark contrasting background.
-    Raw text only — no icons, no decoration. The discomfort is intentional.
-    LINES — change each string to update the problem statements.
-  -->
-  <section class="bg-surface-900 px-6 py-20">
+  <!-- PROBLEM BLOCK — unchanged, concrete, no adjectives doing the work. -->
+  <section class="bg-surface-900 px-6 py-section-md">
     <div class="mx-auto max-w-3xl space-y-6">
       {[
         "A slow site loses visitors in 3 seconds.",
         "A confusing layout kills trust before you say a word.",
         "An outdated design tells people you stopped caring.",
-      ].map(line => (
-        <p class="text-2xl font-semibold text-text-primary md:text-3xl">{line}</p>
+      ].map((line, i) => (
+        <p class="reveal text-2xl font-semibold text-text-primary md:text-3xl" style={`--reveal-delay: ${i * 80}`}>{line}</p>
       ))}
     </div>
   </section>
 
-  <!-- ─── WHAT WE DO ─── -->
-  <section class="bg-surface-950 px-6 py-20">
+  <!-- WHAT WE DO — includes the new proof point tying the "no bloat" promise to the flagship system's ₪0/month infra cost. -->
+  <section class="bg-surface-950 px-6 py-section-md">
     <div class="mx-auto max-w-3xl">
-      <p class="text-lg text-text-soft md:text-xl">
+      <p class="reveal text-lg text-text-soft md:text-xl">
         We build clean, fast websites that do one thing —{" "}
-        <!--
-          EMPHASIS — the key phrase is bolded and white.
-          Move the <strong> tags to highlight a different phrase.
-        -->
         <strong class="text-text-primary">turn visitors into leads.</strong>{" "}
         No bloat, no templates that look like everyone else's.
       </p>
 
-      <!--
-        CAPABILITY LINES — three short differentiators.
-        Change any line by editing the string in the array below.
-      -->
       <ul class="mt-8 space-y-3">
         {[
           "Fast and mobile-first",
           "Built to rank on Google",
           "Designed around your customer, not your preferences",
-        ].map(line => (
-          <li class="flex items-start gap-3 text-text-muted">
-            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400"></span>
+        ].map((line, i) => (
+          <li class="reveal flex items-start gap-3 text-text-muted" style={`--reveal-delay: ${80 + i * 60}`}>
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-xs bg-brand-400"></span>
             {line}
           </li>
         ))}
       </ul>
+
+      <!-- PROOF POINT — the fact this page was missing per the copy file. -->
+      <p class="reveal mt-8 text-text-muted" style="--reveal-delay: 260">
+        The same zero-lock-in approach we use to run a client's entire business system for ₪0 a month in infrastructure costs applies to a website too — no bloated monthly hosting fee, no vendor you can't leave.
+      </p>
     </div>
   </section>
 
-  <!-- ─── PROCESS ─── -->
+  <!-- PROCESS -->
   <ProcessBlock
     heading="What working with us looks like"
     steps={processSteps}
   />
 
-  <!-- ─── REBUILD OFFER ─── -->
-  <!--
-    id="rebuild" — for cold outreach link directly to this section:
-    /websites#rebuild
-    This is the most important section for cold prospecting.
-    Full-width, different background to make it stand out.
-  -->
-  <section id="rebuild" class="bg-surface-800 px-6 py-24">
+  <!-- REBUILD OFFER — freshened body copy, less of a stock phrase; unchanged structure/CTA target. -->
+  <section id="rebuild" class="bg-surface-800 px-6 py-section-lg">
     <div class="mx-auto max-w-3xl text-center">
-      <!--
-        REBUILD HEADLINE + BODY — the low-pressure offer.
-        "No pitch, no pressure" is doing heavy lifting here — keep it visible.
-      -->
-      <h2 class="text-3xl font-bold text-text-primary md:text-4xl">
+      <h2 class="reveal text-3xl font-bold text-text-primary md:text-4xl">
         We'll show you what your site could look like. Before you commit to anything.
       </h2>
-      <p class="mx-auto mt-5 max-w-xl text-text-muted">
-        Send us your site. We'll come back with a real example of what we'd do differently — no pitch, no pressure.
+      <p class="reveal mx-auto mt-5 max-w-xl text-text-muted" style="--reveal-delay: 80">
+        Send us your site. We'll come back with a real example of what we'd change — no obligation either way.
       </p>
-      <!--
-        CTA — sharp corners, links to the contact form below.
-        For cold outreach: link directly to /websites#rebuild in emails.
-      -->
-      <a
-        href="#contact"
-        class="mt-8 inline-block rounded-sm bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-400"
-      >
+      <a href="#contact" class="reveal btn btn-primary btn-lg mt-8" style="--reveal-delay: 160">
         Show us your site
       </a>
     </div>
   </section>
 
-  <!-- ─── FAQ ─── -->
-  <section class="bg-surface-950 px-6 py-20">
-    <div class="mx-auto max-w-3xl">
-      <h2 class="mb-10 text-2xl font-bold text-text-primary">Common questions</h2>
+  <!-- FAQ -->
+  <FAQBlock items={faq} />
 
-      <!--
-        FAQ LIST — questions and answers rendered from the faq array above.
-        Open Q&A (no accordion) — answers are always visible on a service page.
-      -->
-      <div class="space-y-8">
-        {faq.map(item => (
-          <div>
-            <p class="font-semibold text-text-primary">{item.q}</p>
-            <p class="mt-2 text-text-muted">{item.a}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── CONTACT FORM ─── -->
+  <!-- CONTACT FORM -->
   <ContactForm
     heading="Got a site that's not doing its job? Tell us."
     source="websites"

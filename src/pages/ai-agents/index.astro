@@ -1,0 +1,160 @@
+---
+/*
+  PAGE GOAL: /ai-agents service page (new). Qualify visitors curious
+  about AI, filter out hype-shoppers, carry the owner's explicit stance:
+  use AI smartly, only where genuinely needed, execute it precisely.
+  Must read as the opposite of an AI-hype page. Lead source tag:
+  "ai-agents".
+
+  Copy source: .apm/memory/copy/service-ai-agents-en.md — re-read that
+  file before editing any string below; it is the approved source of
+  truth, not this file. Built on the Task 2.3 homepage exemplar's token
+  set and motion language (py-section-*, .reveal + --reveal-delay).
+
+  The /automations/reception case-study page doesn't exist on this
+  branch yet — it's a documented future route per the Task Prompt (ships
+  before launch). The link below is intentional; it is not a mistake if
+  it 404s on this branch in isolation.
+*/
+import Layout from "../../layouts/Layout.astro";
+import ProcessBlock from "../../components/ProcessBlock.astro";
+import FAQBlock from "../../components/FAQBlock.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+const processSteps = [
+  {
+    label:       "You tell us the annoying, repetitive part",
+    description: "",
+  },
+  {
+    label:       "We check whether AI actually helps",
+    description: "Honestly, including when it doesn't.",
+  },
+  {
+    label:       "We build it narrow, sharp, and tested",
+    description: "",
+  },
+  {
+    label:       "You get one thing working perfectly",
+    description: "Not a dashboard full of features you'll never use.",
+  },
+];
+
+const faq = [
+  {
+    q: "Do I need a chatbot?",
+    a: "Probably not. Most businesses don't. Tell us what's actually eating your time and we'll tell you if AI is the answer.",
+  },
+  {
+    q: "Is this expensive to run?",
+    a: "We build narrow tools for one job, not a platform — that keeps it cheap to run and easy to understand.",
+  },
+  {
+    q: "What if the AI gets it wrong?",
+    a: "We put a human checkpoint wherever a mistake would cost you something. The AI handles the repetitive part; a person still approves what matters.",
+  },
+];
+
+/* FORM FIELDS — only 3 fields per the copy file; no "website" field here. */
+const aiAgentsFormFields = [
+  {
+    id:          "name",
+    label:       "Your name",
+    type:        "text" as const,
+    placeholder: "Your name",
+    required:    true,
+  },
+  {
+    id:          "email",
+    label:       "Email",
+    type:        "email" as const,
+    placeholder: "you@company.com",
+    required:    true,
+  },
+  {
+    id:          "message",
+    label:       "What's the repetitive task?",
+    type:        "textarea" as const,
+    placeholder: "The thing you or your team does over and over, that a computer could do instead",
+    required:    true,
+  },
+];
+---
+
+<Layout
+  title="AI Agents"
+  description="We build narrow, sharp AI tools only where they replace real, tedious work — nothing labeled 'AI-powered' just to sound modern."
+>
+
+  <!-- HERO — no CTA, let them scroll into the problem first (same convention as /automations and /websites). -->
+  <section class="relative overflow-hidden bg-surface-950 px-6 py-section-lg text-start md:py-section-xl">
+    <div class="relative z-10 mx-auto max-w-3xl">
+      <h1 class="reveal text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+        Most businesses don't need AI. Some need exactly one thing AI is good at.
+      </h1>
+      <p class="reveal mt-6 max-w-2xl text-lg text-text-muted" style="--reveal-delay: 80">
+        We build narrow, sharp AI tools only where they replace real, tedious work — nothing labeled "AI-powered" just to sound modern.
+      </p>
+    </div>
+  </section>
+
+  <!-- PROBLEM BLOCK -->
+  <section class="bg-surface-900 px-6 py-section-md">
+    <div class="mx-auto max-w-3xl space-y-6">
+      {[
+        "Every vendor is selling \"AI-powered\" something. Most of it doesn't do anything you actually need.",
+        "A call missed after hours is a lost customer — and no one's answering the phone at 9pm.",
+        "A pile of documents nobody has time to read, let alone pull data out of by hand.",
+      ].map((line, i) => (
+        <p class="reveal text-2xl font-semibold text-text-primary md:text-3xl" style={`--reveal-delay: ${i * 80}`}>{line}</p>
+      ))}
+    </div>
+  </section>
+
+  <!-- WHAT WE DO -->
+  <section class="bg-surface-950 px-6 py-section-md">
+    <div class="mx-auto max-w-3xl">
+      <p class="reveal text-lg text-text-soft md:text-xl">
+        We don't add AI because it's trendy. We look for the one repetitive, well-defined task where AI genuinely saves time — replying instantly to a missed call, pulling structured data out of a messy document — and we build that, narrow and precise. If AI isn't the right tool for what you need, we'll say so, and build something simpler instead.
+      </p>
+    </div>
+  </section>
+
+  <!--
+    PROOF — Reception, the narrow-AI system already running for clients.
+    Links to /automations/reception per the Task Prompt — see the PAGE
+    GOAL note above re: that page's status.
+  -->
+  <section class="border-y border-border-subtle bg-surface-900 px-6 py-section-md">
+    <div class="mx-auto max-w-3xl">
+      <p class="reveal badge badge-brand mb-4">Running today</p>
+      <p class="reveal text-lg leading-relaxed text-text-muted" style="--reveal-delay: 60">
+        One example: Reception, a system we built that sends an automatic WhatsApp reply from a business's own number the moment a call is missed — built for exactly one job, and running for clients today.
+      </p>
+      <a href="/automations/reception" class="focus-ring reveal mt-4 inline-flex items-center gap-1 rounded-sm text-sm font-medium text-brand-400" style="--reveal-delay: 120">
+        See how Reception works
+        <svg class="h-4 w-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <ProcessBlock
+    heading="What working with us looks like"
+    steps={processSteps}
+  />
+
+  <!-- FAQ -->
+  <FAQBlock items={faq} />
+
+  <!-- CONTACT FORM -->
+  <ContactForm
+    heading="Curious whether AI actually helps your business — or not?"
+    source="ai-agents"
+    fields={aiAgentsFormFields}
+    reassurance="We usually reply within 24 hours."
+  />
+
+</Layout>

@@ -177,6 +177,8 @@ function leadReplySubject(source: string): string {
   const subjects: Record<string, string> = {
     websites:    "Your website brief is with us — Argo Navis",
     automations: "Your automation enquiry is with us — Argo Navis",
+    systems:     "Your system brief is with us — Argo Navis",
+    "ai-agents": "Your AI enquiry is with us — Argo Navis",
   };
   return subjects[source] ?? "We got your message — Argo Navis";
 }
@@ -185,6 +187,8 @@ function sourceLabel(source: string): string {
   const labels: Record<string, string> = {
     websites:    "a new website",
     automations: "business automation",
+    systems:     "a new system",
+    "ai-agents": "an AI tool",
   };
   return labels[source] ?? "something great";
 }
@@ -343,6 +347,8 @@ function leadReplySubjectHe(source: string): string {
   const subjects: Record<string, string> = {
     "websites-he":    "קיבלנו את הבריף שלך לאתר — Argo Navis",
     "automations-he": "קיבלנו את הפנייה שלך לאוטומציה — Argo Navis",
+    "systems-he":     "קיבלנו את הבריף שלך למערכת — Argo Navis",
+    "ai-agents-he":   "קיבלנו את הפנייה שלך ל-AI — Argo Navis",
   };
   return subjects[source] ?? "קיבלנו את ההודעה שלך — Argo Navis";
 }
@@ -351,6 +357,8 @@ function sourceLabelHe(source: string): string {
   const labels: Record<string, string> = {
     "websites-he":    "אתר חדש",
     "automations-he": "אוטומציה עסקית",
+    "systems-he":     "מערכת חדשה",
+    "ai-agents-he":   "כלי AI",
   };
   return labels[source] ?? "משהו מעולה";
 }

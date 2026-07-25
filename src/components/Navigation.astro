@@ -11,8 +11,10 @@ import { switchLocalePath, type SiteLocale, withLocale } from "../lib/locale";
 */
 const navLinks: { href: string; label: Record<SiteLocale, string> }[] = [
   { href: "/#services",  label: { en: "Services",    he: "שירותים" } },
+  { href: "/systems",     label: { en: "Systems",     he: "מערכות" } },
   { href: "/automations", label: { en: "Automations", he: "אוטומציות" } },
   { href: "/websites",    label: { en: "Websites",    he: "אתרים" } },
+  { href: "/ai-agents",   label: { en: "AI Agents",   he: "סוכני AI" } },
 ];
 
 interface Props {
@@ -63,20 +65,11 @@ const copy: Record<SiteLocale, {
 const t = copy[locale];
 const ctaHref = withLocale("/#contact", locale);
 
-/* Localized navigation labels keep structure identical across both languages. */
-const localizedLinks = navLinks.map((link) => ({
-  label: link.label[locale],
-  href: withLocale(link.href, locale),
-}));
-
-const currentPath = Astro.url.pathname;
-
 /*
-  LANGUAGE TOGGLE TARGET:
-  Some pages exist in only one language (e.g. showcase sub-pages that were
-  never translated). Naively switching the prefix would produce a 404, so we
-  check the switched path against the real route list (from src/pages) and
-  fall back to the closest existing parent page instead.
+  ROUTE EXISTENCE CHECK — shared by the nav-link filter below and the
+  language-toggle fallback further down. Some pages only exist in one
+  locale (e.g. a new service page built EN-first) — this is the same
+  route list either use to avoid pointing at a 404.
 */
 const pageFiles = import.meta.glob("../pages/**/*.astro");
 const existingRoutes = new Set(
@@ -88,6 +81,27 @@ const existingRoutes = new Set(
     return route === "" ? "/" : route;
   })
 );
+
+/* A link's target page exists if its path (ignoring any #hash) is a real route. */
+function routeExists(href: string): boolean {
+  const path = href.split("#")[0] || "/";
+  return existingRoutes.has(path);
+}
+
+/*
+  Localized navigation labels keep structure identical across both
+  languages, but only for links whose page actually exists in this
+  locale — e.g. a service page built EN-first doesn't show in the nav
+  on HE pages until its /he counterpart ships, instead of 404ing.
+*/
+const localizedLinks = navLinks
+  .map((link) => ({
+    label: link.label[locale],
+    href: withLocale(link.href, locale),
+  }))
+  .filter((link) => routeExists(link.href));
+
+const currentPath = Astro.url.pathname;
 
 function nearestExistingPath(path: string): string {
   let candidate = path.replace(/\/+$/, "") || "/";

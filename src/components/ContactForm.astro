@@ -167,7 +167,15 @@ const turnstileRequired = import.meta.env.PROD;
         <div>
           <label for={field.id} class="field-label">
             {field.label}
-            {field.required && <span class="ms-1 text-brand-400">*</span>}
+            {/*
+              Required-asterisk color audit fix: text-brand-400 measured
+              ~3.07:1 against the light-theme surface (fails WCAG AA's
+              4.5:1). text-text-primary is the theme-mapped body-text
+              token — it's always near-max contrast against the surface
+              in both themes (checked: ~19:1 dark, ~18:1 light) rather
+              than a single fixed hex that only works in one theme.
+            */}
+            {field.required && <span class="ms-1 font-bold text-text-primary">*</span>}
           </label>
 
           {field.type === "textarea" ? (
@@ -204,7 +212,11 @@ const turnstileRequired = import.meta.env.PROD;
               type="button"
               data-contact-method={method.id}
               class:list={[
-                "contact-method-btn inline-flex items-center justify-center gap-2 rounded-sm border border-border-subtle px-3 py-2 text-xs font-medium text-text-muted transition-colors hover:border-brand-500/60 hover:text-text-primary focus-ring",
+                /* min-h-11 (44px) audit fix: px-3/py-2/text-xs alone was
+                   under the 44px touch-target minimum. min-h-11 sets a
+                   floor without changing padding/border/font, so the
+                   visual style is identical, just tall enough to tap. */
+                "contact-method-btn inline-flex min-h-11 items-center justify-center gap-2 rounded-sm border border-border-subtle px-3 py-2 text-xs font-medium text-text-muted transition-colors hover:border-brand-500/60 hover:text-text-primary focus-ring",
                 index === 0 && "border-brand-500/60 bg-brand-500/5 font-semibold text-text-primary",
               ]}
               aria-pressed={index === 0 ? "true" : "false"}

@@ -1,0 +1,63 @@
+---
+/*
+  FAQ BLOCK — reusable accordion of question/answer pairs, shared across
+  every service page. Native <details>/<summary> — no JS required, and
+  keyboard/screen-reader accessible by default (unlike the old per-page
+  "always open" Q&A pattern this replaces).
+
+  PROPS:
+    heading? — optional section heading (default: "Common questions")
+    items    — array of { q, a }
+*/
+interface FaqItem {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  heading?: string;
+  items:    FaqItem[];
+}
+
+const { heading = "Common questions", items } = Astro.props;
+---
+
+<section class="bg-surface-950 px-6 py-section-lg">
+  <div class="mx-auto max-w-3xl">
+
+    <h2 class="reveal mb-10 text-center text-3xl font-bold text-text-primary md:text-4xl">
+      {heading}
+    </h2>
+
+    <!--
+      ACCORDION — each <details> is its own reveal item with a light
+      stagger. group-open: drives the chevron rotation; list-none +
+      the webkit selector strip the native disclosure marker so only
+      our own chevron icon shows.
+    -->
+    <div class="flex flex-col gap-3">
+      {items.map((item, i) => (
+        <details
+          class="reveal group rounded-sm border border-border-subtle bg-surface-900"
+          style={`--reveal-delay: ${i * 80}`}
+        >
+          <summary class="focus-ring flex list-none cursor-pointer items-center justify-between gap-4 rounded-sm px-5 py-4 font-semibold text-text-primary transition-colors hover:bg-surface-800 [&::-webkit-details-marker]:hidden">
+            <span>{item.q}</span>
+            <svg
+              class="h-4 w-4 shrink-0 text-text-muted transition-transform duration-200 group-open:rotate-90"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </summary>
+          <p class="px-5 pb-4 leading-relaxed text-text-muted">{item.a}</p>
+        </details>
+      ))}
+    </div>
+
+  </div>
+</section>
