@@ -1,0 +1,73 @@
+---
+/*
+  STEPS SECTION — numbered steps with a real paragraph of description
+  each. Distinct from ProcessBlock.astro, which is built for short
+  one-line captions in a horizontal, connecting-line layout — cramming a
+  multi-sentence paragraph into that layout reads badly. Use ProcessBlock
+  for short captions; use this whenever a step needs a full paragraph.
+
+  Always a single column (even on desktop) — a readable paragraph column
+  beats a cramped 3-up grid, and it keeps the numbered order obviously
+  sequential top-to-bottom.
+
+  PROPS — same Step shape as ProcessBlock so content can move between
+  the two components without reshaping.
+    heading? — optional section heading
+    steps    — array of { label, description }
+                 label       — short bold lead-in (e.g. "Build the system.")
+                 description — one paragraph, as long as it needs to be
+*/
+interface Step {
+  label:       string;
+  description: string;
+}
+
+interface Props {
+  heading?: string;
+  steps:    Step[];
+}
+
+const { heading, steps } = Astro.props;
+---
+
+<!--
+  border-b marks the seam with whatever follows (e.g. a contact section
+  on the same bg-surface-950 tone) — without it, two consecutive
+  same-background sections run together with no visual break.
+-->
+<section class="border-b border-border-subtle bg-surface-950 px-6 py-section-lg">
+  <div class="mx-auto max-w-2xl">
+
+    {heading && (
+      <h2 class="reveal mb-10 text-center text-3xl font-bold text-text-primary md:text-4xl">
+        {heading}
+      </h2>
+    )}
+
+    <!--
+      STEP LIST — number chip + label + paragraph per row. A connecting
+      line runs behind the chips (like ProcessBlock's, just vertical) to
+      keep the "this is a sequence" read. Always visible — this layout is
+      single-column at every breakpoint, so there's no responsive reason
+      to hide it on mobile (unlike ProcessBlock's horizontal line, which
+      only makes sense once steps sit side by side).
+    -->
+    <ol class="relative flex flex-col gap-8">
+      <div class="absolute top-5 bottom-5 start-5 w-px bg-border-subtle" aria-hidden="true"></div>
+
+      {steps.map((step, i) => (
+        <li class="reveal relative flex gap-5" style={`--reveal-delay: ${i * 100}`}>
+          <!-- NUMBER CHIP — small-radius rectangle, never a circle/pill -->
+          <div class="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-brand-500/30 bg-surface-950 text-sm font-bold text-brand-400">
+            {i + 1}
+          </div>
+          <div class="pt-1.5">
+            <p class="font-semibold text-text-primary">{step.label}</p>
+            <p class="mt-1.5 leading-relaxed text-text-muted">{step.description}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+  </div>
+</section>

@@ -93,6 +93,13 @@ const hebrewURL = new URL(withLocale(canonicalPath, "he"), siteUrl);
       (() => {
         const key = "argo-theme";
         const html = document.documentElement;
+
+        // Marks JS as available BEFORE first paint. `.reveal` (global.css)
+        // only hides content when `.js` is present on <html> — so a
+        // visitor with JS disabled/blocked never sees hidden content
+        // waiting on a script that will never run.
+        html.classList.add("js");
+
         const stored = localStorage.getItem(key);
         if (stored === "light" || stored === "dark") {
           html.setAttribute("data-theme", stored);
@@ -123,3 +130,30 @@ const hebrewURL = new URL(withLocale(canonicalPath, "he"), siteUrl);
 
   </body>
 </html>
+
+<!--
+  SCROLL-REVEAL OBSERVER — shared by every page, not just this one.
+  `.reveal` (defined once in global.css) starts hidden/offset; this
+  observer adds `.is-visible` the moment an element scrolls into view,
+  which plays the entrance once. Stagger a group with the
+  `--reveal-delay` custom property (ms) on each element — see
+  AchievementsStrip / VisionSection / StepsSection for examples.
+  Lives here (not per-page) so any current or future page can use
+  `.reveal` without re-wiring this each time.
+-->
+<script>
+  const revealItems = Array.from(document.querySelectorAll(".reveal"));
+
+  if (revealItems.length > 0) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    revealItems.forEach((item) => observer.observe(item));
+  }
+</script>

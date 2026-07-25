@@ -1,0 +1,46 @@
+---
+/*
+  VISION SECTION — a longer editorial statement (multiple paragraphs),
+  distinct from WhyUs.astro which only takes one headline + one short
+  body string. Use this when the copy is a real multi-paragraph position
+  (an "about us" / philosophy block); use WhyUs for a single punchy line.
+
+  bg-surface-800 breaks the page rhythm the same way WhyUs does — a
+  tonal step between the surrounding bg-surface-950 sections.
+
+  PROPS:
+    heading?    — optional headline above the paragraphs (omit if the
+                  copy doesn't have one — don't invent a heading)
+    paragraphs  — array of paragraph strings, rendered in order
+*/
+interface Props {
+  heading?:    string;
+  paragraphs:  string[];
+}
+
+const { heading, paragraphs } = Astro.props;
+---
+
+<section class="bg-surface-800 px-6 py-section-lg">
+  <div class="mx-auto max-w-2xl">
+
+    {heading && (
+      <h2 class="reveal text-center text-3xl font-bold leading-snug tracking-tight text-text-primary md:text-4xl">
+        {heading}
+      </h2>
+    )}
+
+    <!--
+      PARAGRAPHS — stacked with generous leading for an editorial feel.
+      Each one reveals with a light stagger.
+    -->
+    <div class:list={["flex flex-col gap-5 text-lg leading-relaxed text-text-muted", heading && "mt-6"]}>
+      {paragraphs.map((paragraph, i) => (
+        <p class="reveal" style={`--reveal-delay: ${i * 90}`}>
+          {paragraph}
+        </p>
+      ))}
+    </div>
+
+  </div>
+</section>

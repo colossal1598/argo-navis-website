@@ -1,0 +1,73 @@
+---
+/*
+  ACHIEVEMENTS STRIP — a small set of real, number-backed results from one
+  project, not a generic "stats bar". Every value must be traceable to a
+  real source (see CLAUDE.md, Content honesty) — never invent or round a
+  number to make it look better.
+
+  PROPS — everything arrives via props so this works for any page/locale
+  that has a real project to point to, not just the homepage.
+    intro  — small label above the numbers (e.g. "One real project. No
+             rounded numbers.")
+    stats  — array of { value, description }
+               value       — the headline number (e.g. "21 → 1", "1 week")
+               description — one short sentence of context
+    note   — optional small attribution line under the grid (e.g. "All
+              four numbers are from the same project — full story below.")
+    id     — optional anchor id, so a CTA elsewhere on the page (e.g. a
+              hero "see how it worked" link) can jump straight here.
+*/
+interface Stat {
+  value:       string;
+  description: string;
+}
+
+interface Props {
+  intro?: string;
+  stats:  Stat[];
+  note?:  string;
+  id?:    string;
+}
+
+const { intro, stats, note, id } = Astro.props;
+---
+
+<section id={id} class="border-y border-border-subtle bg-surface-900 px-6 py-section-sm">
+  <div class="mx-auto max-w-5xl">
+
+    <!-- Intro label — small, uppercase, sets up "these are real" before the numbers land -->
+    {intro && (
+      <p class="reveal text-center text-xs font-semibold uppercase tracking-widest text-text-muted">
+        {intro}
+      </p>
+    )}
+
+    <!--
+      STAT GRID — 2 columns on mobile, 4 on desktop. Each stat reveals with
+      a short stagger so the row reads left-to-right instead of popping in
+      all at once.
+    -->
+    <div class="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-4">
+      {stats.map((stat, i) => (
+        <div
+          class="reveal border-s-2 border-brand-500/40 ps-4 text-start"
+          style={`--reveal-delay: ${i * 100}`}
+        >
+          <p class="text-3xl font-extrabold tracking-tight text-text-primary md:text-4xl">
+            {stat.value}
+          </p>
+          <p class="mt-1.5 text-sm leading-relaxed text-text-muted">
+            {stat.description}
+          </p>
+        </div>
+      ))}
+    </div>
+
+    {note && (
+      <p class="reveal mt-8 text-center text-xs text-text-muted">
+        {note}
+      </p>
+    )}
+
+  </div>
+</section>

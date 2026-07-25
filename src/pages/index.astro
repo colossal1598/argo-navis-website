@@ -1,45 +1,123 @@
 ---
+/*
+  PAGE GOAL: Homepage. State the positioning in the reader's own words
+  (the WhatsApp/Morning/spreadsheet disconnect they already live with),
+  prove it with one real, number-backed story, and move the visitor to a
+  diagnostic conversation — or to the fuel-distribution proof further
+  down the page if they need convincing first. Every claim below is
+  either a stated value or traceable to that fuel-distribution case
+  study (see .apm/memory/content-brief.md §"Facts Verification
+  Summary"). No developer/commit metrics anywhere on this page — only
+  business numbers (see CLAUDE.md, Content honesty).
+
+  Copy source: .apm/memory/copy/homepage-en.md — re-read that file
+  before editing any string below; it is the approved source of truth,
+  not this file.
+
+  There is no fuel-distribution case-study page yet (content-brief §10
+  describes it but it hasn't been built) — the hero's secondary CTA
+  points at the achievements strip further down this same page instead
+  of a page that doesn't exist yet, matching the existing "no dead
+  links" convention already used in ShowcaseCard.astro. Swap the href
+  to the real case-study path once that page ships.
+*/
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
-import ServicesSection from "../components/ServicesSection.astro";
-import WhyUs from "../components/WhyUs.astro";
-import ProcessBlock from "../components/ProcessBlock.astro";
+import AchievementsStrip from "../components/AchievementsStrip.astro";
+import VisionSection from "../components/VisionSection.astro";
+import StepsSection from "../components/StepsSection.astro";
 import ContactForm from "../components/ContactForm.astro";
 
-/*
-  HOMEPAGE PROCESS STEPS — the four stages of working with Argo Navis.
-  Change label or description on any step without touching the component.
-  To add a step: add another object to the array.
-*/
-const processSteps = [
-  { label: "Discovery",  description: "You tell us what's going on" },
-  { label: "Proposal",   description: "We come back with a clear plan and price" },
-  { label: "Build",      description: "We execute, you stay informed" },
-  { label: "Done",       description: "Delivered, working, yours" },
+/* ACHIEVEMENTS STRIP — all four numbers are from the same real project
+   (a family fuel-distribution business). Do not add, round, or invent
+   a number here without a traceable source. */
+const achievements = [
+  {
+    value:       "21 → 1",
+    description: "21 spreadsheets, replaced by one database. Nothing was thrown away — every row migrated.",
+  },
+  {
+    value:       "1 week",
+    description: "From first meeting to a working system, start to finish.",
+  },
+  {
+    value:       "~1,900 / year",
+    description: "Delivery records migrated out of the spreadsheets and into the new system, automatically deduplicated.",
+  },
+  {
+    value:       "₪0 / month",
+    description: "Infrastructure cost. Runs entirely on free-tier hosting — no server bill, ever.",
+  },
+];
+
+/* VISION / ATTITUDE — the site's one editorial statement. No heading in
+   the approved copy — don't add one. */
+const visionParagraphs = [
+  "Most small businesses are still run the way they were twenty years ago: a spreadsheet only one person understands, a notebook for the rest, and an evening every month spent reconciling the two. That's not a technology problem — it's just what happens when nobody's had time to fix it.",
+  "We think that's worth fixing, but not by selling you more software to manage. The point is to give you back the evenings — the reconciliation, the retyping, the \"did I already invoice this customer\" — not to add another system to babysit.",
+  "Independence matters as much as the fix itself. You own your data and your system. No monthly fee that keeps climbing, no vendor you can't leave, no enterprise contract sized for a company twenty times your size.",
+  "Where AI genuinely saves time — replying instantly to a missed call, pulling structured data out of a messy document — we use it, built narrow and precise for that one job. Where it doesn't, we don't force it in. Most of what a small business needs isn't AI at all. It's just its own data, connected.",
+];
+
+/* WAY OF WORKING — three real steps, each a full paragraph (StepsSection,
+   not ProcessBlock — see that component's doc comment for why). */
+const wayOfWorkingSteps = [
+  {
+    label:       "A short diagnosis, not a sales call.",
+    description: "An hour or two going through your spreadsheets and how you actually work. You get a short, concrete document back: where the time and money are leaking, what's worth automating first, what isn't. Low cost, low risk — meant to be easy to say yes to.",
+  },
+  {
+    label:       "Build the system.",
+    description: "A system built around how your business already runs — not the other way around. Your existing data migrates in, nothing is lost. It connects to what you already use (Morning, WhatsApp, whatever else is in the mix), and it works from a phone, because that's where you actually are during the day.",
+  },
+  {
+    label:       "Stay reachable.",
+    description: "Once it's running, small changes and new features come as needed, on a light retainer — not a bloated support contract. Backups run automatically. If something breaks, there's one person to call.",
+  },
 ];
 ---
 
 <Layout
   title="Home"
-  description="Argo Navis builds websites and automations that generate leads and scale your business."
+  description="Argo Navis builds one system that connects what you already use, pulls your business out of the spreadsheets, and runs from your phone."
 >
 
-  <Hero />
+  <!-- HERO — the disconnect the reader already lives with, not a feature pitch. -->
+  <Hero
+    headline="The orders land in WhatsApp. The invoices sit in Morning. You're the only thing connecting them."
+    subline="We build one system that connects what you already use, pulls your business out of the spreadsheets, and runs from your phone. No new software to learn. No enterprise contract. No lock-in."
+    cta={{ label: "Talk to us about your setup", href: "#contact" }}
+    ctaSecondary={{ label: "See how it worked for a fuel-distribution business →", href: "#achievements" }}
+  />
 
-  <ServicesSection />
+  <!-- ACHIEVEMENTS STRIP — the one section on the site allowed to look like a stats row, because every number here is real and from one project. -->
+  <AchievementsStrip
+    id="achievements"
+    intro="One real project. No rounded numbers."
+    stats={achievements}
+    note="All four numbers are from the same project — a family fuel-distribution business. Full story below."
+  />
 
-  <WhyUs />
+  <!-- VISION / ATTITUDE — the editorial "why us" statement, in full paragraphs. -->
+  <VisionSection paragraphs={visionParagraphs} />
 
-  <ProcessBlock
-    heading="How it works"
-    steps={processSteps}
+  <!-- WAY OF WORKING — the three real steps of engaging Argo Navis. -->
+  <StepsSection
+    heading="Way of Working"
+    steps={wayOfWorkingSteps}
   />
 
   <!--
-    Contact form — fields, heading, and reassurance text are all
-    using the component defaults (defined in ContactForm.astro).
-    Pass props here to override them for this page specifically.
+    CONTACT — converts to the same diagnostic conversation as every other
+    page. `source="landing"` matches the previous homepage's tag so lead
+    attribution stays consistent.
   -->
-  <ContactForm source="landing" />
+  <ContactForm
+    heading="Still doing this by hand?"
+    subheading="If a spreadsheet, a notebook, or your own memory is holding a piece of your business together, that's exactly the conversation worth having. Tell us how things run today — we'll tell you honestly whether it's worth fixing and where to start."
+    submitLabel="Start with a diagnostic conversation"
+    reassurance="No pitch prepared in advance. We ask about your business first."
+    source="landing"
+  />
 
 </Layout>

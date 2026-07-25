@@ -251,6 +251,13 @@ body {
   .reveal starts hidden/offset; toggling .is-visible (e.g. via an
   IntersectionObserver) plays the entrance once. Stagger a group by
   setting the --reveal-delay custom property (in ms) per item.
+
+  Progressive enhancement: the hidden starting state only applies under
+  `.js` (stamped on <html> by an early inline script in Layout.astro,
+  before first paint). Without that class — JS disabled/blocked, or it
+  errors before running — `.reveal` elements are simply visible by
+  default instead of permanently stuck at opacity:0. Never write plain
+  `.reveal { opacity: 0 }` again; it silently breaks no-JS visitors.
   ─────────────────────────────────────────────────────────────────
 */
 @keyframes reveal-up {
@@ -264,7 +271,7 @@ body {
   }
 }
 
-.reveal {
+.js .reveal {
   opacity: 0;
   transform: translateY(1rem);
 }
@@ -275,7 +282,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
+  .js .reveal {
     opacity: 1;
     transform: none;
   }

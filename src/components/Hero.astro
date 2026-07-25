@@ -3,10 +3,13 @@
   PROPS — every string is override-able so this component works for both
   locales (and any future landing page): the HE homepage passes Hebrew
   copy here instead of hand-copying this section's markup.
-    headline — biggest text on the page, ~8-12 words
-    subline  — smaller, slightly muted, one punchy sentence
-    cta      — single button: { label, href }. href points at a contact
-               form section by default, but can be any URL (e.g. Calendly).
+    headline     — biggest text on the page, ~8-12 words
+    subline      — smaller, slightly muted, one punchy sentence
+    cta          — primary button: { label, href }. href points at a
+                   contact form section by default, but can be any URL.
+    ctaSecondary — optional second, lower-emphasis button (e.g. "see the
+                   proof" linking to a case study or an in-page anchor).
+                   Omit it on pages that only need one CTA.
 */
 interface HeroCta {
   label: string;
@@ -14,15 +17,17 @@ interface HeroCta {
 }
 
 interface Props {
-  headline?: string;
-  subline?:  string;
-  cta?:      HeroCta;
+  headline?:     string;
+  subline?:      string;
+  cta?:          HeroCta;
+  ctaSecondary?: HeroCta;
 }
 
 const {
-  headline = "Your website and workflows — sharp, professional, and actually working.",
-  subline  = "Most businesses leak money through the cracks. We close them.",
-  cta      = { label: "Book a Call", href: "/#contact" },
+  headline     = "Your website and workflows — sharp, professional, and actually working.",
+  subline      = "Most businesses leak money through the cracks. We close them.",
+  cta          = { label: "Book a Call", href: "/#contact" },
+  ctaSecondary,
 } = Astro.props;
 ---
 
@@ -34,20 +39,25 @@ const {
       HEADLINE — h1 for SEO. Only one h1 per page.
       The copy is intentionally long and confident — let it wrap.
     -->
-    <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+    <h1 class="reveal text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
       {headline}
     </h1>
 
     <!-- SUBLINE — muted color, not competing with the headline -->
-    <p class="mt-6 max-w-xl text-lg text-text-muted">
+    <p class="reveal mt-6 max-w-xl text-lg text-text-muted" style="--reveal-delay: 80">
       {subline}
     </p>
 
-    <!-- CTA BUTTON — token button classes (sharp corners, baked-in focus ring). -->
-    <div class="mt-10">
+    <!-- CTAS — token button classes (sharp corners, baked-in focus ring). Secondary is optional. -->
+    <div class="reveal mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center" style="--reveal-delay: 160">
       <a href={cta.href} class="btn btn-primary btn-lg">
         {cta.label}
       </a>
+      {ctaSecondary && (
+        <a href={ctaSecondary.href} class="btn btn-secondary btn-lg">
+          {ctaSecondary.label}
+        </a>
+      )}
     </div>
 
   </div>
