@@ -9,12 +9,15 @@ import { stripLocalePrefix, type SiteLocale, withLocale } from "../lib/locale";
     title       (required) — shown in the browser tab and used by SEO
     description (optional) — shown in Google search snippets
                              defaults to a generic tagline if not provided
+    noindex     (optional) — set true for internal/preview pages (e.g. the
+                             style guide) to keep them out of search results
 */
 interface Props {
   title: string;
   description?: string;
   locale?: SiteLocale;
   dir?: "ltr" | "rtl";
+  noindex?: boolean;
 }
 
 const {
@@ -22,6 +25,7 @@ const {
   description = "Argo Navis – automations, websites, and campaigns that grow your business.",
   locale = "en",
   dir = locale === "he" ? "rtl" : "ltr",
+  noindex = false,
 } = Astro.props;
 
 const siteUrl = import.meta.env.SITE ?? "https://argo-navis.net";
@@ -53,6 +57,9 @@ const hebrewURL = new URL(withLocale(canonicalPath, "he"), siteUrl);
     <link rel="alternate" hreflang="en" href={englishURL} />
     <link rel="alternate" hreflang="he" href={hebrewURL} />
     <link rel="alternate" hreflang="x-default" href={englishURL} />
+
+    <!-- NOINDEX — internal/preview pages (e.g. /styleguide) opt in via the noindex prop -->
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <!--
       OPEN GRAPH — controls how the page looks when shared on
