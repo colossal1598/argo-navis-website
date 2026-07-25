@@ -31,6 +31,7 @@
   --color-gold-400: #fbbf24;
   --color-gold-500: #f59e0b;
   --color-gold-600: #d97706;
+  --color-gold-800: #92400e; /* light-theme text step only (badge contrast fix, Task 2.5) — matches Tailwind's amber-800 exactly, same as how gold-300/400/500/600 already mirror amber */
 
   /* ─── Semantic theme tokens (mapped by data-theme) ─── */
   --color-surface-950: var(--theme-surface-950);
@@ -172,6 +173,20 @@ body {
 }
 
 /*
+  Offset-color modifier for .focus-ring on a non-surface-950 background.
+  A plain `focus:ring-offset-surface-900` utility stacked in markup does
+  NOT win here — Tailwind emits component classes defined via @apply
+  later in the same utilities layer than plain utilities, so at equal
+  selector specificity .focus-ring's own hardcoded offset still wins
+  (verified in compiled output, Task 2.4 audit). This modifier is
+  defined after .focus-ring in this same file so it wins by source
+  order instead. Pair as `class="focus-ring ... focus-ring-on-900"`.
+*/
+.focus-ring-on-900 {
+  @apply focus:ring-offset-surface-900;
+}
+
+/*
   Buttons — one base recipe + size/variant modifiers.
   Base owns shape, weight, motion, and focus; variants own color;
   sizes own padding/type scale. Always small-radius rectangles —
@@ -234,6 +249,70 @@ body {
 }
 .badge-muted {
   @apply bg-surface-800 font-medium text-text-muted;
+}
+
+/*
+  Light-theme contrast fix (Task 2.5 audit finding): brand-300/gold-300/
+  slate-300 are fixed hex values, not theme-remapped like the surface and
+  text tokens — they read fine on dark surfaces but fail WCAG AA (~2:1) on light ones.
+  Step to a darker shade of the same color for light mode only; dark
+  theme is untouched. Computed contrast against light-theme surface-950
+  (#f8fafc): brand-700 ≈8.4:1, gold-800 ≈6.8:1, slate-700 ≈9.9:1.
+*/
+html[data-theme="light"] .badge-brand {
+  color: var(--color-brand-700);
+}
+html[data-theme="light"] .badge-gold {
+  color: var(--color-gold-800);
+}
+html[data-theme="light"] .badge-slate {
+  color: var(--color-slate-700);
+}
+
+/*
+  Accent text for small chips on a surface background (e.g. numbered
+  step/takeaway chips) — same light-theme contrast problem and fix as
+  the badges above (brand-400 ≈3.1:1 on light surface-950, fails AA).
+  Use instead of a bare `text-brand-400` utility for this pattern.
+*/
+.chip-accent-text {
+  @apply text-brand-400;
+}
+html[data-theme="light"] .chip-accent-text {
+  color: var(--color-brand-700);
+}
+
+/*
+  Long-form narrative prose (ShowcaseSection's slot content: <p>, <ul>/
+  <ol>, <strong>, <a>, <code>). Replaces "prose"/"prose-invert" — no
+  @tailwindcss/typography plugin is installed (budget is zero) — with
+  real utility styling for the handful of elements case-study copy
+  actually uses. Also fixes the same light-theme link-contrast problem
+  as .chip-accent-text above (brand-400 fails AA on a light surface).
+*/
+.showcase-prose {
+  @apply mt-5 flex flex-col gap-4 text-text-muted;
+}
+.showcase-prose :where(ul, ol) {
+  @apply ms-5 space-y-2;
+}
+.showcase-prose ul {
+  @apply list-disc;
+}
+.showcase-prose ol {
+  @apply list-decimal;
+}
+.showcase-prose strong {
+  @apply font-semibold text-text-primary;
+}
+.showcase-prose a {
+  @apply text-brand-400 hover:text-brand-300;
+}
+html[data-theme="light"] .showcase-prose a {
+  color: var(--color-brand-700);
+}
+.showcase-prose code {
+  @apply rounded-xs bg-surface-900 px-1 py-0.5 font-mono text-xs;
 }
 
 /* Form fields — underline style already used in ContactForm.astro. */

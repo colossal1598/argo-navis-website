@@ -1,0 +1,129 @@
+---
+/*
+  PAGE GOAL: High-intent landing page for "our whole business runs on a
+  spreadsheet" traffic. Exactly one conversion goal — submit the form at
+  the bottom to start a diagnostic conversation. No nav chrome (see
+  LandingLayout), no secondary buttons, no link list. The Proof section's
+  case-study mention is a plain inline text link, never a button, so it
+  never competes with the one form CTA.
+
+  Copy source: .apm/memory/copy/lp-spreadsheets-en.md — re-read that file
+  before editing any string below; it is the approved source of truth,
+  not this file.
+
+  INTEGRATION NOTE (see .apm/memory/lp-pattern.md "Leads.ts checklist" and
+  the Task 2.4 log for full detail): the approved copy asks for 4 separate
+  fields (name, phone/WhatsApp, business type, pain point), but the shared
+  /api/leads endpoint only validates/saves name + email + message by exact
+  field name — any other custom field id is silently dropped (never saved
+  to Supabase, never in the notification email). So this page asks for
+  name + email (email not in the approved copy, added because the backend
+  hard-requires it) + one combined message field covering business type
+  and pain point, and captures the phone/WhatsApp number through
+  ContactForm's existing contact-method picker (defaulted to WhatsApp)
+  instead of a new custom field that would lose the data.
+*/
+import LandingLayout from "../../layouts/LandingLayout.astro";
+import LPHero from "../../components/LPHero.astro";
+import ChecklistSection from "../../components/ChecklistSection.astro";
+import ProofSection from "../../components/ProofSection.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+/* PAIN — flat statements, no bold lead-in. Order doesn't matter, so no
+   numbering/sequence styling (see ChecklistSection's doc comment). */
+const painItems = [
+  { label: "One giant spreadsheet, and you're the only person who really understands it." },
+  { label: "Every month-end, a whole evening matching invoices to spreadsheet rows by hand." },
+  { label: "A forgotten check, an invoice that never went out, a license renewal you missed — and it cost you money." },
+  { label: "Orders come in on WhatsApp. You copy them into the spreadsheet yourself, later, if you remember." },
+];
+
+/* WHAT CHANGES — bold lead-in + rest of the sentence. */
+const changesItems = [
+  {
+    label:       "Your data moves in — all of it.",
+    description: "Every row, every past month. Nothing gets thrown away.",
+  },
+  {
+    label:       "One system instead of five open tabs.",
+    description: "No more jumping between this month's sheet and last month's to answer a simple question.",
+  },
+  {
+    label:       "What you already use gets connected, not replaced.",
+    description: "Morning, WhatsApp, whatever else is in the mix — instead of you being the one copying between them.",
+  },
+  {
+    label:       "It works from your phone.",
+    description: "Because that's where you actually are most of the day, not at a desk.",
+  },
+];
+
+/* Combined field covering "business type" + "pain point" from the
+   approved copy — see the INTEGRATION NOTE above for why these two
+   separate fields became one. */
+const fields = [
+  { id: "name", label: "Your name", type: "text" as const, placeholder: "Your name", required: true },
+  { id: "email", label: "Email", type: "email" as const, placeholder: "you@business.com", required: true },
+  {
+    id:          "message",
+    label:       "What does your business do, and what's eating the most time right now?",
+    type:        "textarea" as const,
+    placeholder: "e.g. fuel distribution. Mention what's eating the most time, if you'd like.",
+    required:    true,
+  },
+];
+
+/* WhatsApp leads the contact-method picker — this LP's whole angle is
+   "orders come in on WhatsApp," so it's the natural default channel
+   rather than email. */
+const contactMethods = [
+  { id: "whatsapp" as const, label: "WhatsApp" },
+  { id: "phone" as const, label: "Phone" },
+  { id: "email" as const, label: "Email" },
+  { id: "telegram" as const, label: "Telegram" },
+];
+---
+
+<LandingLayout
+  title="Your spreadsheet served you well. Now it's a second job."
+  description="We move everything your spreadsheet holds into one system that works from your phone — nothing lost, nothing new to learn."
+>
+
+  <!-- HERO -->
+  <LPHero
+    headline="Your spreadsheet served you well. Now it's a second job."
+    subline="We move everything it holds into one system that works from your phone — nothing lost, nothing new to learn."
+  />
+
+  <!-- PAIN — tonal break from the hero -->
+  <ChecklistSection
+    intro="You'll recognize at least one of these:"
+    items={painItems}
+    tone="tonal"
+  />
+
+  <!-- WHAT CHANGES -->
+  <ChecklistSection
+    heading="What Changes"
+    items={changesItems}
+  />
+
+  <!-- PROOF — plain inline link to the flagship case study, never a button -->
+  <ProofSection
+    text="We did exactly this for a family fuel-distribution business: 21 monthly spreadsheets, replaced by one working system in a single development week. ~1,900 delivery records migrated in — none of it lost."
+    caseStudyHref="/systems/fuel-distribution"
+    caseStudyLabel="Full case study: From Chaotic Spreadsheets to a Full Management System in One Week →"
+  />
+
+  <!-- START THE CONVERSATION — the one and only conversion action on this page -->
+  <ContactForm
+    heading="Still doing this by hand? Let's look at it together."
+    subheading="A short conversation about how your spreadsheet actually works today. No pitch prepared in advance — we ask about your business first, then tell you honestly what's worth fixing."
+    fields={fields}
+    contactMethods={contactMethods}
+    submitLabel="Start my diagnostic conversation"
+    reassurance="No cost, no commitment — just an honest look at your setup."
+    source="lp-spreadsheets"
+  />
+
+</LandingLayout>

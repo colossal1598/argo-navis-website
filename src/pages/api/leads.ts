@@ -179,6 +179,8 @@ function leadReplySubject(source: string): string {
     automations: "Your automation enquiry is with us — Argo Navis",
     systems:     "Your system brief is with us — Argo Navis",
     "ai-agents": "Your AI enquiry is with us — Argo Navis",
+    "lp-spreadsheets":           "Your spreadsheet diagnostic is with us — Argo Navis",
+    "systems-fuel-distribution": "Your diagnostic conversation is with us — Argo Navis",
   };
   return subjects[source] ?? "We got your message — Argo Navis";
 }
@@ -189,6 +191,8 @@ function sourceLabel(source: string): string {
     automations: "business automation",
     systems:     "a new system",
     "ai-agents": "an AI tool",
+    "lp-spreadsheets":           "moving off your spreadsheets",
+    "systems-fuel-distribution": "a custom system for your business",
   };
   return labels[source] ?? "something great";
 }
@@ -349,6 +353,8 @@ function leadReplySubjectHe(source: string): string {
     "automations-he": "קיבלנו את הפנייה שלך לאוטומציה — Argo Navis",
     "systems-he":     "קיבלנו את הבריף שלך למערכת — Argo Navis",
     "ai-agents-he":   "קיבלנו את הפנייה שלך ל-AI — Argo Navis",
+    "lp-spreadsheets-he":           "קיבלנו את הפנייה שלך על הגיליונות — Argo Navis",
+    "systems-fuel-distribution-he": "קיבלנו את הפנייה שלך לשיחת אבחון — Argo Navis",
   };
   return subjects[source] ?? "קיבלנו את ההודעה שלך — Argo Navis";
 }
@@ -359,6 +365,8 @@ function sourceLabelHe(source: string): string {
     "automations-he": "אוטומציה עסקית",
     "systems-he":     "מערכת חדשה",
     "ai-agents-he":   "כלי AI",
+    "lp-spreadsheets-he":           "לצאת מהגיליונות האלקטרוניים",
+    "systems-fuel-distribution-he": "מערכת מותאמת אישית לעסק שלך",
   };
   return labels[source] ?? "משהו מעולה";
 }

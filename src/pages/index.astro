@@ -14,12 +14,10 @@
   before editing any string below; it is the approved source of truth,
   not this file.
 
-  There is no fuel-distribution case-study page yet (content-brief §10
-  describes it but it hasn't been built) — the hero's secondary CTA
-  points at the achievements strip further down this same page instead
-  of a page that doesn't exist yet, matching the existing "no dead
-  links" convention already used in ShowcaseCard.astro. Swap the href
-  to the real case-study path once that page ships.
+  The fuel-distribution case study now exists at /systems/fuel-distribution
+  (Task 2.5) — the hero's secondary CTA points there. It previously
+  anchored to the achievements strip on this same page (Task 2.3) because
+  the case-study page didn't exist yet.
 */
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
@@ -87,7 +85,7 @@ const wayOfWorkingSteps = [
     headline="The orders land in WhatsApp. The invoices sit in Morning. You're the only thing connecting them."
     subline="We build one system that connects what you already use, pulls your business out of the spreadsheets, and runs from your phone. No new software to learn. No enterprise contract. No lock-in."
     cta={{ label: "Talk to us about your setup", href: "#contact" }}
-    ctaSecondary={{ label: "See how it worked for a fuel-distribution business →", href: "#achievements" }}
+    ctaSecondary={{ label: "See how it worked for a fuel-distribution business →", href: "/systems/fuel-distribution" }}
   />
 
   <!-- ACHIEVEMENTS STRIP — the one section on the site allowed to look like a stats row, because every number here is real and from one project. -->

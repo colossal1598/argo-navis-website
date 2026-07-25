@@ -1,66 +1,160 @@
 ---
 import Layout from "./Layout.astro";
+import type { SiteLocale } from "../lib/locale";
 
 /*
-  PROPS — every showcase sub-page passes these in.
+  SHOWCASE LAYOUT — full site chrome (nav + footer via Layout.astro),
+  reworked to be locale-aware and prop/copy-object-driven so a future
+  Hebrew case study just passes Hebrew strings into the same props
+  rather than needing its own layout. Supports the flagship case-study
+  structure: header + meta line, a flexible metrics bar, the narrative
+  body (each page composes its own <ShowcaseSection> blocks via the
+  default slot), an optional architecture-decisions table, an optional
+  results table + callout, and an optional numbered takeaways list.
 
-    title        — page title (browser tab + SEO)
-    description  — meta description (Google snippet)
-    service      — which service this belongs to ("Automations" / "Websites" / "Campaigns")
-    serviceHref  — link back to the parent service page
-    headline     — big h1 at the top of the case study
-    subheadline  — one sentence under the h1
-    metric1/2/3  — three key results shown as large stats
-                   shape: { value: "3×", label: "faster onboarding" }
-    tags         — technology tags shown as pills
+  Badges are `.badge` (token class, small-radius rectangle) — the old
+  version used `rounded-full` for the service badge, which is forbidden.
+  All structural labels (Project/Scope/Result, table headers, section
+  headings) come from the `copy` object below, keyed by locale — never
+  hard-coded English, per CLAUDE.md.
+
+  PROPS:
+    title / description   — page meta (browser tab, SEO, OG via Layout)
+    locale / dir           — passed through to Layout for nav/footer copy
+    service / serviceHref  — breadcrumb label + link back to the service page
+    headline / subheadline — big h1 + one supporting sentence
+    metaLine               — { project, scope, result, disclaimer? } — the
+                              short "what this project was" facts under the
+                              headline. disclaimer is the small italic line
+                              confirming every figure is a real order of
+                              magnitude (anonymization statement).
+    metrics                — flexible-length array of { value, label } —
+                              the headline stats bar. Not fixed at 3 (the
+                              old metric1/2/3 props) — pass as many as the
+                              project has real, sourced numbers for.
+    tags?                  — small technology/topic tags under the header
+    decisions?             — { decision, why }[] — architecture-decisions
+                              table. Omit if a case study doesn't need one.
+    resultsTable?           — { metric, value }[] — the results table.
+    resultsCallout?         — one line under the results table (e.g. "what
+                              the numbers don't show").
+    takeaways?              — numbered list of lesson strings.
+
+    Body content (background, research, hardest-problem, integration,
+    process, etc.) goes through the default <slot /> — each case-study
+    page composes its own <ShowcaseSection> blocks there, since narrative
+    shape genuinely varies project to project. A `cta` named slot renders
+    outside <article> for the closing ContactForm.
 */
 interface Metric { value: string; label: string; }
+interface Decision { decision: string; why: string; }
+interface ResultRow { metric: string; value: string; }
+interface MetaLine {
+  project:     string;
+  scope:       string;
+  result:      string;
+  disclaimer?: string;
+}
 
 interface Props {
-  title:        string;
-  description?: string;
-  service:      string;
-  serviceHref:  string;
-  headline:     string;
-  subheadline:  string;
-  metric1:      Metric;
-  metric2:      Metric;
-  metric3:      Metric;
-  tags:         string[];
+  title:           string;
+  description?:    string;
+  locale?:         SiteLocale;
+  dir?:            "ltr" | "rtl";
+  service:         string;
+  serviceHref:     string;
+  headline:        string;
+  subheadline:     string;
+  metaLine:        MetaLine;
+  metrics:         Metric[];
+  tags?:           string[];
+  decisions?:      Decision[];
+  resultsTable?:   ResultRow[];
+  resultsCallout?: string;
+  takeaways?:      string[];
 }
 
 const {
   title, description,
+  locale = "en",
+  dir = locale === "he" ? "rtl" : "ltr",
   service, serviceHref,
   headline, subheadline,
-  metric1, metric2, metric3,
-  tags,
+  metaLine, metrics, tags,
+  decisions, resultsTable, resultsCallout, takeaways,
 } = Astro.props;
+
+/* Structural labels — the same across every case study, so they live
+   here once instead of being retyped as props on each page. */
+const copy: Record<SiteLocale, {
+  backTo:           (service: string) => string;
+  projectLabel:     string;
+  scopeLabel:       string;
+  resultLabel:      string;
+  decisionsHeading: string;
+  decisionHeader:   string;
+  whyHeader:        string;
+  resultsHeading:   string;
+  metricHeader:     string;
+  valueHeader:      string;
+  takeawaysHeading: string;
+  scrollHint:       string;
+}> = {
+  en: {
+    backTo:           (s) => `Back to ${s}`,
+    projectLabel:     "Project",
+    scopeLabel:       "Scope",
+    resultLabel:      "Result",
+    decisionsHeading: "Architecture Decisions",
+    decisionHeader:   "Decision",
+    whyHeader:        "Why",
+    resultsHeading:   "Results",
+    metricHeader:     "Metric",
+    valueHeader:      "Value",
+    takeawaysHeading: "Takeaways",
+    scrollHint:       "Scroll to see more →",
+  },
+  he: {
+    backTo:           (s) => `חזרה ל${s}`,
+    projectLabel:     "פרויקט",
+    scopeLabel:       "היקף",
+    resultLabel:      "תוצאה",
+    decisionsHeading: "החלטות ארכיטקטורה",
+    decisionHeader:   "החלטה",
+    whyHeader:        "למה",
+    resultsHeading:   "תוצאות",
+    metricHeader:     "מדד",
+    valueHeader:      "ערך",
+    takeawaysHeading: "מסקנות",
+    scrollHint:       "← גללו לראות עוד",
+  },
+};
+const t = copy[locale];
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} locale={locale} dir={dir}>
 
-  <!-- Back breadcrumb -->
+  <!-- BACK BREADCRUMB -->
   <div class="bg-surface-950 px-6 pt-10">
     <div class="mx-auto max-w-4xl">
       <a
         href={serviceHref}
-        class="inline-flex items-center gap-1 text-sm text-text-muted transition-colors hover:text-text-primary"
+        class="focus-ring inline-flex items-center gap-1 rounded-sm py-1 text-sm text-text-muted transition-colors hover:text-text-primary"
       >
-        <svg class="icon-chevron h-4 w-4 rotate-180 rtl:rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg class="icon-chevron h-4 w-4 rotate-180 rtl:rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
-        Back to {service}
+        {t.backTo(service)}
       </a>
     </div>
   </div>
 
-  <!-- Header -->
-  <header class="bg-surface-950 px-6 pb-16 pt-10 text-center">
+  <!-- HEADER -->
+  <header class="reveal bg-surface-950 px-6 pb-16 pt-10 text-center">
     <div class="mx-auto max-w-3xl">
 
-      <!-- Service badge -->
-      <span class="mb-4 inline-block rounded-full border border-brand-500/30 bg-brand-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-brand-300">
+      <!-- Service badge — small-radius token badge, never rounded-full -->
+      <span class="badge badge-brand mb-4 inline-flex">
         {service}
       </span>
 
@@ -69,23 +163,41 @@ const {
       </h1>
       <p class="mx-auto mt-4 max-w-2xl text-text-muted">{subheadline}</p>
 
-      <!-- Tags -->
-      <div class="mt-6 flex flex-wrap justify-center gap-2">
-        {tags.map(tag => (
-          <span class="rounded-md bg-surface-800 px-3 py-1 text-xs text-text-muted">{tag}</span>
-        ))}
-      </div>
+      <!-- META LINE — Project / Scope / Result, plus the anonymization disclaimer -->
+      <dl class="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-4 text-start sm:grid-cols-3">
+        <div>
+          <dt class="text-xs font-semibold uppercase tracking-widest text-text-muted">{t.projectLabel}</dt>
+          <dd class="mt-1 text-sm text-text-primary">{metaLine.project}</dd>
+        </div>
+        <div>
+          <dt class="text-xs font-semibold uppercase tracking-widest text-text-muted">{t.scopeLabel}</dt>
+          <dd class="mt-1 text-sm text-text-primary">{metaLine.scope}</dd>
+        </div>
+        <div>
+          <dt class="text-xs font-semibold uppercase tracking-widest text-text-muted">{t.resultLabel}</dt>
+          <dd class="mt-1 text-sm text-text-primary">{metaLine.result}</dd>
+        </div>
+      </dl>
+      {metaLine.disclaimer && (
+        <p class="mx-auto mt-4 max-w-2xl text-xs italic text-text-muted">{metaLine.disclaimer}</p>
+      )}
+
+      <!-- TAGS -->
+      {tags && tags.length > 0 && (
+        <div class="mt-6 flex flex-wrap justify-center gap-2">
+          {tags.map(tag => (
+            <span class="badge badge-muted">{tag}</span>
+          ))}
+        </div>
+      )}
     </div>
   </header>
 
-  <!--
-    KEY METRICS BAR — three big numbers that instantly communicate results.
-    Change metric1/2/3 props on each showcase page to match the project.
-  -->
-  <div class="border-y border-border-subtle bg-surface-900 px-6 py-10">
-    <div class="mx-auto grid max-w-4xl grid-cols-1 gap-8 text-center sm:grid-cols-3 sm:gap-6">
-      {[metric1, metric2, metric3].map(m => (
-        <div>
+  <!-- KEY METRICS BAR — flexible-length real numbers, styled like the homepage's AchievementsStrip -->
+  <div class="border-y border-border-subtle bg-surface-900 px-6 py-section-sm">
+    <div class="mx-auto grid max-w-4xl grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4">
+      {metrics.map((m, i) => (
+        <div class="reveal border-s-2 border-brand-500/40 ps-4 text-start" style={`--reveal-delay: ${i * 100}`}>
           <p class="text-2xl font-extrabold text-text-primary sm:text-3xl md:text-4xl">{m.value}</p>
           <p class="mt-1 text-sm text-text-muted">{m.label}</p>
         </div>
@@ -94,13 +206,84 @@ const {
   </div>
 
   <!--
-    BODY CONTENT — each showcase page puts its own sections here via <slot>.
-      default slot  → the full article content
-      cta           → optional CTA section (e.g. ContactForm) rendered inside <main>
+    BODY CONTENT — each case-study page composes its own narrative here
+    (typically a series of <ShowcaseSection> blocks) via the default slot.
   -->
-  <article class="bg-surface-950 px-6 py-20">
+  <article class="bg-surface-950 px-6 py-section-lg">
     <div class="mx-auto max-w-3xl space-y-16">
       <slot />
+
+      <!-- ARCHITECTURE DECISIONS TABLE -->
+      {decisions && decisions.length > 0 && (
+        <section>
+          <h2 id="decisions-heading" class="text-2xl font-bold text-text-primary">{t.decisionsHeading}</h2>
+          <div class="mt-5 overflow-x-auto rounded-sm border border-border-subtle">
+            <table aria-labelledby="decisions-heading" class="w-full min-w-[32rem] border-collapse text-start text-sm">
+              <thead>
+                <tr class="border-b border-border-subtle bg-surface-900">
+                  <th scope="col" class="p-4 text-start font-semibold text-text-primary">{t.decisionHeader}</th>
+                  <th scope="col" class="p-4 text-start font-semibold text-text-primary">{t.whyHeader}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {decisions.map((d, i) => (
+                  <tr class:list={[i > 0 && "border-t border-border-subtle"]}>
+                    <td class="p-4 align-top font-medium text-text-primary">{d.decision}</td>
+                    <td class="p-4 align-top text-text-muted">{d.why}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-2 text-xs text-text-muted sm:hidden" aria-hidden="true">{t.scrollHint}</p>
+        </section>
+      )}
+
+      <!-- RESULTS TABLE -->
+      {resultsTable && resultsTable.length > 0 && (
+        <section>
+          <h2 id="results-heading" class="text-2xl font-bold text-text-primary">{t.resultsHeading}</h2>
+          <div class="mt-5 overflow-x-auto rounded-sm border border-border-subtle">
+            <table aria-labelledby="results-heading" class="w-full min-w-[24rem] border-collapse text-start text-sm">
+              <thead>
+                <tr class="border-b border-border-subtle bg-surface-900">
+                  <th scope="col" class="p-4 text-start font-semibold text-text-primary">{t.metricHeader}</th>
+                  <th scope="col" class="p-4 text-start font-semibold text-text-primary">{t.valueHeader}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {resultsTable.map((r, i) => (
+                  <tr class:list={[i > 0 && "border-t border-border-subtle"]}>
+                    <td class="p-4 align-top text-text-muted">{r.metric}</td>
+                    <td class="p-4 align-top font-medium text-text-primary">{r.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-2 text-xs text-text-muted sm:hidden" aria-hidden="true">{t.scrollHint}</p>
+          {resultsCallout && (
+            <p class="mt-5 border-s-2 border-brand-500/40 ps-4 text-text-muted">{resultsCallout}</p>
+          )}
+        </section>
+      )}
+
+      <!-- TAKEAWAYS -->
+      {takeaways && takeaways.length > 0 && (
+        <section>
+          <h2 class="text-2xl font-bold text-text-primary">{t.takeawaysHeading}</h2>
+          <ol class="mt-5 flex flex-col gap-4">
+            {takeaways.map((item, i) => (
+              <li class="flex gap-4">
+                <span class="chip-accent-text flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-brand-500/30 bg-surface-900 text-sm font-bold">
+                  {i + 1}
+                </span>
+                <p class="pt-0.5 leading-relaxed text-text-muted">{item}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
     </div>
   </article>
 

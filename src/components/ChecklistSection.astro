@@ -1,0 +1,70 @@
+---
+/*
+  CHECKLIST SECTION — a labeled list of short statements. Serves two LP
+  section types with one component:
+    - "Pain" lists    — items with only a `label` (a flat sentence each)
+    - "What changes" lists — items with `label` (bold lead-in) + a
+      `description` (the rest of the sentence)
+  Deliberately NOT built on StepsSection (numbered chips + connecting
+  line) — that visual language says "this is an ordered sequence," which
+  is wrong for a parallel list of pains or benefits where order doesn't
+  matter. Marker is a small square (rounded-xs), never a circle/pill.
+
+  PROPS:
+    heading? — optional section heading
+    intro?   — optional line above the list (e.g. "You'll recognize at
+               least one of these:")
+    items    — { label, description? }[]
+    tone     — "base" (bg-surface-950, default) | "tonal" (bg-surface-800,
+               for the alternating section-rhythm break — see lp-pattern.md)
+*/
+interface Item {
+  label:        string;
+  description?: string;
+}
+
+interface Props {
+  heading?: string;
+  intro?:   string;
+  items:    Item[];
+  tone?:    "base" | "tonal";
+}
+
+const { heading, intro, items, tone = "base" } = Astro.props;
+const bgClass = tone === "tonal" ? "bg-surface-800" : "bg-surface-950";
+---
+
+<section class={`${bgClass} px-6 py-section-md`}>
+  <div class="mx-auto max-w-2xl">
+
+    {heading && (
+      <h2 class="reveal text-3xl font-bold text-text-primary md:text-4xl">
+        {heading}
+      </h2>
+    )}
+    {intro && (
+      <p class:list={["reveal text-text-muted", heading ? "mt-3" : ""]}>
+        {intro}
+      </p>
+    )}
+
+    <ul class:list={["flex flex-col gap-4", (heading || intro) && "mt-6"]}>
+      {items.map((item, i) => (
+        <li class="reveal flex gap-3" style={`--reveal-delay: ${i * 80}`}>
+          <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-xs bg-brand-400" aria-hidden="true"></span>
+          <p class="leading-relaxed text-text-muted">
+            {item.description ? (
+              <>
+                <span class="font-semibold text-text-primary">{item.label}</span>{" "}
+                {item.description}
+              </>
+            ) : (
+              item.label
+            )}
+          </p>
+        </li>
+      ))}
+    </ul>
+
+  </div>
+</section>

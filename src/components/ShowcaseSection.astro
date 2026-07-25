@@ -23,9 +23,9 @@ const dotColor = {
 ---
 
 <section>
-  <!-- Section label with coloured dot -->
+  <!-- Section label with coloured marker (small square, never rounded-full) -->
   <div class="mb-3 flex items-center gap-2">
-    <span class={`h-2 w-2 rounded-full ${dotColor}`}></span>
+    <span class={`h-2 w-2 rounded-xs ${dotColor}`}></span>
     <span class="text-xs font-semibold uppercase tracking-widest text-text-muted">{label}</span>
   </div>
 
@@ -33,10 +33,14 @@ const dotColor = {
 
   <!--
     <slot /> renders whatever content the showcase page puts between
-    the opening and closing <ShowcaseSection> tags.
-    This can be paragraphs, lists, images — anything.
+    the opening and closing <ShowcaseSection> tags — typically <p>,
+    <ul>/<ol>, <strong>, <a>, and <code> elements. `.showcase-prose`
+    (global.css) styles them with real utility classes — there's no
+    @tailwindcss/typography plugin installed in this project (budget is
+    zero), so this styles the handful of elements actually used here
+    instead of adding the dependency.
   -->
-  <div class="prose prose-invert mt-5 max-w-none text-text-muted">
+  <div class="showcase-prose">
     <slot />
   </div>
 </section>
