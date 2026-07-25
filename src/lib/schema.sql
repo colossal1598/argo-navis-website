@@ -11,7 +11,7 @@
 --   contact_details handle/phone when non-email method is selected
 --   message    what they typed in the message field (required)
 --   source     which page/form the lead came from
---              e.g. "landing", "websites", "automations", "campaigns"
+--              e.g. "landing", "websites", "automations"
 --   created_at set automatically on insert
 
 create table if not exists leads (

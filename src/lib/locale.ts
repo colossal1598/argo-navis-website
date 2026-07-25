@@ -2,7 +2,7 @@ export type SiteLocale = "en" | "he";
 
 /*
   ROUTE PREFIX STRATEGY:
-    - English stays at root: /, /automations, /websites, /campaigns
+    - English stays at root: /, /automations, /websites
     - Hebrew is prefixed:    /he, /he/automations, ...
 */
 const HE_PREFIX = "/he";

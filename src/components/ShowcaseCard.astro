@@ -6,6 +6,8 @@
     description — one-line summary of the result
     tags        — array of small labels (e.g. ["Make", "Notion", "CRM"])
     href        — link to the full showcase sub-page (e.g. "/automations/crm-sync")
+                  omit it until the case-study page exists — the card then
+                  renders without the "View case study" link (no dead links)
     metric      — an eye-catching number / stat (optional)
                   e.g. "3× faster onboarding"
 */
@@ -13,7 +15,7 @@ interface Props {
   title:       string;
   description: string;
   tags:        string[];
-  href:        string;
+  href?:       string;
   metric?:     string;
 }
 
@@ -47,15 +49,18 @@ const { title, description, tags, href, metric } = Astro.props;
   <!--
     "View case study" link — the after:absolute trick makes the
     entire card clickable without wrapping everything in an <a>.
+    Only rendered when href is set, so cards never point at 404s.
   -->
-  <a
-    href={href}
-    class="mt-5 inline-flex items-center gap-1 text-sm font-medium text-brand-400 transition-all after:absolute after:inset-0 after:rounded-2xl"
-  >
-    View case study
-    <svg class="icon-chevron h-4 w-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-    </svg>
-  </a>
+  {href && (
+    <a
+      href={href}
+      class="mt-5 inline-flex items-center gap-1 text-sm font-medium text-brand-400 transition-all after:absolute after:inset-0 after:rounded-2xl"
+    >
+      View case study
+      <svg class="icon-chevron h-4 w-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </a>
+  )}
 
 </article>

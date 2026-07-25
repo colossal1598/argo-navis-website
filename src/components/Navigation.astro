@@ -11,7 +11,6 @@ const navLinks = [
   { label: "Services",    href: "/#services" },
   { label: "Automations", href: "/automations" },
   { label: "Websites",    href: "/websites" },
-  { label: "Campaigns",   href: "/campaigns" },
 ];
 
 /*
@@ -40,16 +39,43 @@ const localizedLinks = navLinks.map((link) => ({
     ? (
       link.href === "/#services" ? "שירותים"
       : link.href === "/automations" ? "אוטומציות"
-      : link.href === "/websites" ? "אתרים"
-      : "קמפיינים"
+      : "אתרים"
     )
     : link.label,
   href: withLocale(link.href, locale),
 }));
 
 const currentPath = Astro.url.pathname;
+
+/*
+  LANGUAGE TOGGLE TARGET:
+  Some pages exist in only one language (e.g. showcase sub-pages that were
+  never translated). Naively switching the prefix would produce a 404, so we
+  check the switched path against the real route list (from src/pages) and
+  fall back to the closest existing parent page instead.
+*/
+const pageFiles = import.meta.glob("../pages/**/*.astro");
+const existingRoutes = new Set(
+  Object.keys(pageFiles).map((file) => {
+    const route = file
+      .replace("../pages", "")
+      .replace(/\/index\.astro$/, "")
+      .replace(/\.astro$/, "");
+    return route === "" ? "/" : route;
+  })
+);
+
+function nearestExistingPath(path: string): string {
+  let candidate = path.replace(/\/+$/, "") || "/";
+  while (candidate !== "/") {
+    if (existingRoutes.has(candidate)) return candidate;
+    candidate = candidate.slice(0, candidate.lastIndexOf("/")) || "/";
+  }
+  return "/";
+}
+
 /* Language toggle targets the equivalent route in the other locale. */
-const localeSwitchHref = `${switchLocalePath(Astro.url.pathname)}${Astro.url.search}`;
+const localeSwitchHref = `${nearestExistingPath(switchLocalePath(Astro.url.pathname))}${Astro.url.search}`;
 const currentLocaleFlag = isHebrew ? "he" : "en";
 ---
 
