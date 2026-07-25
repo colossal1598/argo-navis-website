@@ -114,7 +114,7 @@ const takeaways = [
   <ShowcaseSection label="The Research" heading="What Was Actually in the File">
     <p>Before a single line of code: a deep, script-based analysis of the file. The file itself was never opened "by hand" — it was too big and too fragile for that. The findings dictated the entire architecture.</p>
     <p>There was no master data at all. No customer list, no supplier list, no invoice table. Every business entity existed only as free text inside delivery rows. The schema had to be derived, not copied.</p>
-    <p>Real scope: ~1,900 delivery rows a year. Diesel — few large deliveries (commercial, hundreds to thousands of liters); heating oil — many small deliveries (retail heating). A sharp seasonal pattern: heating-oil sheets exist only October through March. Two product lines with opposite characters, in the same file.</p>
+    <p>Real scope: ~1,900 delivery rows total — the volume of records the investigation into how the business actually operated had to untangle and match, not an annual rate. Diesel — few large deliveries (commercial, hundreds to thousands of liters); heating oil — many small deliveries (retail heating), only showing up October through March. Two product lines with opposite characters, in the same file.</p>
     <p>Data quality — a real minefield:</p>
     <ul>
       <li>Dates in 4 different formats, including malformed entries like <code>26/11*2025</code> and <code>16/092025</code>, plus outright wrong years (<code>2925</code>, <code>3036</code>); the header row sat on a different line number in every sheet.</li>
