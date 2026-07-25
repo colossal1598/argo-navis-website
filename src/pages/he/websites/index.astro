@@ -1,15 +1,23 @@
 ---
+/*
+  PAGE GOAL (HE): mirrors the rebuilt /websites exactly, section for
+  section, via the same shared components (Layout, ProcessBlock,
+  FAQBlock, ContactForm) — no hand-copied markup. Rebuilt from the
+  approved copy file (previous draft on this page predated the EN
+  rebuild — different hero/problem-block wording, no proof point, an
+  older rebuild-offer line, a different contact message field). Draft-
+  quality Hebrew copy is acceptable (the owner sharpens post-launch).
+
+  Copy source: .apm/memory/copy/he/service-websites-he.md — re-read
+  that file before editing any string below; it is the approved source
+  of truth, not this file. Source tag: websites-he (existing leads.ts
+  key).
+*/
 import Layout from "../../../layouts/Layout.astro";
 import ProcessBlock from "../../../components/ProcessBlock.astro";
+import FAQBlock from "../../../components/FAQBlock.astro";
 import ContactForm from "../../../components/ContactForm.astro";
 
-/*
-  PAGE GOAL (HE WEBSITES):
-  Replicate the English websites page structure in Hebrew with strong RTL flow,
-  moving users from discomfort ("site not working") to a low-friction contact.
-*/
-
-/* PROCESS STEPS — Hebrew copy for the shared step timeline. */
 const processSteps = [
   { label: "אתם שולחים את האתר", description: "או אומרים שצריך לבנות מאפס" },
   { label: "אנחנו עושים אבחון", description: "מהירות, עיצוב, מסר ומבנה" },
@@ -20,143 +28,118 @@ const processSteps = [
 
 const faq = [
   {
-    q: "צריך אתר קיים כדי להתחיל?",
-    a: "לא. אנחנו בונים מאפס בדיוק כמו שאנחנו משדרגים אתרים קיימים.",
+    q: "אני צריך שכבר יהיה לי אתר?",
+    a: "לא. אנחנו בונים מאפס בדיוק כמו שאנחנו בונים מחדש.",
   },
   {
     q: "כמה זמן זה לוקח?",
-    a: "תלוי היקף. אתר נקי של 5 עמודים לרוב ייקח 2-3 שבועות, ואנחנו מגדירים הכול מראש.",
+    a: "תלוי בהיקף. אתר נקי של 5 עמודים לוקח 2–3 שבועות. נגיד לכם מראש.",
   },
   {
-    q: "מה צריך ממני?",
-    a: "שיחת היכרות אחת, נכסי מותג אם יש, ופידבק כשמבקשים. זה הכול.",
+    q: "מה אתם צריכים ממני?",
+    a: "הזמן שלכם לשיחה אחת, הלוגו ונכסי המותג שלכם אם יש לכם, ומשוב כשאנחנו מבקשים. זהו.",
   },
 ];
 
-/* FORM FIELDS — website-specific discovery prompts in Hebrew. */
 const websiteFormFields = [
+  { id: "name", label: "שם מלא", type: "text" as const, placeholder: "איך קוראים לך?", required: true },
+  { id: "email", label: "אימייל", type: "email" as const, placeholder: "you@company.com", required: true },
+  { id: "website", label: "אתר", type: "url" as const, placeholder: "example.com", required: false },
   {
-    id: "name",
-    label: "שם מלא",
-    type: "text" as const,
-    placeholder: "איך קוראים לך?",
-    required: true,
-  },
-  {
-    id: "email",
-    label: "אימייל",
-    type: "email" as const,
-    placeholder: "you@company.com",
-    required: true,
-  },
-  {
-    id: "website",
-    label: "אתר",
-    type: "url" as const,
-    placeholder: "example.com",
-    required: false,
-  },
-  {
-    id: "message",
-    label: "מה לא עובד היום?",
-    type: "textarea" as const,
-    placeholder: "מה הבעיה באתר או מה תרצו לבנות?",
-    required: true,
+    id:          "message",
+    label:       "מה הבעיה?",
+    type:        "textarea" as const,
+    placeholder: "מה לא עובד, או מה אתם צריכים?",
+    required:    true,
   },
 ];
 ---
 
 <Layout
   title="אתרים"
-  description="אנחנו בונים אתרים שמביאים לקוחות - ומשדרגים אתרים שמרחיקים אותם."
+  description="אנחנו בונים אתרים שמביאים אנשים פנימה — ובונים מחדש כאלה שדוחפים אותם החוצה."
   locale="he"
   dir="rtl"
 >
-  <!-- HERO — sets the core "working for you or against you" framing -->
-  <section class="relative overflow-hidden bg-surface-950 px-6 py-24 md:py-36">
+
+  <!-- HERO — עימות מכוון, בלי כפתור CTA -->
+  <section class="relative overflow-hidden bg-surface-950 px-6 py-section-lg text-start md:py-section-xl">
     <div class="relative z-10 mx-auto max-w-3xl">
-      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
-        האתר שלכם או עובד בשבילכם או עובד נגדכם. אין באמצע.
+      <h1 class="reveal text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+        האתר שלכם או עובד בשבילכם, או נגדכם. אין אמצע.
       </h1>
-      <p class="mt-6 max-w-2xl text-lg text-text-muted">
-        אנחנו בונים אתרים שמכניסים לקוחות, ומשדרגים אתרים שדוחפים אותם החוצה.
+      <p class="reveal mt-6 max-w-2xl text-lg text-text-muted" style="--reveal-delay: 80">
+        אנחנו בונים אתרים שמביאים אנשים פנימה — ובונים מחדש כאלה שדוחפים אותם החוצה.
       </p>
     </div>
   </section>
 
-  <!-- PROBLEM BLOCK — three direct pain statements -->
-  <section class="bg-surface-900 px-6 py-20">
+  <!-- PROBLEM BLOCK -->
+  <section class="bg-surface-900 px-6 py-section-md">
     <div class="mx-auto max-w-3xl space-y-6">
       {[
         "אתר איטי מאבד מבקרים תוך 3 שניות.",
-        "מבנה מבלבל מוריד אמון עוד לפני שמתחילים לקרוא.",
-        "עיצוב מיושן משדר שהעסק נתקע.",
-      ].map(line => (
-        <p class="text-2xl font-semibold text-text-primary md:text-3xl">{line}</p>
+        "עיצוב מבלבל הורג אמון עוד לפני שאמרתם מילה.",
+        "עיצוב מיושן אומר לאנשים שהפסקתם לשים לב.",
+      ].map((line, i) => (
+        <p class="reveal text-2xl font-semibold text-text-primary md:text-3xl" style={`--reveal-delay: ${i * 80}`}>{line}</p>
       ))}
     </div>
   </section>
 
-  <!-- WHAT WE DO — outcome-focused offer and capabilities -->
-  <section class="bg-surface-950 px-6 py-20">
+  <!-- WHAT WE DO — כולל נקודת ההוכחה החדשה (₪0 לחודש בעלות תשתית) -->
+  <section class="bg-surface-950 px-6 py-section-md">
     <div class="mx-auto max-w-3xl">
-      <p class="text-lg text-text-soft md:text-xl">
-        אנחנו בונים אתרים מהירים ונקיים שעושים דבר אחד:
-        <strong class="text-text-primary"> הופכים מבקרים ללידים.</strong>
-        בלי עומס מיותר ובלי תבניות שנראות כמו כולם.
+      <p class="reveal text-lg text-text-soft md:text-xl">
+        אנחנו בונים אתרים נקיים ומהירים שעושים דבר אחד —{" "}
+        <strong class="text-text-primary">הופכים מבקרים ללידים.</strong>{" "}
+        בלי עומס, בלי תבניות שנראות כמו של כולם.
       </p>
+
       <ul class="mt-8 space-y-3">
         {[
-          "מהיר ומותאם מובייל",
-          "בנוי לקידום בגוגל",
-          "מבוסס על הלקוח שלכם, לא על טעם אישי",
-        ].map(line => (
-          <li class="flex items-start gap-3 text-text-muted">
-            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400"></span>
+          "מהיר ומותאם קודם לנייד",
+          "בנוי כדי לדרג בגוגל",
+          "מעוצב סביב הלקוח שלכם, לא סביב הטעם שלכם",
+        ].map((line, i) => (
+          <li class="reveal flex items-start gap-3 text-text-muted" style={`--reveal-delay: ${80 + i * 60}`}>
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-xs bg-brand-400"></span>
             {line}
           </li>
         ))}
       </ul>
+
+      <p class="reveal mt-8 text-text-muted" style="--reveal-delay: 260">
+        נקודת הוכחה: אותה גישה של אפס נעילה שבה אנחנו מריצים מערכת עסקית שלמה של לקוח ב-₪0 לחודש בעלות תשתית חלה גם על אתר — בלי דמי אירוח חודשיים מנופחים, בלי ספק שאי אפשר לעזוב.
+      </p>
     </div>
   </section>
 
-  <!-- PROCESS — handoff and delivery expectation setting -->
-  <ProcessBlock heading="איך העבודה איתנו נראית" steps={processSteps} />
+  <!-- PROCESS -->
+  <ProcessBlock
+    heading="איך העבודה איתנו נראית"
+    steps={processSteps}
+  />
 
-  <!-- REBUILD OFFER — low-pressure CTA section for colder traffic -->
-  <section id="rebuild" class="bg-surface-800 px-6 py-24">
+  <!-- REBUILD OFFER — ניסוח מרוענן, זהה למבנה ה-EN -->
+  <section id="rebuild" class="bg-surface-800 px-6 py-section-lg">
     <div class="mx-auto max-w-3xl text-center">
-      <h2 class="text-3xl font-bold text-text-primary md:text-4xl">
-        נציג לכם איך האתר שלכם יכול להיראות. לפני שמתחייבים.
+      <h2 class="reveal text-3xl font-bold text-text-primary md:text-4xl">
+        נראה לכם איך האתר שלכם יכול להיראות. לפני שאתם מתחייבים לכל דבר.
       </h2>
-      <p class="mx-auto mt-5 max-w-xl text-text-muted">
-        שולחים לנו את האתר, ואנחנו חוזרים עם דוגמה אמיתית למה היינו עושים אחרת - בלי לחץ ובלי התחייבות.
+      <p class="reveal mx-auto mt-5 max-w-xl text-text-muted" style="--reveal-delay: 80">
+        שלחו לנו את האתר שלכם. נחזור עם דוגמה אמיתית למה שהיינו משנים — בלי שום התחייבות.
       </p>
-      <a
-        href="/he/#contact"
-        class="mt-8 inline-block rounded-sm bg-brand-500 px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-brand-400"
-      >
-        שלחו לנו את האתר
+      <a href="/he/#contact" class="reveal btn btn-primary btn-lg mt-8" style="--reveal-delay: 160">
+        הראו לנו את האתר שלכם
       </a>
     </div>
   </section>
 
-  <!-- FAQ — pre-qualify and reduce friction before submit -->
-  <section class="bg-surface-950 px-6 py-20">
-    <div class="mx-auto max-w-3xl">
-      <h2 class="mb-10 text-2xl font-bold text-text-primary">שאלות נפוצות</h2>
-      <div class="space-y-8">
-        {faq.map(item => (
-          <div>
-            <p class="font-semibold text-text-primary">{item.q}</p>
-            <p class="mt-2 text-text-muted">{item.a}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
+  <!-- FAQ -->
+  <FAQBlock heading="שאלות נפוצות" items={faq} />
 
-  <!-- CONTACT FORM — same data shape, Hebrew labels/messages -->
+  <!-- CONTACT FORM -->
   <ContactForm
     heading="יש לכם אתר שלא עושה את העבודה? ספרו לנו."
     source="websites-he"

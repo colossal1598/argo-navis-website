@@ -1,0 +1,113 @@
+---
+/*
+  PAGE GOAL (HE): mirrors /lp/ai-agents exactly, section for section, via
+  the same shared components — no hand-copied markup, no nav chrome.
+  Draft-quality Hebrew copy is acceptable. Source tag: lp-ai-agents-he
+  (existing leads.ts key).
+
+  Copy source: .apm/memory/copy/he/lp-ai-agents-he.md — re-read that
+  file before editing any string below; it is the approved source of
+  truth, not this file.
+
+  INTEGRATION NOTE (same as the EN page, see lp-pattern.md): copy's
+  field 2 is a merged "Email or phone" field — not supported by the
+  backend's own regex-validated email field, so kept a standard
+  required email field and left contactMethods at default order (this
+  LP's angle isn't phone/WhatsApp-specific). The "task" field is
+  "(טקסט קצר)" per copy — used type: "text", field id "message".
+*/
+import LandingLayout from "../../../layouts/LandingLayout.astro";
+import LPHero from "../../../components/LPHero.astro";
+import ChecklistSection from "../../../components/ChecklistSection.astro";
+import ProofSection from "../../../components/ProofSection.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+
+const painItems = [
+  { label: "כל מצגת מכירות מתחילה ב\"מבוסס AI\" ומסתיימת בכלום שאתם באמת יכולים להשתמש בו." },
+  { label: "שיחה שלא נענתה אחרי שעות העבודה הופכת ללקוח שאבד, ואין מי שיענה." },
+  { label: "מישהו עדיין קורא מסמכים ביד, ומחלץ כל פעם את אותם כמה שדות." },
+  { label: "כבר נכוויתם מכלי \"חכם\" שרק הוסיף עוד דשבורד לבדוק." },
+];
+
+const changesItems = [
+  { label: "אנחנו מוצאים את המשימה החוזרת האחת ש-AI באמת טוב בה אצלכם", description: "לא את כולן, אחת." },
+  { label: "זה נבנה צר וחד", description: "נבדק מול המקרים האמיתיים שלכם, לא מול דמו." },
+  { label: "בכל מקום שטעות תעלה לכם משהו", description: "אדם עדיין בודק לפני שזה יוצא." },
+  { label: "אם AI הוא לא הכלי הנכון למשימה", description: "נגיד את זה, ונבנה משהו פשוט יותר במקום." },
+];
+
+const fields = [
+  { id: "name", label: "השם שלכם", type: "text" as const, placeholder: "איך קוראים לכם?", required: true },
+  { id: "email", label: "אימייל", type: "email" as const, placeholder: "you@business.com", required: true },
+  {
+    id:          "message",
+    label:       "מה המשימה החוזרת?",
+    type:        "text" as const,
+    placeholder: "הדבר שאתם או הצוות שלכם עושים שוב ושוב, שמחשב יכול לעשות במקום",
+    required:    true,
+  },
+];
+---
+
+<LandingLayout
+  title="AI זה לא העניין. לחסוך לכם זמן — זה כן."
+  description="אנחנו בונים כלי AI צר אחד למשימה אחת אמיתית ומשעממת — בלי לתייג משהו 'מבוסס AI' רק כדי להישמע מודרני."
+  locale="he"
+  dir="rtl"
+>
+
+  <!-- HERO -->
+  <LPHero
+    headline="AI זה לא העניין. לחסוך לכם זמן — זה כן."
+    subline="אנחנו בונים כלי AI צר אחד למשימה אחת אמיתית ומשעממת — בלי לתייג משהו &quot;מבוסס AI&quot; רק כדי להישמע מודרני."
+  />
+
+  <!-- PAIN -->
+  <ChecklistSection
+    intro="תזהו לפחות אחד מאלה:"
+    items={painItems}
+    tone="tonal"
+  />
+
+  <!-- WHAT CHANGES -->
+  <ChecklistSection
+    heading="מה משתנה"
+    items={changesItems}
+  />
+
+  <!-- PROOF -->
+  <ProofSection
+    text="דוגמה אחת: Reception, מערכת שבנינו ששולחת תגובת וואטסאפ אוטומטית מהמספר של העסק עצמו ברגע ששיחה לא נענית — בנויה צר, בדיוק למשימה אחת, ורצה עבור לקוחות כבר היום."
+    caseStudyHref="/he/automations/reception"
+    caseStudyLabel="ראו איך Reception עובדת ←"
+  />
+
+  <!-- START THE CONVERSATION -->
+  <ContactForm
+    heading="לא בטוחים אם AI בכלל הבחירה הנכונה לעסק שלכם?"
+    subheading="ספרו לנו על החלק החוזר ביום שלכם. נגיד לכם בכנות אם AI עוזר — או שמשהו פשוט יותר עושה את העבודה באותה מידה."
+    fields={fields}
+    submitLabel="שאלו אותנו בכנות"
+    reassurance="בלי מצגת מוכנה מראש. אנחנו בודקים לפני שאנחנו בונים כל דבר."
+    source="lp-ai-agents-he"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactMethods={[
+      { id: "email", label: "אימייל" },
+      { id: "phone", label: "טלפון" },
+      { id: "telegram", label: "טלגרם" },
+      { id: "whatsapp", label: "ווטסאפ" },
+    ]}
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+
+</LandingLayout>
