@@ -47,12 +47,12 @@ const textTokens = [
   { name: "text-muted", class: "text-text-muted" },
 ];
 const radiusSteps = [
-  { name: "radius-xs", class: "rounded-xs", px: "2px", use: "fine detail only" },
-  { name: "radius-sm", class: "rounded-sm", px: "4px", use: "buttons, inputs, badges" },
-  { name: "radius-md", class: "rounded-md", px: "6px", use: "icon buttons, compact tags" },
-  { name: "radius-lg", class: "rounded-lg", px: "8px", use: "reserved" },
-  { name: "radius-xl", class: "rounded-xl", px: "12px", use: "reserved" },
-  { name: "radius-2xl", class: "rounded-2xl", px: "16px", use: "cards, panels" },
+  { name: "radius-xs", class: "rounded-xs", px: "0px", use: "reserved: fully square" },
+  { name: "radius-sm", class: "rounded-sm", px: "1px", use: "buttons, inputs, badges" },
+  { name: "radius-md", class: "rounded-md", px: "2px", use: "icon buttons, compact tags" },
+  { name: "radius-lg", class: "rounded-lg", px: "2px", use: "reserved" },
+  { name: "radius-xl", class: "rounded-xl", px: "3px", use: "reserved" },
+  { name: "radius-2xl", class: "rounded-2xl", px: "4px", use: "cards, panels" },
 ];
 const sectionRhythm = [
   { name: "section-sm", class: "py-section-sm", px: "64px", replaces: "py-16", use: "compact / tonal-break sections" },
@@ -188,8 +188,9 @@ const durations = [
     <div class="mx-auto max-w-5xl">
       <h2 class="text-2xl font-bold text-text-primary">Radius Scale</h2>
       <p class="mt-2 max-w-2xl text-sm text-text-muted">
-        Small-radius rectangles only — no <code>rounded-full</code> outside avatars and
-        toggle knobs. Pick from this scale; don't introduce new one-offs.
+        Near-90° corners — controls stay within 0–2px, cards get the one step slightly
+        past that (4px). No <code>rounded-full</code> outside avatars and toggle knobs.
+        Pick from this scale; don't introduce new one-offs.
       </p>
       <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         {radiusSteps.map(r => (
@@ -245,10 +246,12 @@ const durations = [
       <h2 class="text-2xl font-bold text-text-primary">Cards</h2>
       <p class="mt-2 max-w-2xl text-sm text-text-muted">
         One <code>.card</code> recipe. Add <code>.card-link-overlay</code> on the internal
-        link to make the whole card clickable without wrapping it in an anchor.
+        link to make the whole card clickable without wrapping it in an anchor. Grids of
+        cards use <code>gap-cards</code> (16px) — deliberately tighter than the card's own
+        24px padding, so a row reads as one dense cluster instead of floating islands.
       </p>
 
-      <div class="mt-6 grid gap-6 md:grid-cols-3">
+      <div class="mt-6 grid gap-cards md:grid-cols-3">
         <article class="card">
           <span class="badge badge-brand mb-3 self-start">3× faster</span>
           <h3 class="text-lg font-semibold text-text-primary">Card with badge</h3>
@@ -333,14 +336,17 @@ const durations = [
       <h2 class="text-2xl font-bold text-text-primary">Section Rhythm</h2>
       <p class="mt-2 max-w-2xl text-sm text-text-muted">
         Four deliberate vertical-padding steps replace the mixed py-16 / py-20 / py-24 /
-        md:py-36 seen across pages today.
+        md:py-36 seen across pages today. The accent bar on the left stretches to match
+        each box's real rendered height, so the step-up is unmistakable at a glance.
       </p>
       <div class="mt-6 flex flex-col gap-4">
         {sectionRhythm.map(s => (
-          <div class={`flex items-center justify-center border border-dashed border-brand-500/40 bg-brand-500/5 text-center ${s.class}`}>
-            <span class="text-xs font-medium text-text-muted">
-              {s.name} — {s.px} (replaces {s.replaces}) — {s.use}
-            </span>
+          <div class="flex items-stretch gap-4">
+            <div class="w-1.5 shrink-0 rounded-xs bg-brand-500" aria-hidden="true"></div>
+            <div class={`flex flex-1 flex-wrap items-center justify-center gap-x-2 gap-y-1 border border-border-subtle bg-surface-900 text-center ${s.class}`}>
+              <span class="badge badge-brand">{s.name}</span>
+              <span class="text-xs text-text-muted">{s.px} — replaces {s.replaces} — {s.use}</span>
+            </div>
           </div>
         ))}
       </div>
@@ -353,13 +359,14 @@ const durations = [
       <h2 class="text-2xl font-bold text-text-primary">Motion</h2>
       <p class="mt-2 max-w-2xl text-sm text-text-muted">
         Durations mirror what's already live (200ms cards, 300ms menu) plus one new
-        slower step for reveals. Hover each swatch to feel the duration.
+        slower step for reveals. These play on their own on a loop — no hover needed —
+        so the speed difference is visible at a glance.
       </p>
 
       <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         {durations.map(d => (
           <div class="flex flex-col items-center gap-2">
-            <div class={`h-16 w-full rounded-sm border border-border-subtle bg-surface-900 transition-colors ${d.class} hover:bg-brand-500/20`}></div>
+            <div class={`motion-demo-duration h-16 w-full rounded-sm border border-border-subtle bg-surface-900 transition-colors ${d.class}`}></div>
             <span class="text-xs font-semibold text-text-primary">{d.name}</span>
             <span class="text-xs text-text-muted">{d.ms} — {d.use}</span>
           </div>
@@ -370,12 +377,13 @@ const durations = [
       <p class="mt-2 max-w-2xl text-xs text-text-muted">
         <code>ease-in-out</code> is pinned to Tailwind's existing default (unchanged — the
         mobile menu already uses it). <code>ease-out</code> is new: a decelerate curve for
-        entrances. Hover each bar to compare.
+        entrances. Plays on a loop — animates <code>transform</code>, not <code>width</code>,
+        so it's compositor-friendly.
       </p>
       <div class="mt-4 flex flex-col gap-3">
-        <div class="h-3 w-1/4 rounded-sm bg-brand-500 transition-all duration-500 ease-out hover:w-full"></div>
+        <div class="motion-demo-ease h-3 w-full origin-left scale-x-25 rounded-sm bg-brand-500 transition-transform duration-500 ease-out"></div>
         <span class="text-xs text-text-muted">ease-out (--ease-out) — reveals, entrances</span>
-        <div class="h-3 w-1/4 rounded-sm bg-gold-500 transition-all duration-500 ease-in-out hover:w-full"></div>
+        <div class="motion-demo-ease h-3 w-full origin-left scale-x-25 rounded-sm bg-gold-500 transition-transform duration-500 ease-in-out"></div>
         <span class="text-xs text-text-muted">ease-in-out (--ease-in-out) — toggles, menus</span>
       </div>
 
@@ -431,6 +439,18 @@ const durations = [
   </section>
 </Layout>
 
+<style>
+  /* Duration/easing demos auto-loop (see script below) instead of relying
+     on :hover — a passive scroll-through never triggers :hover, so those
+     demos would otherwise sit inert. */
+  .motion-demo-duration.is-active {
+    background-color: rgb(58 107 239 / 0.2); /* brand-500 at 20%, matches bg-brand-500/20 */
+  }
+  .motion-demo-ease.is-active {
+    transform: scaleX(1);
+  }
+</style>
+
 <script>
   // Scroll-reveal demo: toggles .is-visible once each item enters the viewport.
   // "Replay" resets and re-triggers so reviewers don't have to reload to see it again.
@@ -454,4 +474,22 @@ const durations = [
       item.classList.add("is-visible");
     });
   });
+
+  // Duration/easing demos: auto-toggle on an interval so each swatch's own
+  // transition-duration / ease-* utility is what's actually animating —
+  // no hover required, so the demo plays out during a normal scroll-through.
+  const durationSwatches = Array.from(document.querySelectorAll(".motion-demo-duration"));
+  const easingBars = Array.from(document.querySelectorAll(".motion-demo-ease"));
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (prefersReducedMotion) {
+    // Respect the preference: show the "arrived" state instead of looping.
+    durationSwatches.forEach((el) => el.classList.add("is-active"));
+    easingBars.forEach((el) => el.classList.add("is-active"));
+  } else {
+    setInterval(() => {
+      durationSwatches.forEach((el) => el.classList.toggle("is-active"));
+      easingBars.forEach((el) => el.classList.toggle("is-active"));
+    }, 1200);
+  }
 </script>
