@@ -48,25 +48,24 @@
 
   /*
     ─── Radius scale ───
-    Owner correction (post-review): near-90° corners everywhere — a
-    hairline of rounding is acceptable, nothing that reads as "rounded".
-    Controls stay within 0–2px; cards get the only step allowed slightly
-    past that (4px), per the owner's explicit "only slightly more, if
-    anything, on cards".
+    Explicit and pinned (not left to Tailwind's implicit defaults) so the
+    scale is deliberate and documented. Values match what the codebase
+    already renders, so nothing shifts visually — this just gives every
+    future component ONE source of truth to pick from instead of guessing.
 
     Semantic usage (apply this consistently in new/updated work):
       radius-sm  → buttons, form controls, badges/tags (the default —
                    "small-radius rectangle", never rounded-full)
       radius-md  → icon-only buttons, compact secondary chrome
-      radius-2xl → cards / panels (the one step past the control ceiling)
+      radius-2xl → cards / panels
       radius-lg, radius-xl → reserved; avoid introducing new one-offs
   */
-  --radius-xs:  0rem;       /* 0px – reserved: fully square edge cases */
-  --radius-sm:  0.0625rem;  /* 1px – controls: buttons, inputs, badges */
-  --radius-md:  0.125rem;   /* 2px – icon buttons, compact tags (control ceiling) */
-  --radius-lg:  0.125rem;   /* 2px – reserved, same as md */
-  --radius-xl:  0.1875rem;  /* 3px – reserved */
-  --radius-2xl: 0.25rem;    /* 4px – cards, panels only */
+  --radius-xs:  0.125rem;  /* 2px  – fine detail only (e.g. flag-icon corners) */
+  --radius-sm:  0.25rem;   /* 4px  – controls: buttons, inputs, badges */
+  --radius-md:  0.375rem;  /* 6px  – icon buttons, compact tags */
+  --radius-lg:  0.5rem;    /* 8px  – reserved */
+  --radius-xl:  0.75rem;   /* 12px – reserved */
+  --radius-2xl: 1rem;      /* 16px – cards, panels */
 
   /*
     ─── Spacing rhythm ───
@@ -82,16 +81,6 @@
   --spacing-section-md: 5rem;   /* 80px  ≈ existing py-20 */
   --spacing-section-lg: 6rem;   /* 96px  ≈ existing py-24 */
   --spacing-section-xl: 9rem;   /* 144px ≈ existing md:py-36 */
-
-  /*
-    ─── Card gap ───
-    Owner correction (post-review): the gap between cards in a grid felt
-    off against the card's own padding. Deliberately tighter than the
-    card's p-6 (24px) so a grid of cards reads as one dense cluster
-    rather than isolated islands — use `gap-cards` on any grid/flex of
-    `.card` elements instead of a generic gap-* number.
-  */
-  --spacing-cards: 1rem; /* 16px — gap between cards, ~2/3 of card padding */
 
   /*
     ─── Motion: easing ───
