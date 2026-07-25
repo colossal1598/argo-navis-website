@@ -1,0 +1,64 @@
+---
+/*
+  PAGE GOAL: Case study for "a digital marketing agency," anonymized.
+  Deliberately minimal and owner-approved verbatim — this page renders
+  ONLY the "What We Built" content from the copy file, word for word.
+  No metrics bar (the copy has no numbers to show — none invented), no
+  architecture-decisions table, no results table, no takeaways: the copy
+  file doesn't have any of that content, so none of it is fabricated
+  here to fill out the template.
+
+  Copy source: .apm/memory/copy/case-study-marketing-en.md — re-read
+  that file before editing any string below; it is the approved source
+  of truth, not this file. Per the Task Prompt: the copy file's "Status"
+  section (draft-meta commentary about owner sign-off, not customer-
+  facing content) and its own header comment are both intentionally
+  omitted from this page — neither belongs in front of a visitor. The
+  metaLine disclaimer below keeps only the anonymization statement from
+  that section, not the draft/approval commentary.
+
+  serviceHref points at /systems — this is a custom-system-build case
+  study, canonical route /systems/marketing-agency per the Task Prompt.
+*/
+import ShowcaseLayout from "../../layouts/ShowcaseLayout.astro";
+import ShowcaseSection from "../../components/ShowcaseSection.astro";
+import ContactForm from "../../components/ContactForm.astro";
+---
+
+<ShowcaseLayout
+  title="A Combined System for a Digital Marketing Agency"
+  description="One connected Notion, automation, and web system for a digital marketing agency — content planning, day-to-day sales work, financial oversight, and recruiting, in place of separate, disconnected tools."
+  service="Systems"
+  serviceHref="/systems"
+  headline="A Combined System for a Digital Marketing Agency"
+  subheadline="One connected system in place of separate, disconnected tools for content planning, day-to-day sales work, financial oversight, and hiring."
+  metaLine={{
+    project:     "A combined Notion, automation, and web (HTML) system for a digital marketing agency.",
+    scope:       "Serves the agency's clients, sales reps, sales workers, and its recruiting pipeline.",
+    result:      "One connected system in place of separate, disconnected tools for content planning, day-to-day sales work, financial oversight, and hiring.",
+    disclaimer:  "Anonymized as \"a digital marketing agency.\" No client name, no domain.",
+  }}
+  tags={["Notion", "HTML"]}
+>
+
+  <!-- WHAT WE BUILT — kept short and owner-approved verbatim, per the Task Prompt -->
+  <ShowcaseSection label="The System" heading="What We Built">
+    <p>Four connected pieces, all built in Notion and a custom HTML layer, replacing what used to be separate, disconnected tools:</p>
+    <ul>
+      <li><strong>A content dashboard and planning system</strong> — where campaign content gets planned and tracked in one place, instead of scattered across documents.</li>
+      <li><strong>A worker dashboard</strong>, with its own popups and forms — the day-to-day workspace for the agency's reps and sales workers.</li>
+      <li><strong>A management financial dashboard and control panel</strong> — the numbers and the controls the owner needs, in one view.</li>
+      <li><strong>Funnel automation for recruiting</strong> — an automatic pipeline that brings in and filters worker and candidate applications, instead of handling each one by hand.</li>
+    </ul>
+  </ShowcaseSection>
+
+  <ContactForm
+    slot="cta"
+    heading="Recognize your own business in this?"
+    subheading="A short conversation about how your business actually runs today — no pitch prepared in advance."
+    submitLabel="Start a diagnostic conversation"
+    reassurance="No cost, no commitment — just an honest look at your setup."
+    source="systems-marketing-agency"
+  />
+
+</ShowcaseLayout>

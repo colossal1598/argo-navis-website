@@ -1,0 +1,135 @@
+---
+/*
+  PAGE GOAL: Second automation/systems-pattern case study, anonymized as
+  "a travel agency" — a second, independent proof point alongside the
+  fuel-distribution flagship. Converts to the same diagnostic-
+  conversation form as every other case study.
+
+  Copy source: .apm/memory/copy/case-study-travel-en.md — re-read that
+  file before editing any string below; it is the approved source of
+  truth, not this file. Anonymized throughout as "a travel agency" — no
+  client name, no domain, anywhere on this page.
+
+  METRICS: the automation-suite half (billing/membership/WhatsApp,
+  running through n8n) carries no numbers per the copy file's own note
+  — it runs outside the two reviewed repositories, so nothing is cited
+  for it and nothing is invented here either. The two custom-built
+  systems DO have real build-window facts (about a week / about two
+  months) — those are the only numbers in the metrics bar below.
+
+  serviceHref points at /automations (this case study's canonical route
+  is /automations/travel-agency per the Task Prompt).
+*/
+import ShowcaseLayout from "../../layouts/ShowcaseLayout.astro";
+import ShowcaseSection from "../../components/ShowcaseSection.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+/* Build-window facts only — no counts of any kind for the automation
+   suite, per the copy file's explicit instruction not to attach numbers
+   to that half of the work. */
+const metrics = [
+  { value: "2", label: "custom systems built" },
+  { value: "~1 week", label: "internal tools portal build time" },
+  { value: "~2 months", label: "WhatsApp inbox build time" },
+];
+
+const decisions = [
+  {
+    decision: "Two separate systems instead of one monolith",
+    why:      "The portal and the WhatsApp inbox serve different jobs — internal tool access vs. customer messaging — and can be built, deployed, and changed independently.",
+  },
+  {
+    decision: "A real database as the source of truth for WhatsApp",
+    why:      "The inbox's own database, not the chat window, holds the record of every conversation — so the interface can be rebuilt or changed without losing history.",
+  },
+  {
+    decision: "Session-window and template-message handling built explicitly",
+    why:      "WhatsApp's own rules (a 24-hour window to reply freely, template messages required after) are handled in code, not left to chance.",
+  },
+  {
+    decision: "An automated activity log for automation workflows",
+    why:      "Every automated action gets a record — what ran, whether it worked, and its estimated cost — visible in one place instead of buried in logs.",
+  },
+];
+
+const takeaways = [
+  "Not every project is one system. Sometimes the right shape is two smaller ones, each doing one job well.",
+  "Building a WhatsApp inbox from scratch, instead of wrapping an existing tool, means the business's own data — not a vendor's — is the record of every conversation.",
+  "WhatsApp has real rules (a 24-hour reply window, template messages after). Handling them explicitly beats hoping they don't come up.",
+  "An automated activity log pays for itself the first time something needs debugging — \"what happened and why\" shouldn't require digging through raw logs.",
+  "AI is genuinely useful for the boring, well-defined part of a workflow — rewriting a document's text — not for the whole workflow.",
+];
+---
+
+<ShowcaseLayout
+  title="One Travel Agency, Two Custom Systems"
+  description="A travel agency handling bookings, billing, and membership over WhatsApp got an automation suite plus two purpose-built systems: an internal tools portal and a from-scratch WhatsApp inbox on Meta's own Cloud API."
+  service="Automations"
+  serviceHref="/automations"
+  headline="One Travel Agency, Two Custom Systems"
+  subheadline="A travel agency running memberships and bookings, handling billing, membership records, and day-to-day customer messaging — mostly over WhatsApp — alongside the usual internal tools a small team ends up juggling logins for."
+  metaLine={{
+    project:     "Internal operations systems for a travel agency — an automation suite for billing and membership communication, plus two custom-built systems: an internal tools portal and a from-scratch WhatsApp inbox.",
+    scope:       "Two custom systems, built back to back — the tools portal in about a week, the WhatsApp inbox over about two months.",
+    result:      "One internal portal putting every staff tool behind a single login; one purpose-built WhatsApp inbox running directly on Meta's own Cloud API, with session-window handling, template messages, and an automated activity log.",
+    disclaimer:  "No client name, no domain, no financial data.",
+  }}
+  metrics={metrics}
+  tags={["n8n", "WhatsApp Cloud API"]}
+  decisions={decisions}
+  takeaways={takeaways}
+>
+
+  <!-- BACKGROUND -->
+  <ShowcaseSection label="Background" heading="Background">
+    <p>A travel agency running memberships and bookings, handling billing, membership records, and day-to-day customer messaging — mostly over WhatsApp — alongside the usual internal tools a small team ends up juggling logins for. Two separate pieces of work came out of that: an automation suite handling the repetitive parts, and two purpose-built systems for the team itself.</p>
+  </ShowcaseSection>
+
+  <!-- THE AUTOMATION SUITE — descriptive only, no numbers, per copy -->
+  <ShowcaseSection label="The Automation Suite" heading="What Was Built — The Automation Suite">
+    <p>Billing emails flow into a spreadsheet automatically. Membership records update as part of the same flow. WhatsApp messages — member welcomes, membership updates — go out without someone typing each one by hand. This piece of the work runs through automation behind the scenes, so no volumes are cited for it here — only what it does.</p>
+  </ShowcaseSection>
+
+  <!-- THE SYSTEMS -->
+  <ShowcaseSection label="The Systems" heading="What Was Built — The Systems" accent="gold">
+    <p><strong>An internal tools portal.</strong> One login, one dashboard, every internal tool behind it — links to other systems, embedded views of internal services, a chat interface that proxies messages to the automation layer, and a document tool that takes a travel itinerary as a Word document, sends it through an AI rewrite step, and hands back a rebuilt version with its formatting intact. Built in about a week.</p>
+    <p><strong>A WhatsApp inbox, built from scratch.</strong> Not a wrapper around an existing WhatsApp product — a purpose-built, agent-facing inbox on top of Meta's own WhatsApp Cloud API, with its own database as the single source of truth for every conversation. Handles WhatsApp's 24-hour session window, sends template messages once that window closes, stores inbound and outbound media, and includes an automated activity log recording what an automation workflow did, whether it succeeded, and its estimated cost. Built over about two months.</p>
+  </ShowcaseSection>
+
+  <!-- HARDEST PROBLEM -->
+  <ShowcaseSection label="The Hardest Problem" heading="Rewriting a Travel Itinerary Document With AI, Without Breaking It">
+    <p>One tool in the internal portal takes a real travel itinerary — a Word document, not plain text — and needs to hand it to an AI step for rewriting without losing its formatting. The fix: the document's text gets extracted, sent off for rewriting, and rebuilt back into a proper Word document afterward — rather than round-tripping through plain text and losing the original structure.</p>
+  </ShowcaseSection>
+
+  <!-- INTEGRATIONS -->
+  <ShowcaseSection label="Integrations" heading="Integrations">
+    <ul>
+      <li><strong>Meta WhatsApp Cloud API</strong> for the WhatsApp inbox — sending and receiving text, images, and template messages directly, no third-party WhatsApp wrapper.</li>
+      <li><strong>n8n</strong>, used two ways: receiving inbound WhatsApp messages and logging them into the inbox's own records, and running the automation suite (billing-email intake, membership updates, outbound WhatsApp messages) as a separate workflow layer outside these two systems.</li>
+      <li>An internal chat/automation proxy inside the tools portal, so staff can trigger the same automation layer from inside the portal itself.</li>
+    </ul>
+  </ShowcaseSection>
+
+  <!-- RESULTS — qualitative, not numeric, so rendered as narrative rather than forced into the results-table shape -->
+  <ShowcaseSection label="Results" heading="Results">
+    <ul>
+      <li>Billing emails get filed automatically instead of retyped by hand.</li>
+      <li>Membership records update themselves as part of the same flow.</li>
+      <li>WhatsApp welcomes and membership updates go out on their own, not one at a time.</li>
+      <li>Every internal staff tool sits behind a single login instead of scattered logins and bookmarks.</li>
+      <li>Travel itinerary documents get rewritten by AI with their formatting kept intact.</li>
+      <li>Every customer conversation is stored in the agency's own system, not scattered across apps and phones.</li>
+    </ul>
+    <p>What wasn't measured: message volume, billing-email throughput, and membership-update counts aren't part of this case study — those run through automation behind the scenes and weren't tracked as figures.</p>
+  </ShowcaseSection>
+
+  <ContactForm
+    slot="cta"
+    heading="Recognize your own business in this?"
+    subheading="A short conversation about how your business actually runs today — no pitch prepared in advance."
+    submitLabel="Start a diagnostic conversation"
+    reassurance="No cost, no commitment — just an honest look at your setup."
+    source="automations-travel-agency"
+  />
+
+</ShowcaseLayout>

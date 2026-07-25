@@ -1,0 +1,82 @@
+---
+/*
+  PAGE GOAL: Case study for Reception — Argo Navis's own product, used
+  here as proof of a pattern (a narrow, well-built AI/automation tool),
+  not as a sales page. Reception rules in force (copy already complies
+  — preserved verbatim below): no pricing, no plan offers, no product/
+  demo links; "running for clients today" + "we can build it for you"
+  framing only.
+
+  Copy source: .apm/memory/copy/case-study-reception-en.md — re-read
+  that file before editing any string below; it is the approved source
+  of truth, not this file. No usage/volume figures — none were ever
+  verified, so none are cited or invented here; the value of this page
+  is the pattern, not a stats claim, per the copy file's own framing.
+
+  serviceHref points at /automations — this case study's canonical
+  route is /automations/reception per the Task Prompt (Reception is
+  also referenced as proof from the /ai-agents service page and two of
+  the new LPs — those links now resolve once this page ships).
+*/
+import ShowcaseLayout from "../../layouts/ShowcaseLayout.astro";
+import ShowcaseSection from "../../components/ShowcaseSection.astro";
+import ContactForm from "../../components/ContactForm.astro";
+
+const takeaways = [
+  "A narrow product, built for exactly one job, doesn't need much underneath it — one workflow, one job, done well.",
+  "A demo is worth more than a features list — it lets a visitor feel the actual product before deciding anything.",
+  "Bilingual from day one (English root, Hebrew RTL mirror) costs little extra when it's planned in from the start.",
+  "A system already running for real clients is stronger proof than a prototype ever is.",
+];
+---
+
+<ShowcaseLayout
+  title="Reception — An Automatic WhatsApp Reply for Missed Business Calls"
+  description="Reception sends an automatic WhatsApp reply from a business's own number the moment a call is missed. Built narrow, for exactly one job, and running for clients today."
+  service="Automations"
+  serviceHref="/automations"
+  headline="Reception — An Automatic WhatsApp Reply for Missed Business Calls"
+  subheadline="An automatic WhatsApp reply triggered by a missed business call, sent from the business's own number."
+  metaLine={{
+    project:     "Reception — a WhatsApp automatic-reply system built by Argo Navis.",
+    scope:       "An automatic WhatsApp reply triggered by a missed business call, sent from the business's own number.",
+    result:      "Built, and running for clients today.",
+    disclaimer:  "This is Argo Navis's own system, described here as proof of a pattern — no pricing, no signup link, and no plan names.",
+  }}
+  takeaways={takeaways}
+>
+
+  <!-- WHY WE BUILT IT -->
+  <ShowcaseSection label="The Problem" heading="Why We Built It">
+    <p>A missed call rarely gets a second try. For a small or solo business, answering every call while working a job or with a client isn't realistic — and the caller usually just moves on to the next name on the list. Reception was built to close that gap: when a call goes unanswered, the caller gets an immediate WhatsApp reply, so at least they know they were seen and know what to do next.</p>
+  </ShowcaseSection>
+
+  <!-- WHAT IT DOES -->
+  <ShowcaseSection label="The Solution" heading="What It Does" accent="gold">
+    <p>The moment a business misses a call, Reception sends an automatic WhatsApp message from that business's own number — not a shared or generic number, so it reads to the caller as a real reply from the business, not a bot from somewhere else. It was built as a bilingual product, in English and Hebrew, with a demo built specifically so a visitor could feel exactly what their own missed callers would receive.</p>
+  </ShowcaseSection>
+
+  <!-- HOW IT'S BUILT -->
+  <ShowcaseSection label="Architecture" heading="How It's Built">
+    <p>A simple, deliberately small architecture: a lead-capture form protected by an invisible bot check, submitting into a background workflow that handles everything past that point — keeping the moving parts to a minimum for a product built this narrow.</p>
+  </ShowcaseSection>
+
+  <!--
+    WHERE IT STANDS — the Reception-rules sentence rendered verbatim:
+    "running for clients today" + "we can build it for you," no pricing,
+    no plan offers, no product/demo link.
+  -->
+  <ShowcaseSection label="Status" heading="Where It Stands">
+    <p>Reception is a real, working system, running today for the clients using it. We're not listing pricing or a signup link here — but if something like this would help your business, we can build it specifically for you, shaped around how you actually work.</p>
+  </ShowcaseSection>
+
+  <ContactForm
+    slot="cta"
+    heading="Recognize your own business in this?"
+    subheading="A short conversation about how your business actually runs today — no pitch prepared in advance."
+    submitLabel="Start a diagnostic conversation"
+    reassurance="No cost, no commitment — just an honest look at your setup."
+    source="automations-reception"
+  />
+
+</ShowcaseLayout>

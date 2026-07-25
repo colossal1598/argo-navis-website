@@ -184,6 +184,9 @@ function leadReplySubject(source: string): string {
     "lp-ai-agents":              "Your AI diagnostic is with us — Argo Navis",
     "lp-connected-systems":      "Your systems diagnostic is with us — Argo Navis",
     "lp-missed-calls":           "Your missed-calls diagnostic is with us — Argo Navis",
+    "automations-travel-agency": "Your diagnostic conversation is with us — Argo Navis",
+    "systems-marketing-agency":  "Your diagnostic conversation is with us — Argo Navis",
+    "automations-reception":     "Your diagnostic conversation is with us — Argo Navis",
   };
   return subjects[source] ?? "We got your message — Argo Navis";
 }
@@ -199,6 +202,9 @@ function sourceLabel(source: string): string {
     "lp-ai-agents":              "figuring out if AI helps your business",
     "lp-connected-systems":      "connecting your systems",
     "lp-missed-calls":           "not missing another call",
+    "automations-travel-agency": "a custom system for your business",
+    "systems-marketing-agency":  "a custom system for your business",
+    "automations-reception":     "a custom system for your business",
   };
   return labels[source] ?? "something great";
 }
@@ -364,6 +370,9 @@ function leadReplySubjectHe(source: string): string {
     "lp-ai-agents-he":              "קיבלנו את הפנייה שלך בנושא AI — Argo Navis",
     "lp-connected-systems-he":      "קיבלנו את הפנייה שלך לחיבור המערכות — Argo Navis",
     "lp-missed-calls-he":           "קיבלנו את הפנייה שלך על שיחות שהוחמצו — Argo Navis",
+    "automations-travel-agency-he": "קיבלנו את הפנייה שלך לשיחת אבחון — Argo Navis",
+    "systems-marketing-agency-he":  "קיבלנו את הפנייה שלך לשיחת אבחון — Argo Navis",
+    "automations-reception-he":     "קיבלנו את הפנייה שלך לשיחת אבחון — Argo Navis",
   };
   return subjects[source] ?? "קיבלנו את ההודעה שלך — Argo Navis";
 }
@@ -379,6 +388,9 @@ function sourceLabelHe(source: string): string {
     "lp-ai-agents-he":              "האם AI מתאים לעסק שלך",
     "lp-connected-systems-he":      "לחבר בין המערכות שלך",
     "lp-missed-calls-he":           "לא לפספס עוד שיחה",
+    "automations-travel-agency-he": "מערכת מותאמת אישית לעסק שלך",
+    "systems-marketing-agency-he":  "מערכת מותאמת אישית לעסק שלך",
+    "automations-reception-he":     "מערכת מותאמת אישית לעסק שלך",
   };
   return labels[source] ?? "משהו מעולה";
 }

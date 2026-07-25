@@ -28,10 +28,13 @@ import type { SiteLocale } from "../lib/locale";
                               headline. disclaimer is the small italic line
                               confirming every figure is a real order of
                               magnitude (anonymization statement).
-    metrics                — flexible-length array of { value, label } —
+    metrics?                — flexible-length array of { value, label } —
                               the headline stats bar. Not fixed at 3 (the
                               old metric1/2/3 props) — pass as many as the
-                              project has real, sourced numbers for.
+                              project has real, sourced numbers for. Omit
+                              entirely (or pass []) for a case study with
+                              no real per-project metrics — the bar itself
+                              is skipped rather than rendering empty.
     tags?                  — small technology/topic tags under the header
     decisions?             — { decision, why }[] — architecture-decisions
                               table. Omit if a case study doesn't need one.
@@ -66,7 +69,7 @@ interface Props {
   headline:        string;
   subheadline:     string;
   metaLine:        MetaLine;
-  metrics:         Metric[];
+  metrics?:        Metric[];
   tags?:           string[];
   decisions?:      Decision[];
   resultsTable?:   ResultRow[];
@@ -193,17 +196,24 @@ const t = copy[locale];
     </div>
   </header>
 
-  <!-- KEY METRICS BAR — flexible-length real numbers, styled like the homepage's AchievementsStrip -->
-  <div class="border-y border-border-subtle bg-surface-900 px-6 py-section-sm">
-    <div class="mx-auto grid max-w-4xl grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4">
-      {metrics.map((m, i) => (
-        <div class="reveal border-s-2 border-brand-500/40 ps-4 text-start" style={`--reveal-delay: ${i * 100}`}>
-          <p class="text-2xl font-extrabold text-text-primary sm:text-3xl md:text-4xl">{m.value}</p>
-          <p class="mt-1 text-sm text-text-muted">{m.label}</p>
-        </div>
-      ))}
+  <!--
+    KEY METRICS BAR — flexible-length real numbers, styled like the
+    homepage's AchievementsStrip. Skipped entirely (not rendered empty)
+    when a case study has no real per-project metrics to show — see the
+    metrics prop doc above.
+  -->
+  {metrics && metrics.length > 0 && (
+    <div class="border-y border-border-subtle bg-surface-900 px-6 py-section-sm">
+      <div class="mx-auto grid max-w-4xl grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4">
+        {metrics.map((m, i) => (
+          <div class="reveal border-s-2 border-brand-500/40 ps-4 text-start" style={`--reveal-delay: ${i * 100}`}>
+            <p class="text-2xl font-extrabold text-text-primary sm:text-3xl md:text-4xl">{m.value}</p>
+            <p class="mt-1 text-sm text-text-muted">{m.label}</p>
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
+  )}
 
   <!--
     BODY CONTENT — each case-study page composes its own narrative here
