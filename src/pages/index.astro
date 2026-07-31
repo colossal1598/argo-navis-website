@@ -17,6 +17,20 @@
         each linking to its case study/product page. See
         AchievementsStrip.astro (replaces CapabilityStrips.astro, which
         is now deleted — it had zero remaining callers).
+
+  REVISED 2026-08-01, Round 4, per owner feedback on the round-3 build:
+    (c) Hero headline swapped to the owner's own verbatim line
+        ("The only thing holding your business is you and a
+        spreadsheet?") — see the copy file's Hero section, updated
+        2026-08-01. Subhead/CTA unchanged.
+    (d) Strips made more compact (tighter panel padding, stat-grid
+        gaps, and margins; stat value size stepped down one notch) and
+        each strip now gets its own tinted, bordered panel — 4 colors
+        from the existing palette (brand/gold/slate/muted, the same
+        family `.badge-*` already uses), so the section reads as 4
+        distinct blocks instead of one flat stack. See
+        AchievementsStrip.astro's round-4 notes and the `.strip-panel*`
+        classes in global.css for the contrast math behind the tints.
   Vision/Attitude, Way of Working, and Contact are UNCHANGED from the
   prior revision (verified word-for-word against the copy file below,
   not assumed).
@@ -52,15 +66,20 @@ import VisionSection from "../components/VisionSection.astro";
 import StepsSection from "../components/StepsSection.astro";
 import ContactForm from "../components/ContactForm.astro";
 
-/* ACHIEVEMENT STRIPS — one bordered stats-row block per case study.
-   Every value must be traceable to a real project source (see
+/* ACHIEVEMENT STRIPS — one tinted, bordered stats-row panel per case
+   study. Every value must be traceable to a real project source (see
    CLAUDE.md, Content honesty) EXCEPT the six PLACEHOLDER values below,
    which are a deliberate, owner-requested, clearly marked exception —
-   see the PAGE GOAL comment above. */
+   see the PAGE GOAL comment above. `tone` (round 4) picks each strip's
+   panel/accent-bar color — one of each from the existing
+   .badge-brand/gold/slate/muted family so all 4 strips read as
+   distinct blocks in one palette, not four identical rows. Untouched
+   this round: every value, description, and PLACEHOLDER comment. */
 const strips = [
   {
     heading: "A family fuel-distribution business",
     subline: "One week, ground up — spreadsheets replaced with a system that runs the whole operation.",
+    tone: "brand" as const,
     stats: [
       { value: "21 → 1",      description: "Twenty-one spreadsheets, replaced by one system built around the business. Nothing was thrown away — every row migrated." },
       { value: "1 week",      description: "From first meeting to a working system, start to finish." },
@@ -73,6 +92,7 @@ const strips = [
   {
     heading: "A travel agency, two systems built back to back",
     subline: "Two custom systems, not a template — an internal tools portal and a from-scratch WhatsApp inbox.",
+    tone: "gold" as const,
     stats: [
       { value: "2",          description: "Custom systems built: an internal tools portal and a from-scratch WhatsApp inbox." },
       { value: "~1 week",    description: "To build the internal tools portal — every staff tool behind one login." },
@@ -84,6 +104,7 @@ const strips = [
   {
     heading: "Reception — automatic WhatsApp replies for missed calls",
     subline: "Built by us, running for clients today.",
+    tone: "slate" as const,
     stats: [
       // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: response time — how fast the reply goes out after a missed call)
       { value: "< 1 min",   description: "How fast the WhatsApp reply goes out after a missed call." },
@@ -98,6 +119,7 @@ const strips = [
   {
     heading: "A digital marketing agency — one connected system instead of four",
     subline: "Content planning, sales work, financial oversight, and hiring — all in one place.",
+    tone: "muted" as const,
     stats: [
       // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: how many tools/spreadsheets/systems this replaced)
       { value: "4 → 1",     description: "Separate tools for content, sales, finance, and hiring — replaced with one connected system." },
@@ -143,9 +165,9 @@ const wayOfWorkingSteps = [
   description="Argo Navis builds one system that connects what you already use, pulls your business out of the spreadsheets, and runs from your phone."
 >
 
-  <!-- HERO — the disconnect the reader already lives with. Single CTA, zero numbers, tightened composition. -->
+  <!-- HERO — owner-supplied headline (round 4, verbatim, kept as a question). Single CTA, zero numbers, tightened composition. -->
   <Hero
-    headline="You're the only thing connecting WhatsApp and Morning."
+    headline="The only thing holding your business is you and a spreadsheet?"
     subline="We build one system that connects what you already use and runs from your phone. No new software, no lock-in."
     cta={{ label: "Talk to us about your setup", href: "#contact" }}
   />

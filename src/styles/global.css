@@ -328,6 +328,101 @@ html[data-theme="light"] .chip-accent-text:hover {
 }
 
 /*
+  Strip panels (round-4 homepage achievement strips) — each of the 4
+  per-case-study strips gets its own tinted, bordered panel so the
+  section reads as 4 distinct blocks in one family, not a flat stack.
+  Reuses the existing .badge-brand/gold/slate/muted 4-way palette
+  family (same hues, same "3 accents + 1 neutral" logic) instead of
+  inventing new colors. "Muted" uses Tailwind's built-in `neutral`
+  scale (a true, non-blue gray) rather than a literal surface-800 step
+  — see the correction note below for why. No new hex values, no
+  gradients, no box-shadow; sharp small-radius rectangle, border only.
+
+  CORRECTION (still round 4, same review pass): the first version of
+  this block used flat 10% tints for brand/gold/slate and the literal
+  `bg-surface-800` token for "muted". An audit pass — independently
+  re-verified against the actual @theme hex values, not taken on faith
+  — found that failed the owner's actual ask: brand/slate/muted all sit
+  in the same blue-navy hue family as the surface tokens themselves, so
+  at matched low alpha they blended into three barely-distinguishable
+  near-identical colors (RGB distance as low as ~6–16 between pairs —
+  a JND-level difference, not "visibly distinct"), and "muted" against
+  bg-surface-900 measured ~1.1:1 contrast in BOTH themes — nearly
+  invisible without its border doing all the work. Retuned per-tone
+  alpha (asymmetric, not one flat number) to push real separation while
+  re-verifying WCAG AA on every text/link combination at each step:
+  brand 20%, gold 10% (unchanged — already worked, most saturated hue),
+  slate 30% (needed the biggest push — closest hue to the navy base),
+  muted 15% of `neutral-500` (a true gray, breaks out of the blue-navy
+  cluster entirely, still "within the existing palette" the same way
+  `slate` itself is already a borrowed Tailwind default, not a custom
+  token). Resulting minimum pairwise RGB distance across all 6 tone
+  pairs, both themes: 16.3 (dark, gold-muted) / 22.2 (light, gold-
+  muted) — a real, defensible step up from the ~6-16 range before.
+  Worst-case text-muted contrast against any tint, either theme: 5.06:1
+  (dark, slate) — still clear of the 4.5:1 AA floor with margin.
+
+  `.strip-panel-<tone>` is defined after `.strip-panel` (same reasoning
+  as `.card-row`/`.card-compact`) so its border-color/background win by
+  source order within the same compiled utilities layer. Padding
+  matches `.card-compact`'s value (p-5 sm:p-6) — reusing the codebase's
+  existing "compact" spacing step rather than inventing a new one.
+*/
+.strip-panel {
+  @apply rounded-sm border p-5 sm:p-6;
+}
+.strip-panel-brand {
+  @apply border-brand-500/30 bg-brand-500/20;
+}
+.strip-panel-gold {
+  @apply border-gold-500/30 bg-gold-500/10;
+}
+.strip-panel-slate {
+  @apply border-slate-500/30 bg-slate-500/30;
+}
+.strip-panel-muted {
+  @apply border-neutral-500/30 bg-neutral-500/15;
+}
+
+/*
+  Strip panel link colors (round 4) — the closing "read the full
+  story" link inside each panel now matches its panel's tone instead
+  of the sitewide default `.chip-accent-text` (fixed brand blue),
+  which an audit found dropped as low as 4.14:1 against the retuned
+  slate panel in dark theme (below AA) once panels stopped being a
+  flat, generically-dark bg-surface-900. Reuses the exact color steps
+  already computed and AA-verified for `.badge-brand/gold/slate`
+  (Task 2.5) rather than deriving new ones — those were chosen against
+  a harder case (light-theme surface-950) than these panels present,
+  so they carry comfortable margin here too. "Muted" has no hue of its
+  own, so its link reuses the brand steps (the site's default accent).
+  No dedicated `:hover` color rule this round (unlike `.chip-accent-
+  text`, which needs one for its own light-theme specificity issue,
+  untouched here) — the closing link's chevron icon already animates
+  on hover (`group-hover:translate-x-1` in AchievementsStrip.astro),
+  which is enough hover feedback without repeating that fix pattern
+  four more times for a nice-to-have.
+*/
+.strip-link-brand {
+  @apply text-brand-300;
+}
+html[data-theme="light"] .strip-link-brand {
+  color: var(--color-brand-700);
+}
+.strip-link-gold {
+  @apply text-gold-300;
+}
+html[data-theme="light"] .strip-link-gold {
+  color: var(--color-gold-800);
+}
+.strip-link-slate {
+  @apply text-slate-300;
+}
+html[data-theme="light"] .strip-link-slate {
+  color: var(--color-slate-700);
+}
+
+/*
   Long-form narrative prose (ShowcaseSection's slot content: <p>, <ul>/
   <ol>, <strong>, <a>, <code>). Replaces "prose"/"prose-invert" — no
   @tailwindcss/typography plugin is installed (budget is zero) — with

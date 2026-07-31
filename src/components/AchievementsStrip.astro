@@ -9,26 +9,52 @@
   block gets its own heading + one-line subline, its own 2-4 stats, and
   a closing inline link out to where the full story lives.
 
+  ROUND 4 — owner feedback ("more compact", "visibly colored, distinct
+  from each other"): each strip is now its own tinted, bordered panel
+  (`.strip-panel` + a `.strip-panel-<tone>` modifier) instead of a
+  borderless row in one `divide-y` stack, and every internal spacing
+  value (panel padding, stat-grid gaps, stat value size, margins) was
+  tightened a defensible step, not overhauled. Panel tints reuse the
+  existing `.badge-brand/gold/slate/muted` 4-way palette family — same
+  hues, same "3 accents + 1 neutral" logic — rather than inventing new
+  colors. First-draft flat 10% tints (+ a literal `bg-surface-800` for
+  "muted") looked right on paper but an audit — independently
+  reverified against the actual @theme hex values, not trusted as-is —
+  found 3 of 4 panels rendered as barely-distinguishable near-blacks
+  (all in the same blue-navy hue family as the surface tokens) and
+  "muted" measured ~1.1:1 contrast against the section background in
+  BOTH themes. Retuned to asymmetric per-tone alpha (brand 20%, gold
+  10%, slate 30%, muted 15% of Tailwind's `neutral` scale instead of a
+  literal surface step) — see global.css's `.strip-panel-*` comment for
+  the full before/after distance and contrast numbers. The stat-cell
+  accent bar (`border-s-2`) and the closing link both now pick up their
+  panel's hue too (`bar`/`link` in `TONE_CLASSES` below), per the Task
+  Prompt's "keep the same visual language" instruction — the link swap
+  was itself needed because the old shared `.chip-accent-text` (fixed
+  brand blue) dropped below AA against the retuned slate panel.
+
   Every value must be traceable to a real source (see CLAUDE.md, Content
   honesty) — never invent or round a number to make it look better. The
   one exception is deliberate, owner-requested, and marked inline: see
   the [OWNER NUMBER NEEDED] placeholders wired up in index.astro, never
   in this component.
 
-  STAT-CELL LOOK — preserved exactly from round 1, do not restyle:
-  `border-s-2 border-brand-500/40 ps-4`, 3xl/4xl extrabold value, muted
-  description, `--reveal-delay` stagger.
+  STAT-CELL LOOK — round-1 DNA preserved (`border-s-2 ... ps-4`,
+  extrabold value, muted description, `--reveal-delay` stagger); value
+  size stepped down one notch (3xl/4xl → 2xl/3xl) and bar color is now
+  tone-driven, both per round-4's compactness/color-distinction request.
 
   GRID SHAPE — must look intentional at both 3 and 4 stats, not like a
   4-column grid with an empty cell. 4 stats: 2 cols mobile, 4 cols sm+.
   3 stats: 1 col mobile (stacked), 3 cols sm+. Never stretch 3 across 4.
 
-  CASCADE-LAYER NOTE: nothing here stacks a plain utility on `.card`/
-  `.badge`/`.btn`/`.focus-ring` for a property the base class already
-  sets — the closing link uses `.focus-ring` + `.focus-ring-on-900`
-  (this section's bg-surface-900 needs the offset variant; see
-  global.css for why a plain `focus:ring-offset-surface-900` utility
-  would silently lose here).
+  CASCADE-LAYER NOTE: `.strip-panel-<tone>` is defined after `.strip-
+  panel` in global.css (same reasoning as `.card-row`/`.card-compact`)
+  so its border-color/background win by source order within the same
+  compiled layer. The closing link still uses `.focus-ring` +
+  `.focus-ring-on-900` (this section's bg-surface-900 needs the offset
+  variant) and `.chip-accent-text` (which now also carries a per-theme
+  `:hover` rule, round-3 fix, for the light-theme specificity issue).
 
   LINK, NOT A STRETCHED CARD: unlike round 2's CapabilityStrips (whole
   row as a single stretched-link target), each block here has real
@@ -48,6 +74,9 @@
                 stats   — 2-4 { value, description } pairs
                 href       — link target (case study or product page)
                 linkLabel  — visible link text (e.g. "Read the full story")
+                tone?      — "brand" | "gold" | "slate" | "muted",
+                             which panel/bar color this strip gets.
+                             Defaults to "muted" if omitted.
     note?   — optional small closing line under all strips.
     id?     — optional anchor id.
 */
@@ -56,12 +85,15 @@ interface Stat {
   description: string;
 }
 
+type Tone = "brand" | "gold" | "slate" | "muted";
+
 interface Strip {
   heading:   string;
   subline:   string;
   stats:     Stat[];
   href:      string;
   linkLabel: string;
+  tone?:     Tone;
 }
 
 interface Props {
@@ -74,15 +106,36 @@ interface Props {
 const { intro, strips, note, id } = Astro.props;
 
 // Grid shape depends on stat count so 3-stat strips never stretch
-// across a 4-column layout with an empty cell.
+// across a 4-column layout with an empty cell. Gaps tightened one step
+// (round 4 compactness) from the round-3 values.
 function statGridClass(count: number): string {
   return count >= 4
-    ? "grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-4"
-    : "grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-0";
+    ? "grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-4"
+    : "grid-cols-1 gap-y-4 sm:grid-cols-3 sm:gap-x-4 sm:gap-y-0";
 }
+
+// Panel background, stat-bar color, and closing-link color per tone.
+// Reuses the existing .badge-brand/gold/slate/muted hue family
+// (global.css) instead of new colors. `panel` pairs the base
+// `.strip-panel` class with its tone modifier (defined after the base
+// in global.css, wins by source order). `bar` and `link` are plain
+// utility/component-class names, not stacked on a conflicting base —
+// bar opacity is bumped from the round-3 value (/40 → /60, /50 for
+// muted) so it stays visible against its own tinted panel fill, not
+// just bare bg-surface-900 as before. `link` swaps the old shared
+// `.chip-accent-text` for a tone-matched color (see global.css's
+// `.strip-link-*` classes) — an audit found the old fixed brand-blue
+// link dropped below AA against the retuned slate panel; "muted" has
+// no hue of its own so its link reuses the brand steps.
+const TONE_CLASSES: Record<Tone, { panel: string; bar: string; link: string }> = {
+  brand: { panel: "strip-panel strip-panel-brand", bar: "border-brand-500/60", link: "strip-link-brand" },
+  gold:  { panel: "strip-panel strip-panel-gold",  bar: "border-gold-500/60",  link: "strip-link-gold" },
+  slate: { panel: "strip-panel strip-panel-slate", bar: "border-slate-500/60", link: "strip-link-slate" },
+  muted: { panel: "strip-panel strip-panel-muted", bar: "border-neutral-500/50", link: "strip-link-brand" },
+};
 ---
 
-<section id={id} class="border-y border-border-subtle bg-surface-900 px-6 py-section-md">
+<section id={id} class="border-y border-border-subtle bg-surface-900 px-6 py-section-sm">
   <div class="mx-auto max-w-5xl">
 
     <!-- Intro label — doubles as the section's <h2> landmark -->
@@ -92,59 +145,64 @@ function statGridClass(count: number): string {
       </h2>
     )}
 
-    <!-- ONE BLOCK PER CASE STUDY — divided, not carded; each block cascades in after the previous. -->
-    <div class:list={["divide-y divide-border-subtle", intro && "mt-10"]}>
-      {strips.map((strip, i) => (
-        <article class="reveal py-10 first:pt-0 last:pb-0" style={`--reveal-delay: ${i * 120}`}>
+    <!-- ONE TINTED PANEL PER CASE STUDY — distinct color per strip, tight gap between them (round 4). -->
+    <div class:list={["flex flex-col gap-4", intro && "mt-8"]}>
+      {strips.map((strip, i) => {
+        const tone = TONE_CLASSES[strip.tone ?? "muted"];
+        return (
+          <article class:list={["reveal", tone.panel]} style={`--reveal-delay: ${i * 100}`}>
 
-          <h3 class="text-lg font-semibold text-text-primary sm:text-xl">
-            {strip.heading}
-          </h3>
-          <p class="mt-1.5 text-sm text-text-muted">
-            {strip.subline}
-          </p>
+            <h3 class="text-base font-semibold text-text-primary sm:text-lg">
+              {strip.heading}
+            </h3>
+            <p class="mt-1 text-sm text-text-muted">
+              {strip.subline}
+            </p>
 
-          <!-- STAT GRID — the preserved round-1 stat-cell look -->
-          <div class:list={["mt-6 grid", statGridClass(strip.stats.length)]}>
-            {strip.stats.map((stat, j) => (
-              <div
-                class="reveal border-s-2 border-brand-500/40 ps-4 text-start"
-                style={`--reveal-delay: ${i * 120 + j * 80}`}
+            <!-- STAT GRID — round-1 stat-cell DNA, value size stepped down, tone-colored accent bar -->
+            <div class:list={["mt-4 grid", statGridClass(strip.stats.length)]}>
+              {strip.stats.map((stat, j) => (
+                <div
+                  class:list={["reveal border-s-2 ps-4 text-start", tone.bar]}
+                  style={`--reveal-delay: ${i * 100 + j * 60}`}
+                >
+                  <p class="text-2xl font-extrabold tracking-tight text-text-primary md:text-3xl">
+                    {stat.value}
+                  </p>
+                  <p class="mt-1 text-sm leading-relaxed text-text-muted">
+                    {stat.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <!--
+              CLOSING LINK — plain inline text link, not a stretched card
+              target. Tone-matched color (`tone.link`, round 4) instead
+              of the shared `.chip-accent-text` — see global.css for why.
+              `py-1 -my-1` on the anchor widens the tap target a little on
+              mobile without adding visible gap around the line (the
+              negative margin cancels the padding's layout effect).
+            -->
+            <p class="mt-4 text-sm">
+              <a
+                href={strip.href}
+                class:list={["focus-ring focus-ring-on-900 group -my-1 inline-flex items-center gap-1 rounded-sm py-1 font-medium", tone.link]}
               >
-                <p class="text-3xl font-extrabold tracking-tight text-text-primary md:text-4xl">
-                  {stat.value}
-                </p>
-                <p class="mt-1.5 text-sm leading-relaxed text-text-muted">
-                  {stat.description}
-                </p>
-              </div>
-            ))}
-          </div>
+                {strip.linkLabel}
+                <svg class="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </p>
 
-          <!--
-            CLOSING LINK — plain inline text link, not a stretched card
-            target. `py-1 -my-1` on the anchor widens the tap target a
-            little on mobile without adding visible gap around the line
-            (the negative margin cancels the padding's layout effect).
-          -->
-          <p class="mt-6 text-sm">
-            <a
-              href={strip.href}
-              class="focus-ring focus-ring-on-900 chip-accent-text group -my-1 inline-flex items-center gap-1 rounded-sm py-1 font-medium hover:text-brand-300"
-            >
-              {strip.linkLabel}
-              <svg class="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </a>
-          </p>
-
-        </article>
-      ))}
+          </article>
+        );
+      })}
     </div>
 
     {note && (
-      <p class="reveal mt-10 text-center text-xs text-text-muted">
+      <p class="reveal mt-8 text-center text-xs text-text-muted">
         {note}
       </p>
     )}
