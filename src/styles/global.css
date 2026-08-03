@@ -328,95 +328,83 @@ html[data-theme="light"] .chip-accent-text:hover {
 }
 
 /*
-  Strip panels (round-5 homepage achievement strips) — each of the 4
-  per-case-study strips gets its own confidently, visibly colored
-  panel. Round 4's low-alpha tints (10-30% washes over bg-surface-900)
-  were rejected by the owner as "badly colored (AI weak colors)" —
-  correctly: independently re-verified, they left brand/slate/muted
-  clustered within an RGB distance of ~16-22 of each other, reading as
-  near-identical dark washes rather than distinct colors.
+  Strip panels (round-6 homepage achievement strips — FINAL styling
+  pass, owner ships tomorrow). Three per-case-study strips (Reception
+  deleted this round — see index.astro), each its own confidently,
+  visibly colored panel, arranged as a 3-column row (AchievementsStrip
+  .astro), not a stacked list.
 
-  ROUND-5 FIX — solid, theme-invariant fills instead of alpha tints.
-  Each panel is now an opaque block from a fixed, deep step of its hue
-  (brand-700, gold-800 — the deepest gold step this project defines,
-  slate-700, neutral-900), the same color in both light and dark theme
-  — mirrors the precedent already set by `.btn-primary` (bg-brand-500
-  text-white, unchanged by theme) rather than the surface/text tokens'
-  usual per-theme remapping. This sidesteps the whole per-theme-alpha
-  problem round 4 kept fighting: a solid, saturated fill is either
-  legible or not, independent of which theme the rest of the page is
-  in, so there is exactly one contrast check per tone instead of eight
-  (4 tones × 2 themes × light/dark variants). No new hex values (all
-  four are existing palette steps), no gradients, no box-shadow — sharp
-  small-radius rectangle, border only.
+  HISTORY: round 4's low-alpha tints (~16-22 RGB distance apart) read
+  as "AI weak colors." Round 5 fixed distinctness with solid, deep,
+  theme-invariant fills (brand-700/gold-800/slate-700/neutral-900,
+  79.9 min distance) — but the owner then called THOSE too dark/muddy,
+  specifically flagging `gold-800` as "brownishly bad."
 
-  Verified (own computation): brand-700/gold-800 are this file's own
-  `@theme` hex values (lines ~25, 34); slate-700/slate-300/neutral-900/
-  neutral-400 are NOT — they're Tailwind v4's built-in default palette
-  (OKLCH internally), borrowed the same way `slate` was already
-  borrowed for `.badge-slate`. `neutral` has no other precedent in this
-  codebase as of round 5 — a deliberate 5th hue-ish family added
-  specifically to break "muted" out of the blue-navy cluster that beat
-  round 4 (see below), not a token-discipline oversight. Minimum
-  pairwise RGB distance across all 6 tone pairs is now 79.9 (brand-700
-  vs gold-800: 195.2; slate-700 vs neutral-900, the closest pair, still
-  79.9) — a decisive step up from round 4's 16-22 range, and these are
-  fully saturated hues at a consistent visual "weight," not near-black
-  washes. Fixed white text/slate-300 description text against each
-  fill, worst case: gold-800 with white text 6.78:1 (WCAG relative-
-  luminance formula, double-checked to 3 decimal places), with
-  slate-300 description text 4.78:1 — both clear the 4.5:1 AA floor
-  (gold-800 is the tightest margin since it's this project's lightest
-  defined gold step; every other fill clears 8:1+). Because the fill no
-  longer changes by theme, this is the ONLY contrast check needed — no
-  separate light/dark pass.
+  ROUND-6 FIX — same theme-invariant-fill pattern (still the right
+  tool: one contrast check per tone, not one per tone per theme), moved
+  UP the palette scales to bright, saturated, opaque steps instead of
+  deep ones: `brand-300`, `gold-400`, `slate-400`. Bright fills need
+  DARK text for AA (not round 5's white) — see `.strip-panel` consumers
+  in AchievementsStrip.astro, which use `text-slate-900`/`text-slate-
+  800` (plain Tailwind defaults, not new tokens) instead of white.
+  `neutral` (round 5's 4th tone, for the now-deleted Reception strip)
+  is gone — 3 strips, 3 tones, no "muted" needed.
 
-  "Muted" is deliberately the darkest of the four (neutral-900, not a
-  mid-tone) — differentiates it from `slate` by VALUE (near-black vs.
-  medium blue-gray, luminance ~6× apart) as well as hue, since two
-  similarly-deep grays are harder to tell apart than a light/dark pair
-  even when their hue
-  angles differ (round-4 lesson: brand/slate/muted at matched alpha
-  converged much closer than expected).
+  Verified (own computation, hex values pulled from this file's
+  `@theme` block for brand-300, Tailwind v4 defaults for gold-400/
+  slate-400 — gold-400 is custom-defined here, slate-400 is borrowed,
+  same precedent as `.badge-slate`): minimum pairwise RGB distance
+  across the 3 fills is 72.3 (brand-300 vs slate-400 — still a decisive
+  jump from round 4's 16-22, and these are now light+saturated, not
+  dark+desaturated, which reads as far more "confident color" even at
+  a similar numeric distance to round 5's 79.9). Dark text against
+  every fill, worst case: `text-slate-900` (#0f172a, light theme's own
+  text-primary value, reused rather than inventing a new "dark text"
+  color) on brand-300 at 8.55:1; `text-slate-800` (#1e293b, Tailwind
+  default) on brand-300 at 7.01:1 — every other fill×text combination
+  clears 5.5:1+. Both comfortably clear the 4.5:1 AA floor with real
+  margin (checked specifically since round 5's gold-800 choice had a
+  much tighter, if still-passing, margin — this round intentionally
+  picked steps with headroom, not just steps that barely pass).
 
   `.strip-panel-<tone>` is defined after `.strip-panel` (same reasoning
   as `.card-row`/`.card-compact`) so its border-color/background win by
   source order within the same compiled utilities layer. Padding
-  matches `.card-compact`'s value (p-5 sm:p-6) — reusing the codebase's
-  existing "compact" spacing step rather than inventing a new one.
+  tightened below round 4/5's "compact" baseline (p-4 instead of
+  p-5 sm:p-6) — the 3-column row layout is the main lever for
+  "compact," this is a secondary tightening on top of it.
 */
 .strip-panel {
-  @apply rounded-sm border p-5 sm:p-6;
+  @apply rounded-sm border p-4;
 }
 .strip-panel-brand {
-  @apply border-brand-400/40 bg-brand-700;
+  @apply border-brand-600/40 bg-brand-300;
 }
 .strip-panel-gold {
-  @apply border-gold-400/40 bg-gold-800;
+  @apply border-gold-600/40 bg-gold-400;
 }
 .strip-panel-slate {
-  @apply border-slate-400/40 bg-slate-700;
-}
-.strip-panel-muted {
-  @apply border-neutral-400/40 bg-neutral-900;
+  @apply border-slate-600/40 bg-slate-400;
 }
 
 /*
-  Strip panel text (round 5) — since panel fills are now solid and
-  theme-invariant (see above), panel content uses fixed light colors
-  instead of the usual `text-text-primary`/`text-text-muted` theme
-  tokens, which would otherwise flip to near-black in light theme and
-  vanish against these dark fills. Plain Tailwind utilities, not new
-  component classes — nothing else sets `color` on these elements, so
-  there's no cascade-layer risk stacking them directly in markup.
-  `text-white` for headings/stat values, `text-slate-300` for
-  descriptions and the closing link (the same hex this project's
-  `--theme-text-soft` token already resolves to in dark theme, reused
-  rather than inventing a new "soft light text" value). One shared
-  pair for all four tones — no per-tone text variant needed, since
-  every fill was chosen to clear AA against both at once (see above).
+  Strip panel text (round 6) — since panel fills are solid and
+  theme-invariant (see above), panel content uses fixed colors instead
+  of the usual `text-text-primary`/`text-text-muted` theme tokens,
+  which would otherwise flip per theme independent of the panel's own
+  (unchanging) fill. Plain Tailwind utilities, not new component
+  classes — nothing else sets `color` on these elements, so there's no
+  cascade-layer risk stacking them directly in markup. Round 5 used
+  light text (`text-white`/`text-slate-300`) against its deep fills;
+  round 6's fills are bright, so panel content now uses DARK text
+  instead: `text-slate-900` (#0f172a, the same hex this project's
+  light-theme `--theme-text-primary` already resolves to, reused rather
+  than inventing a new "dark text" value) for headings/stat values,
+  `text-slate-800` (#1e293b, Tailwind default) for descriptions and the
+  closing link. One shared pair for all three tones — no per-tone text
+  variant needed, since every fill was chosen to clear AA against both
+  at once (see above).
 */
-
 
 /*
   Long-form narrative prose (ShowcaseSection's slot content: <p>, <ul>/

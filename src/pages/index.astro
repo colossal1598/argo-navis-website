@@ -48,6 +48,33 @@
         resolved with real owner numbers (6 → 1, 20+ people,
         ~$56,000). Reception's placeholders are still pending an owner
         decision — untouched, byte-identical to round 4.
+
+  REVISED 2026-08-04, Round 6 — FINAL styling pass, owner ships
+  tomorrow — per owner review of the round-5 build:
+    (h) Fills were too dark/muddy (`gold-800` read "brownishly bad").
+        Moved to bright, saturated, opaque fills (brand-300, gold-400,
+        slate-400) with dark text for AA instead of round 5's deep
+        fills with light text — see AchievementsStrip.astro's round-6
+        notes and the `.strip-panel*` classes in global.css for the
+        distance/contrast math.
+    (i) Section made visibly more compact: panels now sit in a 3-across
+        row at sm+ (not stacked full-width blocks), padding/gaps/text
+        sizes all tightened further than round 4's "compact" baseline.
+    (j) Section intro changed to "Some projects we did for clients —
+        real businesses, real results." (replaces "Real business, real
+        results.").
+    (k) THE RECEPTION STRIP IS DELETED per an explicit 2026-08-04 owner
+        decision recorded in the copy file — the section now has THREE
+        strips (fuel, travel, marketing), not four. The
+        `/automations/reception` case-study page itself is untouched
+        and stays live; only its homepage strip is gone. This also
+        removes the LAST placeholder numbers from the page — as of
+        round 6, every stat on this page is a real, verified number.
+        Marketing's `tone` was reassigned from "muted" to "slate" now
+        that Reception (which owned "slate") is gone and three tones
+        exactly cover three strips; "muted"/neutral is no longer used
+        anywhere on this page (see global.css for the resulting dead-
+        class removal).
   Vision/Attitude, Way of Working, and Contact are UNCHANGED from the
   prior revision (verified word-for-word against the copy file below,
   not assumed).
@@ -58,22 +85,13 @@
   ...]*` markers are editorial meta for the owner's review — never
   rendered here; only the resolved bullet text they annotate is used.
 
-  PLACEHOLDER NUMBERS — owner-requested, NOT final, DO NOT SHIP:
-  as of round 5, ONLY the Reception strip still carries placeholders —
-  marketing-agency's were resolved with real owner numbers this round
-  (see (g) above). Reception's 3 stat slots remain marked
-  [OWNER NUMBER NEEDED] in the copy file; the owner has explicitly not
-  yet decided whether Reception ships with numbers, numberless, or gets
-  dropped entirely — left completely untouched this round (byte-
-  identical to round 4, diff-verified). Every placeholder value below
-  is marked inline with a
-  "PLACEHOLDER — awaiting owner's real number, DO NOT SHIP" comment:
-  response time, client/scale count, build time. None of these
-  placeholder values were copied back into
-  .apm/memory/copy/homepage-en.md — that file keeps the
-  [OWNER NUMBER NEEDED] markers as the source of truth. Do not ship
-  this page to production until Reception's owner decision lands and,
-  if numbers are chosen, all three are replaced with real ones.
+  PLACEHOLDER NUMBERS: NONE. As of round 6 (Reception's deletion),
+  every stat value on this page is real and traceable to a real
+  project (see CLAUDE.md, Content honesty). No `PLACEHOLDER`/
+  `DO NOT SHIP`/`OWNER NUMBER NEEDED` markers remain anywhere in this
+  file, `AchievementsStrip.astro`, or the built page — verified by grep
+  before this round's commit. This page is launch-ready with respect to
+  numbers.
 
   No imagery — round 3 dropped the image-slot idea along with
   CapabilityStrips; nothing to reserve here.
@@ -86,16 +104,14 @@ import StepsSection from "../components/StepsSection.astro";
 import ContactForm from "../components/ContactForm.astro";
 
 /* ACHIEVEMENT STRIPS — one confidently-colored, bordered stats-row
-   panel per case study. Every value must be traceable to a real
-   project source (see CLAUDE.md, Content honesty) EXCEPT the three
-   Reception PLACEHOLDER values below, a deliberate, owner-requested,
-   clearly marked exception (owner decision still pending as of round
-   5 — see the PAGE GOAL comment above). `tone` picks each strip's
-   panel color — one of each from the existing .badge-brand/gold/
-   slate/muted family so all 4 strips read as distinct blocks in one
-   palette, not four identical rows. Fuel/travel/marketing data below
-   updated this round to match the finalized copy; Reception is
-   byte-identical to round 4. */
+   panel per case study. Every value below is real and traceable to a
+   real project (see CLAUDE.md, Content honesty) — as of round 6
+   (Reception's deletion) there are no remaining placeholder/invented
+   numbers on this page. `tone` picks each strip's panel color — three
+   strips, three tones (brand/gold/slate), each used exactly once;
+   "muted" is no longer used anywhere on this page (it belonged to
+   marketing-agency before Reception's deletion freed up "slate" for
+   reassignment). */
 const strips = [
   {
     heading: "A family fuel-distribution business",
@@ -122,24 +138,9 @@ const strips = [
     linkLabel: "Read the full story",
   },
   {
-    heading: "Reception — automatic WhatsApp replies for missed calls",
-    subline: "Built by us, running for clients today.",
-    tone: "slate" as const,
-    stats: [
-      // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: response time — how fast the reply goes out after a missed call)
-      { value: "< 1 min",   description: "How fast the WhatsApp reply goes out after a missed call." },
-      // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: scale — clients running Reception today, or replies sent)
-      { value: "6 clients", description: "Running Reception today." },
-      // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: build time — how long Reception took to build)
-      { value: "2 weeks",   description: "From first idea to a working, bilingual product." },
-    ],
-    href:      "/automations/reception",
-    linkLabel: "We can build the same for your business",
-  },
-  {
     heading: "A digital marketing agency — one organized system instead of a mess",
     subline: "Content planning, sales work, financial oversight, and hiring — all tracked and automated.",
-    tone: "muted" as const,
+    tone: "slate" as const,
     stats: [
       { value: "6 → 1",       description: "Separate tools for content, sales, finance, and hiring — from messaging platforms and written notes — now in one place." },
       { value: "20+ people",  description: "Sales reps, workers, and hiring staff using the system day to day." },
@@ -191,7 +192,7 @@ const wayOfWorkingSteps = [
 
   <!-- ACHIEVEMENT STRIPS — restored round-1 presentation, one strip per case study, each linking to its full story. -->
   <AchievementsStrip
-    intro="Real business, real results."
+    intro="Some projects we did for clients — real businesses, real results."
     strips={strips}
   />
 

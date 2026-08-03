@@ -6,75 +6,68 @@
   reveal) after round 2's single-fact "capability strips" misread the
   direction. Extended, per the round-3 correction, to repeat that exact
   presentation ONCE PER CASE STUDY within one shared section — each
-  block gets its own heading + one-line subline, its own 2-4 stats, and
-  a closing inline link out to where the full story lives.
+  block gets its own heading + one-line subline, its own stats, and a
+  closing inline link out to where the full story lives.
 
-  ROUND 5 — owner verdict on round 4's tinted panels: "badly colored
-  (AI weak colors)" (too washed-out to read as confident color),
-  "numbers seem too big", and "not sitting right" (composition). Fixed
-  by moving from round 4's low-alpha tints to solid, theme-invariant
-  fills (see the `.strip-panel-<tone>` comment in global.css for the
-  full color-distance/contrast math) — a decisive jump in how distinct
-  the 4 panels read from each other. Because each panel's fill no
-  longer changes by theme, panel text also stopped using the usual
-  `text-text-primary`/`text-text-muted` theme tokens (which would flip
-  to near-black in light theme and vanish) in favor of fixed
-  `text-white`/`text-slate-300` — see TEXT below. Per-tone `link` and
-  `bar` classes from round 4 are gone: with the whole panel now
-  carrying its tone, a single shared light color for all panel text
-  reads correctly against all four fills at once (verified, see
-  global.css), so there's no more need for 4 separate tone-matched text
-  variants. Stat value size stepped down again (2xl/3xl → xl/2xl, the
-  second such step after round 4's 3xl/4xl → 2xl/3xl). Composition:
-  panel-to-panel gap widened slightly (gap-4 → gap-5) since bolder
-  panels need a touch more breathing room than round 4's faint ones
-  did; internal margins (subline→stats, stats→link) opened one notch
-  for the same reason.
+  ROUND 6 — FINAL styling pass (owner ships tomorrow). Owner verdict on
+  round 5's solid dark fills: too dark/muddy, `gold-800` specifically
+  read "brownishly bad." Fixed by moving UP the palette scales to
+  bright, saturated, opaque fills (brand-300, gold-400, slate-400) —
+  still theme-invariant (round 5's proven pattern), but now needing
+  DARK text for AA instead of round 5's light text, since the fills
+  themselves are light now. See the `.strip-panel-<tone>` comment in
+  global.css for the full distance/contrast math.
 
-  Every value must be traceable to a real source (see CLAUDE.md, Content
-  honesty) — never invent or round a number to make it look better. The
-  one exception is deliberate, owner-requested, and marked inline: see
-  the [OWNER NUMBER NEEDED] placeholders wired up in index.astro, never
-  in this component. Reception's placeholders are still pending an
-  owner decision as of round 5 — untouched here.
+  COMPOSITION — also per round 6: the owner wants "a smooth and compact
+  section," explicitly describing the goal as "one flowing row of
+  proof," not "three heavy slabs." Read that as a literal cue, not just
+  a metaphor for tighter spacing: the 3 strips now sit in a genuine
+  3-column grid at sm+ (stacking to 1 column below that), not a
+  vertically stacked list of full-width panels. This is the single
+  biggest lever for "more compact" — three panels side-by-side take
+  roughly a third of the vertical height three stacked panels do, far
+  more than any padding/gap tightening alone could achieve. Within each
+  (now much narrower) panel, stats stack in a simple single column
+  instead of their own sub-grid — a 3-across sub-grid inside an already
+  1/3-width panel would be too cramped to read. Padding, gaps, heading
+  size, and stat-value size are all tightened again on top of this
+  (see the values below vs round 5's).
 
-  STAT-CELL LOOK — round-1 DNA preserved (`border-s-2 ... ps-4`,
-  extrabold value, staggered `--reveal-delay`); the accent bar itself
-  is now a plain light divider (`border-white/25`, not a per-tone hue)
-  since a colored bar would fight rather than complement a now-solidly
-  colored panel — round 4's stat-cell bars were tone-colored precisely
-  because the panel fill was too faint to carry color on its own; that
-  reasoning no longer applies once the panel itself is the color
-  statement. Same visual language (a short vertical accent before each
-  number), adjusted per the Task Prompt's explicit allowance to do so
-  "unless it fights the new tinted backgrounds."
+  Every stat value must be traceable to a real source (see CLAUDE.md,
+  Content honesty) — never invent or round a number to make it look
+  better. As of round 6 (the Reception strip's deletion, an explicit
+  owner decision — see index.astro's PAGE GOAL comment), there are NO
+  placeholder values anywhere on this page; the [OWNER NUMBER NEEDED]
+  exception that existed through round 5 no longer applies to anything
+  rendered by this component.
 
-  GRID SHAPE — must look intentional at both 3 and 4 stats, not like a
-  4-column grid with an empty cell. 4 stats: 2 cols mobile, 4 cols sm+.
-  3 stats: 1 col mobile (stacked), 3 cols sm+. Never stretch 3 across 4.
-  (As of round 5, every strip has exactly 3 stats — fuel dropped its
-  4th "1 week" stat per the finalized copy — but the 4-stat branch is
-  kept for schema flexibility; nothing currently exercises it.)
+  STAT-CELL LOOK — round-1 DNA preserved in spirit (`border-s-2 ...
+  ps-4`, extrabold value, staggered `--reveal-delay`) but adapted for
+  the narrower per-panel column: the accent bar is a plain dark divider
+  (`border-slate-900/20`, flipped from round 5's `border-white/25` now
+  that panel fills are light, not dark).
 
   CASCADE-LAYER NOTE: `.strip-panel-<tone>` is defined after `.strip-
   panel` in global.css (same reasoning as `.card-row`/`.card-compact`)
   so its border-color/background win by source order within the same
-  compiled utilities layer. `text-white`/`text-slate-300` on the
+  compiled utilities layer. `text-slate-900`/`text-slate-800` on the
   heading/value/description/link are plain Tailwind utilities with no
   competing component-class base setting `color` on those elements —
   no cascade risk stacking them directly. The closing link still uses
   `.focus-ring` + `.focus-ring-on-900` (a small, accepted mismatch
-  against non-surface-900 fills — only visible on keyboard focus, not
-  worth a new per-tone offset system for this round).
+  against non-surface-900 fills, unchanged reasoning from round 5).
 
-  LINK, NOT A STRETCHED CARD: unlike round 2's CapabilityStrips (whole
-  row as a single stretched-link target), each block here has real
-  content beyond the link (heading, subline, several stats) — a plain
-  inline text link at the end reads more honestly than making the
-  numbers themselves seem clickable. Now underlined (round 5) rather
-  than color-differentiated, so the link doesn't rely on color alone
-  to read as interactive (WCAG 1.4.1) now that it shares its color
-  with the surrounding description text.
+  LINK, NOT A STRETCHED CARD: each panel has real content beyond the
+  link (heading, subline, several stats) — a plain inline text link at
+  the end reads more honestly than making the numbers themselves seem
+  clickable. Underlined (since round 5) rather than color-differentiated
+  so it doesn't rely on color alone to read as interactive (WCAG 1.4.1);
+  round 6 flips the underline/text colors from light (round 5, dark
+  fills) to dark (round 6, light fills) — same mechanism, same reason,
+  reversed direction, mirroring how the round-3 `.chip-accent-text`
+  light-theme hover fix went darker while its dark-theme default went
+  lighter for the same underlying reason (resting color already at the
+  higher-contrast end needs to move further from it, not closer).
 
   PROPS:
     intro?  — small label above all strips; doubles as this section's
@@ -84,12 +77,14 @@
                 heading — case-study label (e.g. "A family
                           fuel-distribution business")
                 subline — one line of context under the heading
-                stats   — 2-4 { value, description } pairs
+                stats   — array of { value, description } pairs
                 href       — link target (case study or product page)
                 linkLabel  — visible link text (e.g. "Read the full story")
-                tone?      — "brand" | "gold" | "slate" | "muted",
-                             which panel color this strip gets.
-                             Defaults to "muted" if omitted.
+                tone?      — "brand" | "gold" | "slate", which panel
+                             color this strip gets. Defaults to "brand"
+                             if omitted. ("muted"/neutral was removed
+                             in round 6 — zero callers once Reception,
+                             the only strip using a 4th tone, was cut.)
     note?   — optional small closing line under all strips.
     id?     — optional anchor id.
 */
@@ -98,7 +93,7 @@ interface Stat {
   description: string;
 }
 
-type Tone = "brand" | "gold" | "slate" | "muted";
+type Tone = "brand" | "gold" | "slate";
 
 interface Strip {
   heading:   string;
@@ -118,21 +113,13 @@ interface Props {
 
 const { intro, strips, note, id } = Astro.props;
 
-// Grid shape depends on stat count so 3-stat strips never stretch
-// across a 4-column layout with an empty cell.
-function statGridClass(count: number): string {
-  return count >= 4
-    ? "grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-4"
-    : "grid-cols-1 gap-y-4 sm:grid-cols-3 sm:gap-x-4 sm:gap-y-0";
-}
-
-// Panel background per tone (global.css). Text/bar/link no longer vary
-// by tone as of round 5 — see the component doc comment above.
+// Panel background per tone (global.css). Text/bar/link are shared
+// across all tones as of round 6 (fixed dark colors, verified AA
+// against every fill at once — see global.css for the numbers).
 const TONE_PANEL_CLASS: Record<Tone, string> = {
   brand: "strip-panel strip-panel-brand",
   gold:  "strip-panel strip-panel-gold",
   slate: "strip-panel strip-panel-slate",
-  muted: "strip-panel strip-panel-muted",
 };
 ---
 
@@ -146,31 +133,31 @@ const TONE_PANEL_CLASS: Record<Tone, string> = {
       </h2>
     )}
 
-    <!-- ONE CONFIDENTLY-COLORED PANEL PER CASE STUDY (round 5) — wider gap than round 4 since bolder panels need more room to breathe. -->
-    <div class:list={["flex flex-col gap-5", intro && "mt-8"]}>
+    <!-- THREE-ACROSS ROW OF PROOF (round 6) — a genuine grid, not a stacked list, is the main lever for "compact"; 1 column on mobile, 3 at sm+. -->
+    <div class:list={["grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4", intro && "mt-6"]}>
       {strips.map((strip, i) => {
-        const panelClass = TONE_PANEL_CLASS[strip.tone ?? "muted"];
+        const panelClass = TONE_PANEL_CLASS[strip.tone ?? "brand"];
         return (
-          <article class:list={["reveal", panelClass]} style={`--reveal-delay: ${i * 100}`}>
+          <article class:list={["reveal flex flex-col", panelClass]} style={`--reveal-delay: ${i * 100}`}>
 
-            <h3 class="text-base font-semibold text-white sm:text-lg">
+            <h3 class="text-sm font-semibold text-slate-900">
               {strip.heading}
             </h3>
-            <p class="mt-1 text-sm text-slate-300">
+            <p class="mt-1 text-xs text-slate-800">
               {strip.subline}
             </p>
 
-            <!-- STAT GRID — round-1 stat-cell DNA, value size stepped down again, plain light divider bar -->
-            <div class:list={["mt-5 grid", statGridClass(strip.stats.length)]}>
+            <!-- STATS — stacked single column (each panel is only ~1/3 width now, too narrow for its own sub-grid). -->
+            <div class="mt-3 flex flex-col gap-2.5">
               {strip.stats.map((stat, j) => (
                 <div
-                  class="reveal border-s-2 border-white/25 ps-4 text-start"
+                  class="reveal border-s-2 border-slate-900/20 ps-3 text-start"
                   style={`--reveal-delay: ${i * 100 + j * 60}`}
                 >
-                  <p class="text-xl font-extrabold tracking-tight text-white sm:text-2xl">
+                  <p class="text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">
                     {stat.value}
                   </p>
-                  <p class="mt-1 text-sm leading-relaxed text-slate-300">
+                  <p class="text-xs leading-snug text-slate-800">
                     {stat.description}
                   </p>
                 </div>
@@ -179,20 +166,18 @@ const TONE_PANEL_CLASS: Record<Tone, string> = {
 
             <!--
               CLOSING LINK — plain inline text link, not a stretched card
-              target. Underlined (round 5) instead of tone-colored, since
-              it now shares its color with the description text — the
-              underline (not color) is what signals "interactive" here.
-              `py-1 -my-1` on the anchor widens the tap target a little on
-              mobile without adding visible gap around the line (the
-              negative margin cancels the padding's layout effect).
+              target. Dark, underlined (round 6 — light fills need dark
+              text; underline, not color, signals "interactive").
+              `py-1 -my-1` widens the tap target a little on mobile
+              without adding visible gap (negative margin cancels it).
             -->
-            <p class="mt-5 text-sm">
+            <p class="mt-3 text-xs">
               <a
                 href={strip.href}
-                class="focus-ring focus-ring-on-900 group -my-1 inline-flex items-center gap-1 rounded-sm py-1 font-medium text-slate-300 underline decoration-slate-300/40 underline-offset-4 hover:text-white hover:decoration-white/70"
+                class="focus-ring focus-ring-on-900 group -my-1 inline-flex items-center gap-1 rounded-sm py-1 font-medium text-slate-800 underline decoration-slate-800/40 underline-offset-4 hover:text-slate-900 hover:decoration-slate-900/70"
               >
                 {strip.linkLabel}
-                <svg class="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
               </a>
@@ -204,7 +189,7 @@ const TONE_PANEL_CLASS: Record<Tone, string> = {
     </div>
 
     {note && (
-      <p class="reveal mt-8 text-center text-xs text-text-muted">
+      <p class="reveal mt-6 text-center text-xs text-text-muted">
         {note}
       </p>
     )}
