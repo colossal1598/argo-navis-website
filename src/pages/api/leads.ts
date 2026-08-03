@@ -61,7 +61,21 @@ export const POST: APIRoute = async ({ request }) => {
     console.error("TURNSTILE_SECRET_KEY is missing in production — bot-check is disabled until it's configured.");
   }
 
-  if (isProd && turnstileSecret && !turnstileToken) {
+  /*
+    Launch verification fix (Task 4.2): the client only requires a token
+    when PUBLIC_TURNSTILE_SITE_KEY exists at build time (see
+    ContactForm.astro's turnstileRequired) — if the site key were ever
+    unset, the widget doesn't render and the form never collects a
+    token. The server previously required a token whenever a *secret*
+    was set, regardless of the site key. That mismatch meant a
+    missing-site-key/present-secret misconfiguration would hard-block
+    every submission with "please complete the verification challenge"
+    that the user has no way to complete. Checking the site key here too
+    keeps both sides of the gate in sync.
+  */
+  const turnstileWidgetConfigured = Boolean(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY);
+
+  if (isProd && turnstileSecret && turnstileWidgetConfigured && !turnstileToken) {
     return json({ error: t("Please complete the verification challenge.", "יש להשלים את אימות האבטחה.") }, 400);
   }
 
