@@ -435,6 +435,19 @@ html[data-theme="light"] .chip-accent-text:hover {
 html[data-theme="light"] .showcase-prose a {
   color: var(--color-brand-700);
 }
+/*
+  Launch audit fix (Task 4.1): same specificity bug already fixed for
+  `.chip-accent-text` — `html[data-theme="light"] .showcase-prose a`
+  (specificity 0-2-2) outranks the plain `.showcase-prose a:hover`
+  utility (0-2-1) regardless of source order, so hover was silently
+  dead in light theme. Not visible on any page today (no case study
+  currently has an inline link inside its prose body), but latent —
+  the next copy edit that adds one would inherit it silently. Fixed
+  pre-emptively, same pattern as `.chip-accent-text:hover` above.
+*/
+html[data-theme="light"] .showcase-prose a:hover {
+  color: var(--color-brand-800);
+}
 .showcase-prose code {
   @apply rounded-xs bg-surface-900 px-1 py-0.5 font-mono text-xs;
 }
@@ -445,6 +458,19 @@ html[data-theme="light"] .showcase-prose a {
 }
 .input {
   @apply w-full border-b border-border-subtle bg-transparent px-0 py-3 text-sm text-text-primary transition-colors duration-150 placeholder:text-text-muted/70 focus:border-brand-500 focus:outline-none;
+}
+/*
+  Form error text (launch audit fix, Task 4.1) — was a bare
+  `text-red-400` utility, checked only against dark theme
+  (~7.15:1). Against light theme's surface (~2.65:1) it fails AA —
+  same fixed-hex-only-checked-in-one-theme bug already fixed for
+  badges/chips/prose links; this one spot was missed.
+*/
+.form-error-text {
+  @apply text-red-400;
+}
+html[data-theme="light"] .form-error-text {
+  color: var(--color-red-700);
 }
 
 /*

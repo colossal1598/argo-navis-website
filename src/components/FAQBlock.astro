@@ -41,7 +41,7 @@ const { heading = "Common questions", items } = Astro.props;
           class="reveal group rounded-sm border border-border-subtle bg-surface-900"
           style={`--reveal-delay: ${i * 80}`}
         >
-          <summary class="focus-ring flex list-none cursor-pointer items-center justify-between gap-4 rounded-sm px-5 py-4 font-semibold text-text-primary transition-colors hover:bg-surface-800 [&::-webkit-details-marker]:hidden">
+          <summary class="focus-ring focus-ring-on-900 flex list-none cursor-pointer items-center justify-between gap-4 rounded-sm px-5 py-4 font-semibold text-text-primary transition-colors hover:bg-surface-800 [&::-webkit-details-marker]:hidden">
             <span>{item.q}</span>
             <svg
               class="h-4 w-4 shrink-0 text-text-muted transition-transform duration-200 group-open:rotate-90"

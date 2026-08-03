@@ -33,6 +33,7 @@ interface Props {
   challengeErrorText?: string;
   contactMethodLabel?: string;
   contactMethods?: ContactMethodConfig[];
+  contactDetailsLabel?: string;
   contactDetailsRequiredText?: string;
   contactDetailsPlaceholders?: Partial<Record<ContactMethodConfig["id"], string>>;
 }
@@ -121,6 +122,7 @@ const {
   challengeErrorText = "Please complete the verification challenge.",
   contactMethodLabel = "Preferred contact method",
   contactMethods = defaultContactMethods,
+  contactDetailsLabel = "Contact details",
   contactDetailsRequiredText = methodDetailsRequired,
   contactDetailsPlaceholders = defaultContactDetailsPlaceholders,
 } = Astro.props;
@@ -141,7 +143,16 @@ const contactMethodMeta = normalizedContactMethods.map((method) => ({
 }));
 
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
-const turnstileRequired = import.meta.env.PROD;
+/*
+  Launch audit fix (Task 4.1, Critical): this used to be `import.meta.env.PROD`
+  alone — so if PUBLIC_TURNSTILE_SITE_KEY is ever unset in production, no
+  widget renders (see the turnstileSiteKey ? ... : turnstileHint branch below)
+  but the form still demanded a challenge token that could never be produced,
+  permanently blocking every lead on the site. Now only requires the
+  challenge when a site key actually exists to render one — mirrors the
+  matching server-side fix in api/leads.ts.
+*/
+const turnstileRequired = import.meta.env.PROD && Boolean(turnstileSiteKey);
 ---
 
 <section id="contact" class="bg-surface-950 px-6 py-section-lg">
@@ -248,8 +259,16 @@ const turnstileRequired = import.meta.env.PROD;
         </div>
       </div>
 
-      <!-- Contact details field appears for non-email methods -->
+      <!--
+        Contact details field appears for non-email methods. Launch audit
+        fix (Task 4.1, High): had no accessible name (placeholder only,
+        which isn't a reliable name for assistive tech and disappears on
+        input) — added a visually-hidden label, kept in sync with the
+        selected method by applyContactMethodState() below (same place
+        that already updates the placeholder for the same reason).
+      -->
       <div id="contact-details-wrap" class:list={[!defaultMethodNeedsDetails && "hidden"]}>
+        <label for="contact-details-input" class="sr-only">{contactDetailsLabel}</label>
         <input
           id="contact-details-input"
           name="contact_details"
@@ -275,8 +294,17 @@ const turnstileRequired = import.meta.env.PROD;
         )}
       </div>
 
-      <!-- Error box — shown by JS on API error -->
-      <p id="form-error" class="hidden text-sm text-red-400"></p>
+      <!--
+        Error box — shown by JS on API error. Launch audit fixes
+        (Task 4.1): `.form-error-text` replaces a bare `text-red-400`
+        utility, which measured ~2.65:1 against the light-theme surface
+        (fails AA) — same fixed-hex-only-checked-in-dark-theme bug
+        already fixed for badges/chips/prose links, just missed here
+        (see global.css). `role="alert"` announces the message to
+        screen readers the moment it appears (WCAG 4.1.3) — it wasn't
+        announced at all before.
+      -->
+      <p id="form-error" role="alert" class="hidden text-sm form-error-text"></p>
 
       <div>
         <!-- SUBMIT BUTTON — token button classes, same style as the hero CTA for consistency. -->
@@ -296,8 +324,12 @@ const turnstileRequired = import.meta.env.PROD;
 
     </form>
 
-    <!-- Success message — revealed by JS after a 200 response -->
-    <div id="form-success" class="hidden mt-6">
+    <!--
+      Success message — revealed by JS after a 200 response.
+      `role="status"` (Task 4.1 launch audit fix) announces it to
+      screen readers when it appears — it wasn't announced before.
+    -->
+    <div id="form-success" role="status" class="hidden mt-6">
       <p class="text-lg font-semibold text-text-primary">{successText}</p>
     </div>
 

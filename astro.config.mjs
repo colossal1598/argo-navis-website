@@ -21,7 +21,18 @@ export default defineConfig({
   */
   adapter: cloudflare(),
 
-  integrations: [sitemap()],
+  /*
+    SITEMAP — filter excludes /styleguide (and its /he mirror, if one
+    ever exists): it's already noindexed on-page (Layout's `noindex`
+    prop), but the sitemap integration doesn't read that prop — it was
+    still being listed, which is inconsistent with "don't index this"
+    (launch verification finding, Task 4.1).
+  */
+  integrations: [
+    sitemap({
+      filter: (page) => !page.includes('/styleguide'),
+    }),
+  ],
 
   vite: {
     plugins: [tailwindcss()]
