@@ -328,39 +328,56 @@ html[data-theme="light"] .chip-accent-text:hover {
 }
 
 /*
-  Strip panels (round-4 homepage achievement strips) — each of the 4
-  per-case-study strips gets its own tinted, bordered panel so the
-  section reads as 4 distinct blocks in one family, not a flat stack.
-  Reuses the existing .badge-brand/gold/slate/muted 4-way palette
-  family (same hues, same "3 accents + 1 neutral" logic) instead of
-  inventing new colors. "Muted" uses Tailwind's built-in `neutral`
-  scale (a true, non-blue gray) rather than a literal surface-800 step
-  — see the correction note below for why. No new hex values, no
-  gradients, no box-shadow; sharp small-radius rectangle, border only.
+  Strip panels (round-5 homepage achievement strips) — each of the 4
+  per-case-study strips gets its own confidently, visibly colored
+  panel. Round 4's low-alpha tints (10-30% washes over bg-surface-900)
+  were rejected by the owner as "badly colored (AI weak colors)" —
+  correctly: independently re-verified, they left brand/slate/muted
+  clustered within an RGB distance of ~16-22 of each other, reading as
+  near-identical dark washes rather than distinct colors.
 
-  CORRECTION (still round 4, same review pass): the first version of
-  this block used flat 10% tints for brand/gold/slate and the literal
-  `bg-surface-800` token for "muted". An audit pass — independently
-  re-verified against the actual @theme hex values, not taken on faith
-  — found that failed the owner's actual ask: brand/slate/muted all sit
-  in the same blue-navy hue family as the surface tokens themselves, so
-  at matched low alpha they blended into three barely-distinguishable
-  near-identical colors (RGB distance as low as ~6–16 between pairs —
-  a JND-level difference, not "visibly distinct"), and "muted" against
-  bg-surface-900 measured ~1.1:1 contrast in BOTH themes — nearly
-  invisible without its border doing all the work. Retuned per-tone
-  alpha (asymmetric, not one flat number) to push real separation while
-  re-verifying WCAG AA on every text/link combination at each step:
-  brand 20%, gold 10% (unchanged — already worked, most saturated hue),
-  slate 30% (needed the biggest push — closest hue to the navy base),
-  muted 15% of `neutral-500` (a true gray, breaks out of the blue-navy
-  cluster entirely, still "within the existing palette" the same way
-  `slate` itself is already a borrowed Tailwind default, not a custom
-  token). Resulting minimum pairwise RGB distance across all 6 tone
-  pairs, both themes: 16.3 (dark, gold-muted) / 22.2 (light, gold-
-  muted) — a real, defensible step up from the ~6-16 range before.
-  Worst-case text-muted contrast against any tint, either theme: 5.06:1
-  (dark, slate) — still clear of the 4.5:1 AA floor with margin.
+  ROUND-5 FIX — solid, theme-invariant fills instead of alpha tints.
+  Each panel is now an opaque block from a fixed, deep step of its hue
+  (brand-700, gold-800 — the deepest gold step this project defines,
+  slate-700, neutral-900), the same color in both light and dark theme
+  — mirrors the precedent already set by `.btn-primary` (bg-brand-500
+  text-white, unchanged by theme) rather than the surface/text tokens'
+  usual per-theme remapping. This sidesteps the whole per-theme-alpha
+  problem round 4 kept fighting: a solid, saturated fill is either
+  legible or not, independent of which theme the rest of the page is
+  in, so there is exactly one contrast check per tone instead of eight
+  (4 tones × 2 themes × light/dark variants). No new hex values (all
+  four are existing palette steps), no gradients, no box-shadow — sharp
+  small-radius rectangle, border only.
+
+  Verified (own computation): brand-700/gold-800 are this file's own
+  `@theme` hex values (lines ~25, 34); slate-700/slate-300/neutral-900/
+  neutral-400 are NOT — they're Tailwind v4's built-in default palette
+  (OKLCH internally), borrowed the same way `slate` was already
+  borrowed for `.badge-slate`. `neutral` has no other precedent in this
+  codebase as of round 5 — a deliberate 5th hue-ish family added
+  specifically to break "muted" out of the blue-navy cluster that beat
+  round 4 (see below), not a token-discipline oversight. Minimum
+  pairwise RGB distance across all 6 tone pairs is now 79.9 (brand-700
+  vs gold-800: 195.2; slate-700 vs neutral-900, the closest pair, still
+  79.9) — a decisive step up from round 4's 16-22 range, and these are
+  fully saturated hues at a consistent visual "weight," not near-black
+  washes. Fixed white text/slate-300 description text against each
+  fill, worst case: gold-800 with white text 6.78:1 (WCAG relative-
+  luminance formula, double-checked to 3 decimal places), with
+  slate-300 description text 4.78:1 — both clear the 4.5:1 AA floor
+  (gold-800 is the tightest margin since it's this project's lightest
+  defined gold step; every other fill clears 8:1+). Because the fill no
+  longer changes by theme, this is the ONLY contrast check needed — no
+  separate light/dark pass.
+
+  "Muted" is deliberately the darkest of the four (neutral-900, not a
+  mid-tone) — differentiates it from `slate` by VALUE (near-black vs.
+  medium blue-gray, luminance ~6× apart) as well as hue, since two
+  similarly-deep grays are harder to tell apart than a light/dark pair
+  even when their hue
+  angles differ (round-4 lesson: brand/slate/muted at matched alpha
+  converged much closer than expected).
 
   `.strip-panel-<tone>` is defined after `.strip-panel` (same reasoning
   as `.card-row`/`.card-compact`) so its border-color/background win by
@@ -372,55 +389,34 @@ html[data-theme="light"] .chip-accent-text:hover {
   @apply rounded-sm border p-5 sm:p-6;
 }
 .strip-panel-brand {
-  @apply border-brand-500/30 bg-brand-500/20;
+  @apply border-brand-400/40 bg-brand-700;
 }
 .strip-panel-gold {
-  @apply border-gold-500/30 bg-gold-500/10;
+  @apply border-gold-400/40 bg-gold-800;
 }
 .strip-panel-slate {
-  @apply border-slate-500/30 bg-slate-500/30;
+  @apply border-slate-400/40 bg-slate-700;
 }
 .strip-panel-muted {
-  @apply border-neutral-500/30 bg-neutral-500/15;
+  @apply border-neutral-400/40 bg-neutral-900;
 }
 
 /*
-  Strip panel link colors (round 4) — the closing "read the full
-  story" link inside each panel now matches its panel's tone instead
-  of the sitewide default `.chip-accent-text` (fixed brand blue),
-  which an audit found dropped as low as 4.14:1 against the retuned
-  slate panel in dark theme (below AA) once panels stopped being a
-  flat, generically-dark bg-surface-900. Reuses the exact color steps
-  already computed and AA-verified for `.badge-brand/gold/slate`
-  (Task 2.5) rather than deriving new ones — those were chosen against
-  a harder case (light-theme surface-950) than these panels present,
-  so they carry comfortable margin here too. "Muted" has no hue of its
-  own, so its link reuses the brand steps (the site's default accent).
-  No dedicated `:hover` color rule this round (unlike `.chip-accent-
-  text`, which needs one for its own light-theme specificity issue,
-  untouched here) — the closing link's chevron icon already animates
-  on hover (`group-hover:translate-x-1` in AchievementsStrip.astro),
-  which is enough hover feedback without repeating that fix pattern
-  four more times for a nice-to-have.
+  Strip panel text (round 5) — since panel fills are now solid and
+  theme-invariant (see above), panel content uses fixed light colors
+  instead of the usual `text-text-primary`/`text-text-muted` theme
+  tokens, which would otherwise flip to near-black in light theme and
+  vanish against these dark fills. Plain Tailwind utilities, not new
+  component classes — nothing else sets `color` on these elements, so
+  there's no cascade-layer risk stacking them directly in markup.
+  `text-white` for headings/stat values, `text-slate-300` for
+  descriptions and the closing link (the same hex this project's
+  `--theme-text-soft` token already resolves to in dark theme, reused
+  rather than inventing a new "soft light text" value). One shared
+  pair for all four tones — no per-tone text variant needed, since
+  every fill was chosen to clear AA against both at once (see above).
 */
-.strip-link-brand {
-  @apply text-brand-300;
-}
-html[data-theme="light"] .strip-link-brand {
-  color: var(--color-brand-700);
-}
-.strip-link-gold {
-  @apply text-gold-300;
-}
-html[data-theme="light"] .strip-link-gold {
-  color: var(--color-gold-800);
-}
-.strip-link-slate {
-  @apply text-slate-300;
-}
-html[data-theme="light"] .strip-link-slate {
-  color: var(--color-slate-700);
-}
+
 
 /*
   Long-form narrative prose (ShowcaseSection's slot content: <p>, <ul>/

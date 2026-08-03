@@ -28,33 +28,52 @@
         each strip now gets its own tinted, bordered panel — 4 colors
         from the existing palette (brand/gold/slate/muted, the same
         family `.badge-*` already uses), so the section reads as 4
-        distinct blocks instead of one flat stack. See
-        AchievementsStrip.astro's round-4 notes and the `.strip-panel*`
-        classes in global.css for the contrast math behind the tints.
+        distinct blocks instead of one flat stack.
+
+  REVISED 2026-08-03, Round 5, per owner review of the round-4 build:
+    (e) Hero headline finalized with "together" (now: "The only thing
+        holding your business together is you and a spreadsheet?").
+    (f) Round 4's tints read as "badly colored (AI weak colors)" — too
+        washed-out. Panels are now solid, confidently colored, and
+        theme-invariant (see AchievementsStrip.astro's round-5 notes
+        and the `.strip-panel*` classes in global.css for the full
+        color-distance/contrast math behind the fix). Stat value size
+        stepped down again. Section intro label and closing-note
+        register changed to "Real business, real results." (the old
+        "nothing invented/rounded" phrasing contradicted the `~`-
+        prefixed figures already in use, per the copy file).
+    (g) Copy finalized: fuel strip drops its "1 week" stat (3 stats
+        now, not 4); travel strip has a new subline and new stats (2,
+        8, ~10 hours a week); marketing strip's placeholders are
+        resolved with real owner numbers (6 → 1, 20+ people,
+        ~$56,000). Reception's placeholders are still pending an owner
+        decision — untouched, byte-identical to round 4.
   Vision/Attitude, Way of Working, and Contact are UNCHANGED from the
   prior revision (verified word-for-word against the copy file below,
   not assumed).
 
   Copy source: .apm/memory/copy/homepage-en.md — re-read that file
   before editing any string below; it is the approved source of truth,
-  not this file.
+  not this file. That file's inline `*[polish: ...]*`/`*[Manager fix:
+  ...]*` markers are editorial meta for the owner's review — never
+  rendered here; only the resolved bullet text they annotate is used.
 
   PLACEHOLDER NUMBERS — owner-requested, NOT final, DO NOT SHIP:
-  the Reception and marketing-agency strips each had 3 stat slots
-  marked [OWNER NUMBER NEEDED] in the copy file (no real figures were
-  ever verified for them). The owner explicitly asked to see the
-  approximate shape of the page before supplying real numbers. Every
-  placeholder value below is marked inline with a
-  "PLACEHOLDER — awaiting owner's real number, DO NOT SHIP" comment.
-  Full list — six values across two strips, all in the `strips` const:
-    - Reception: response time, client/scale count, build time.
-    - Marketing agency: tools/systems-replaced count, team size, build
-      time.
-  None of these placeholder values were copied back into
+  as of round 5, ONLY the Reception strip still carries placeholders —
+  marketing-agency's were resolved with real owner numbers this round
+  (see (g) above). Reception's 3 stat slots remain marked
+  [OWNER NUMBER NEEDED] in the copy file; the owner has explicitly not
+  yet decided whether Reception ships with numbers, numberless, or gets
+  dropped entirely — left completely untouched this round (byte-
+  identical to round 4, diff-verified). Every placeholder value below
+  is marked inline with a
+  "PLACEHOLDER — awaiting owner's real number, DO NOT SHIP" comment:
+  response time, client/scale count, build time. None of these
+  placeholder values were copied back into
   .apm/memory/copy/homepage-en.md — that file keeps the
   [OWNER NUMBER NEEDED] markers as the source of truth. Do not ship
-  this page to production until all six are replaced with real,
-  owner-supplied numbers.
+  this page to production until Reception's owner decision lands and,
+  if numbers are chosen, all three are replaced with real ones.
 
   No imagery — round 3 dropped the image-slot idea along with
   CapabilityStrips; nothing to reserve here.
@@ -66,23 +85,24 @@ import VisionSection from "../components/VisionSection.astro";
 import StepsSection from "../components/StepsSection.astro";
 import ContactForm from "../components/ContactForm.astro";
 
-/* ACHIEVEMENT STRIPS — one tinted, bordered stats-row panel per case
-   study. Every value must be traceable to a real project source (see
-   CLAUDE.md, Content honesty) EXCEPT the six PLACEHOLDER values below,
-   which are a deliberate, owner-requested, clearly marked exception —
-   see the PAGE GOAL comment above. `tone` (round 4) picks each strip's
-   panel/accent-bar color — one of each from the existing
-   .badge-brand/gold/slate/muted family so all 4 strips read as
-   distinct blocks in one palette, not four identical rows. Untouched
-   this round: every value, description, and PLACEHOLDER comment. */
+/* ACHIEVEMENT STRIPS — one confidently-colored, bordered stats-row
+   panel per case study. Every value must be traceable to a real
+   project source (see CLAUDE.md, Content honesty) EXCEPT the three
+   Reception PLACEHOLDER values below, a deliberate, owner-requested,
+   clearly marked exception (owner decision still pending as of round
+   5 — see the PAGE GOAL comment above). `tone` picks each strip's
+   panel color — one of each from the existing .badge-brand/gold/
+   slate/muted family so all 4 strips read as distinct blocks in one
+   palette, not four identical rows. Fuel/travel/marketing data below
+   updated this round to match the finalized copy; Reception is
+   byte-identical to round 4. */
 const strips = [
   {
     heading: "A family fuel-distribution business",
     subline: "One week, ground up — spreadsheets replaced with a system that runs the whole operation.",
     tone: "brand" as const,
     stats: [
-      { value: "21 → 1",      description: "Twenty-one spreadsheets, replaced by one system built around the business. Nothing was thrown away — every row migrated." },
-      { value: "1 week",      description: "From first meeting to a working system, start to finish." },
+      { value: "21 → 1",      description: "Twenty-one spreadsheets, replaced by one system built around the business." },
       { value: "~1,900",      description: "Delivery records untangled and matched during the investigation into how the business actually operated." },
       { value: "₪0 / month",  description: "Infrastructure cost. Runs entirely on free-tier hosting — no server bill, ever." },
     ],
@@ -91,12 +111,12 @@ const strips = [
   },
   {
     heading: "A travel agency, two systems built back to back",
-    subline: "Two custom systems, not a template — an internal tools portal and a from-scratch WhatsApp inbox.",
+    subline: "Two custom systems: an internal tools portal and WhatsApp automation, including a dedicated interface.",
     tone: "gold" as const,
     stats: [
-      { value: "2",          description: "Custom systems built: an internal tools portal and a from-scratch WhatsApp inbox." },
-      { value: "~1 week",    description: "To build the internal tools portal — every staff tool behind one login." },
-      { value: "~2 months",  description: "To build the WhatsApp inbox from scratch, on Meta's own Cloud API — not a wrapper around someone else's product." },
+      { value: "2",               description: "Custom systems built: an internal tools portal and a from-scratch WhatsApp inbox." },
+      { value: "8",                description: "Running automations — from an out-of-office custom message to client membership management and ticket registration using billing data." },
+      { value: "~10 hours a week", description: "Saved in prompting, relaying information, and manual work." },
     ],
     href:      "/automations/travel-agency",
     linkLabel: "Read the full story",
@@ -117,16 +137,13 @@ const strips = [
     linkLabel: "We can build the same for your business",
   },
   {
-    heading: "A digital marketing agency — one connected system instead of four",
-    subline: "Content planning, sales work, financial oversight, and hiring — all in one place.",
+    heading: "A digital marketing agency — one organized system instead of a mess",
+    subline: "Content planning, sales work, financial oversight, and hiring — all tracked and automated.",
     tone: "muted" as const,
     stats: [
-      // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: how many tools/spreadsheets/systems this replaced)
-      { value: "4 → 1",     description: "Separate tools for content, sales, finance, and hiring — replaced with one connected system." },
-      // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: team size using the system — reps, workers, or sales staff)
-      { value: "12 people", description: "Sales reps, workers, and hiring staff using the system day to day." },
-      // PLACEHOLDER — awaiting owner's real number, DO NOT SHIP (kind: build time, in days or weeks)
-      { value: "3 weeks",   description: "To design and build all four connected pieces." },
+      { value: "6 → 1",       description: "Separate tools for content, sales, finance, and hiring — from messaging platforms and written notes — now in one place." },
+      { value: "20+ people",  description: "Sales reps, workers, and hiring staff using the system day to day." },
+      { value: "~$56,000",    description: "Saved in one year, from lost sales, deserting clients, and better management oversight." },
     ],
     href:      "/systems/marketing-agency",
     linkLabel: "Read the full story",
@@ -165,16 +182,16 @@ const wayOfWorkingSteps = [
   description="Argo Navis builds one system that connects what you already use, pulls your business out of the spreadsheets, and runs from your phone."
 >
 
-  <!-- HERO — owner-supplied headline (round 4, verbatim, kept as a question). Single CTA, zero numbers, tightened composition. -->
+  <!-- HERO — owner-supplied headline, finalized round 5 with "together". Single CTA, zero numbers, tightened composition. -->
   <Hero
-    headline="The only thing holding your business is you and a spreadsheet?"
+    headline="The only thing holding your business together is you and a spreadsheet?"
     subline="We build one system that connects what you already use and runs from your phone. No new software, no lock-in."
     cta={{ label: "Talk to us about your setup", href: "#contact" }}
   />
 
   <!-- ACHIEVEMENT STRIPS — restored round-1 presentation, one strip per case study, each linking to its full story. -->
   <AchievementsStrip
-    intro="Real projects, by the numbers. Straight from the work — nothing invented."
+    intro="Real business, real results."
     strips={strips}
   />
 
