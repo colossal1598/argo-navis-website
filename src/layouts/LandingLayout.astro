@@ -15,7 +15,7 @@
                              (e.g. the style guide), landing pages ARE
                              meant to be indexed.
 */
-import { type SiteLocale, withLocale } from "../lib/locale";
+import { type SiteLocale, stripLocalePrefix, withLocale } from "../lib/locale";
 import "../styles/global.css";
 
 interface Props {
@@ -36,6 +36,16 @@ const {
 
 const siteUrl = import.meta.env.SITE ?? "https://argo-navis.net";
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+/*
+  HREFLANG ALTERNATES — ported from Layout.astro (launch verification
+  finding, Task 4.1): this layout was emitting no hreflang alternates
+  at all, so every LP (4 pages × 2 locales = 8 indexed pages) was
+  missing them. Same `stripLocalePrefix`/`withLocale` pairing Layout.astro
+  uses, so EN/HE LPs correctly point at each other in both directions.
+*/
+const canonicalPath = stripLocalePrefix(Astro.url.pathname);
+const englishURL = new URL(withLocale(canonicalPath, "en"), siteUrl);
+const hebrewURL = new URL(withLocale(canonicalPath, "he"), siteUrl);
 
 /* Minimal footer copy — just a way back to the main site, no nav/service links. */
 const copy: Record<SiteLocale, { backToSite: string; rights: string }> = {
@@ -72,6 +82,9 @@ const fontFamily = locale === "he"
     <meta name="description" content={description} />
 
     <link rel="canonical" href={canonicalURL} />
+    <link rel="alternate" hreflang="en" href={englishURL} />
+    <link rel="alternate" hreflang="he" href={hebrewURL} />
+    <link rel="alternate" hreflang="x-default" href={englishURL} />
 
     <!-- NOINDEX — opt-in only; landing pages are indexed by default -->
     {noindex && <meta name="robots" content="noindex, nofollow" />}

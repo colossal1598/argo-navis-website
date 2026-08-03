@@ -42,15 +42,27 @@ export const POST: APIRoute = async ({ request }) => {
   const { name, email, website, message, source = "landing", contact_method: contactMethod, contact_details: contactDetails } = body;
   const turnstileToken = body["cf-turnstile-response"] ?? body.turnstileToken;
   const turnstileSecret = env.TURNSTILE_SECRET_KEY;
-  const isProd = import.meta.env.PROD; 
+  const isProd = import.meta.env.PROD;
+  const hebrewSource = isHebrew(source);
+  /* Bilingual error string — `en`/`he` pair, picked by the lead's own source tag. */
+  const t = (en: string, he: string) => (hebrewSource ? he : en);
 
+  /*
+    Launch audit fix (Task 4.1, Critical): this used to hard-fail every
+    submission whenever TURNSTILE_SECRET_KEY was unset (500 here) or
+    unset-but-required (400 below) — meaning a missed Cloudflare Pages
+    env var silently killed every lead on the site, not just bot
+    protection. Now: verification only runs (and is only required) when
+    a secret is actually configured; a missing secret degrades to "no
+    bot check" instead of "no submissions possible." Mirrors the
+    matching client-side fix in ContactForm.astro.
+  */
   if (isProd && !turnstileSecret) {
-    console.error("TURNSTILE_SECRET_KEY is missing in production.");
-    return json({ error: "Security verification is unavailable. Please try again later." }, 500);
+    console.error("TURNSTILE_SECRET_KEY is missing in production — bot-check is disabled until it's configured.");
   }
 
-  if (isProd && !turnstileToken) {
-    return json({ error: "Please complete the verification challenge." }, 400);
+  if (isProd && turnstileSecret && !turnstileToken) {
+    return json({ error: t("Please complete the verification challenge.", "יש להשלים את אימות האבטחה.") }, 400);
   }
 
   if (turnstileSecret && turnstileToken) {
@@ -61,20 +73,18 @@ export const POST: APIRoute = async ({ request }) => {
     );
 
     if (!turnstileRes.success) {
-      return json({ error: "Verification failed. Please try again." }, 400);
+      return json({ error: t("Verification failed. Please try again.", "האימות נכשל. נסו שוב.") }, 400);
     }
-  } else if (isProd) {
-    return json({ error: "Please complete the verification challenge." }, 400);
   }
 
   /* ── Basic validation ── */
-  if (!name?.trim())    return json({ error: "Name is required." }, 400);
-  if (!email?.trim())   return json({ error: "Email is required." }, 400);
-  if (!message?.trim()) return json({ error: "Please tell us what you need." }, 400);
+  if (!name?.trim())    return json({ error: t("Name is required.", "יש להזין שם.") }, 400);
+  if (!email?.trim())   return json({ error: t("Email is required.", "יש להזין כתובת אימייל.") }, 400);
+  if (!message?.trim()) return json({ error: t("Please tell us what you need.", "ספרו לנו במה אתם צריכים עזרה.") }, 400);
 
   const emailValue = email.trim();
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
-  if (!emailValid) return json({ error: "Please enter a valid email." }, 400);
+  if (!emailValid) return json({ error: t("Please enter a valid email.", "יש להזין כתובת אימייל תקינה.") }, 400);
 
   const allowedContactMethods = new Set(["whatsapp", "telegram", "phone", "email"]);
   const preferredContactMethod = allowedContactMethods.has((contactMethod || "").trim())
@@ -82,7 +92,7 @@ export const POST: APIRoute = async ({ request }) => {
     : "email";
   const normalizedContactDetails = contactDetails?.trim() || null;
   if (preferredContactMethod !== "email" && !normalizedContactDetails) {
-    return json({ error: "Please provide your contact details for the selected method." }, 400);
+    return json({ error: t("Please provide your contact details for the selected method.", "יש להזין פרטי יצירת קשר עבור אמצעי הקשר שנבחר.") }, 400);
   }
 
   /*
@@ -112,12 +122,12 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (insertErrorMessage) {
     console.error("Supabase insert error:", insertErrorMessage);
-    return json({ error: "Could not save your message. Please try again." }, 500);
+    return json({ error: t("Could not save your message. Please try again.", "לא הצלחנו לשמור את ההודעה. נסו שוב.") }, 500);
   }
 
   /* ── Send emails via Resend ── */
   const resendKey = env.RESEND_API_KEY;
-  const hebrew = isHebrew(source);
+  const hebrew = hebrewSource;
 
   if (resendKey) {
     try {
