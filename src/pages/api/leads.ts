@@ -376,6 +376,10 @@ function leadReplySubjectHe(source: string): string {
     "automations-travel-agency-he": "קיבלנו את הפנייה שלך לשיחת אבחון — Argo Navis",
     "systems-marketing-agency-he":  "קיבלנו את הפנייה שלך לשיחת אבחון — Argo Navis",
     "automations-reception-he":     "קיבלנו את הפנייה שלך לשיחת אבחון — Argo Navis",
+    "lp-order-he":                  "קיבלנו את הפנייה שלך — Argo Navis",
+    "lp-tried-before-he":           "קיבלנו את הפנייה שלך — Argo Navis",
+    "lp-stop-the-leaks-he":         "קיבלנו את הפנייה שלך — Argo Navis",
+    "lp-runs-itself-he":            "קיבלנו את הפנייה שלך — Argo Navis",
   };
   return subjects[source] ?? "קיבלנו את ההודעה שלך — Argo Navis";
 }
@@ -395,6 +399,10 @@ function sourceLabelHe(source: string): string {
     "automations-travel-agency-he": "מערכת מותאמת אישית לעסק שלך",
     "systems-marketing-agency-he":  "מערכת מותאמת אישית לעסק שלך",
     "automations-reception-he":     "מערכת מותאמת אישית לעסק שלך",
+    "lp-order-he":                  "לעשות סדר בעסק",
+    "lp-tried-before-he":           "מערכת שמתאימה לעסק שלך",
+    "lp-stop-the-leaks-he":         "לסגור את הסדקים בעסק",
+    "lp-runs-itself-he":            "אוטומציה לעסק שלך",
   };
   return labels[source] ?? "משהו מעולה";
 }
