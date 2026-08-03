@@ -175,6 +175,7 @@ export const POST: APIRoute = async ({ request }) => {
 
 function leadReplySubject(source: string): string {
   const subjects: Record<string, string> = {
+    landing:     "Your diagnostic conversation is with us — Argo Navis",
     websites:    "Your website brief is with us — Argo Navis",
     automations: "Your automation enquiry is with us — Argo Navis",
     systems:     "Your system brief is with us — Argo Navis",
@@ -193,6 +194,7 @@ function leadReplySubject(source: string): string {
 
 function sourceLabel(source: string): string {
   const labels: Record<string, string> = {
+    landing:     "bringing order to your business",
     websites:    "a new website",
     automations: "business automation",
     systems:     "a new system",
