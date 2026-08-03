@@ -177,7 +177,8 @@ const TONE_PANEL_CLASS: Record<Tone, string> = {
                 class="focus-ring focus-ring-on-900 group -my-1 inline-flex items-center gap-1 rounded-sm py-1 font-medium text-slate-800 underline decoration-slate-800/40 underline-offset-4 hover:text-slate-900 hover:decoration-slate-900/70"
               >
                 {strip.linkLabel}
-                <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <!-- rtl:rotate-180 (HE mirror fix): resting arrow must point toward line-start (left in RTL); previously only the hover nudge direction flipped, leaving the glyph pointing the wrong way at rest in RTL. -->
+                <svg class="h-3.5 w-3.5 rtl:rotate-180 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
               </a>

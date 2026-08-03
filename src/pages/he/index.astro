@@ -1,30 +1,107 @@
 ---
+/*
+  PAGE GOAL: Hebrew homepage mirror. Mirrors src/pages/index.astro
+  section-for-section (Hero -> AchievementsStrip -> VisionSection ->
+  StepsSection -> ContactForm), same shared components, RTL via
+  dir="rtl" + locale="he" on Layout. No hand-copied markup.
+
+  Copy source: .apm/memory/copy/he/homepage-he.md — re-read that file
+  before editing any string below; it is the approved source of truth,
+  not this file. That file's inline `*[תיקון: ...]*`/`*[polish: ...]*`
+  markers are editorial review meta for the owner — never rendered
+  here; only the resolved text they annotate is used. Draft-quality
+  Hebrew copy is acceptable (owner sharpens post-launch) — but zero
+  placeholder markers may remain in the built page.
+
+  Numbers are identical to the EN homepage (src/pages/index.astro) and
+  exact — never adjusted, rounded, or invented (see CLAUDE.md, Content
+  honesty). Three strips only (fuel, travel, marketing) — the
+  Reception strip was deleted from the EN page per an explicit
+  2026-08-04 owner decision and that decision applies here too.
+
+  This file replaces the OLD pre-remake HE homepage entirely (it used
+  to hand-copy Hero/WhyUs/ServicesSection markup for a different page
+  structure) — rebuilt on the same shared components the EN homepage
+  uses, just with Hebrew copy passed via props.
+*/
 import Layout from "../../layouts/Layout.astro";
 import Hero from "../../components/Hero.astro";
-import WhyUs from "../../components/WhyUs.astro";
-import ServicesSection from "../../components/ServicesSection.astro";
-import ProcessBlock from "../../components/ProcessBlock.astro";
+import AchievementsStrip from "../../components/AchievementsStrip.astro";
+import VisionSection from "../../components/VisionSection.astro";
+import StepsSection from "../../components/StepsSection.astro";
 import ContactForm from "../../components/ContactForm.astro";
 
-/*
-  PAGE GOAL (HE HOMEPAGE):
-  Mirror the English homepage structure for Hebrew users, keeping the same
-  funnel flow: value prop -> services -> trust -> process -> contact form.
-  Hero and WhyUs are the shared components (architecture fix — this page
-  used to hand-copy their markup instead of passing Hebrew copy via props;
-  the copy itself is unchanged, just relocated into the shared components).
-*/
-
-/*
-  PROCESS STEPS — Hebrew copy passed into the shared ProcessBlock component.
-*/
-const processSteps = [
-  { label: "היכרות", description: "אתם מספרים לנו מה קורה בעסק" },
-  { label: "תכנית", description: "אנחנו חוזרים עם מהלך ברור ומחיר ברור" },
-  { label: "ביצוע", description: "אנחנו מבצעים, אתם נשארים מעודכנים" },
-  { label: "מסירה", description: "הכול באוויר, עובד ושייך לכם" },
+/* ACHIEVEMENT STRIPS — same three case studies, same tone-per-strip and
+   same real numbers as the EN homepage, Hebrew copy from homepage-he.md.
+   Links point at the /he/-prefixed mirrors of the same case-study pages. */
+const strips = [
+  {
+    heading: "עסק משפחתי להפצת דלק",
+    subline: "שבוע אחד, מאפס — הגיליונות הוחלפו במערכת שמנהלת את כל התפעול.",
+    tone: "brand" as const,
+    stats: [
+      { value: "21 ← 1",     description: "עשרים ואחד גיליונות אקסל, הוחלפו במערכת אחת שנבנתה סביב העסק." },
+      { value: "כ-1,900",    description: "רשומות משלוח שנפרשו והותאמו במהלך המחקר על איך העסק באמת פעל." },
+      { value: "₪0 לחודש",   description: "עלות תשתית. רץ כולו על אירוח בשכבת חינם — בלי חשבון שרת, אף פעם." },
+    ],
+    href:      "/he/systems/fuel-distribution",
+    linkLabel: "לקרוא את כל הסיפור",
+  },
+  {
+    heading: "סוכנות נסיעות, שתי מערכות שנבנו ברצף",
+    subline: "שתי מערכות בהתאמה אישית: פורטל כלים פנימי ואוטומציה בוואטסאפ, כולל ממשק ייעודי.",
+    tone: "gold" as const,
+    stats: [
+      { value: "2",              description: "מערכות בהתאמה אישית: פורטל כלים פנימי ותיבת וואטסאפ שנבנתה מאפס." },
+      { value: "8",               description: "אוטומציות פעילות — מהודעת \"לא זמין\" מותאמת ועד ניהול חברות לקוחות ורישום כרטיסים לפי נתוני חיוב." },
+      { value: "כ-10 שעות בשבוע", description: "נחסכות בהקלדת הודעות, העברת מידע ועבודה ידנית." },
+    ],
+    href:      "/he/automations/travel-agency",
+    linkLabel: "לקרוא את כל הסיפור",
+  },
+  {
+    heading: "חברת שיווק דיגיטלי — מערכת אחת מאורגנת במקום בלגן",
+    subline: "תכנון תוכן, עבודת מכירות, בקרה פיננסית וגיוס — הכול במעקב ואוטומטי.",
+    tone: "slate" as const,
+    stats: [
+      { value: "6 ← 1",      description: "כלים נפרדים לתוכן, מכירות, כספים וגיוס — מפלטפורמות הודעות ורשימות כתובות ביד — עכשיו במקום אחד." },
+      { value: "20+ אנשים",  description: "נציגי מכירות, עובדים וצוות גיוס שמשתמשים במערכת יום-יום." },
+      { value: "כ-56,000$",  description: "נחסכו בשנה אחת, ממכירות אבודות, לקוחות שעזבו, ובקרת ניהול טובה יותר." },
+    ],
+    href:      "/he/systems/marketing-agency",
+    linkLabel: "לקרוא את כל הסיפור",
+  },
 ];
 
+/* VISION / ATTITUDE — no heading in the approved copy, don't add one. */
+const visionParagraphs = [
+  "הרבה עסקים קטנים עדיין מתנהלים כמו לפני עשרים שנה — גיליון אקסל שרק אדם אחד מבין, פנקס לכל השאר, ערב בחודש שהולך לאיבוד על ההתאמות ביניהם. זו לא בעיה טכנולוגית. זה פשוט מה שקורה כשלאף אחד לא היה זמן לתקן את זה.",
+  "אנחנו מתקנים את זה בלי למכור לכם עוד תוכנה שצריך לנהל. אתם הבעלים של הנתונים שלכם ושל המערכת שלכם — בלי דמי חודש שרק עולים, בלי ספק שאי אפשר לעזוב, בלי חוזה ארגוני שנבנה לעסק גדול פי עשרים מכם.",
+  "במקום שבו AI באמת חוסך זמן, אנחנו משתמשים בו — צר, מדויק, למשימה אמיתית אחת. איפה שהוא לא — אנחנו לא דוחפים אותו בכוח.",
+];
+
+/* WAY OF WORKING — depth on each step lives on the service pages. */
+const wayOfWorkingSteps = [
+  {
+    label:       "אבחון קודם.",
+    description: "מבט קצר וזול על איפה הזמן והכסף דולפים.",
+  },
+  {
+    label:       "אז בונים.",
+    description: "הנתונים שלכם עוברים פנימה, מתחברים למה שאתם משתמשים בו, רצים מהטלפון.",
+  },
+  {
+    label:       "אז נשארים זמינים.",
+    description: "שינויים לפי הצורך, גיבויים אוטומטיים, מספר אחד להתקשר אליו.",
+  },
+];
+
+/* CONTACT FORM — Hebrew field/UI copy. Same shape as the EN default
+   fields (name/email/website/message), same generic Hebrew UI strings
+   used across every other HE page (loadingText, successText,
+   turnstileHint, contact-method labels/placeholders) — ContactForm.astro
+   has no locale-aware defaults of its own, so every HE page must pass
+   these explicitly. */
 const fields = [
   {
     id: "name",
@@ -59,55 +136,44 @@ const fields = [
 
 <Layout
   title="דף הבית"
-  description="Argo Navis בונים אתרים ואוטומציות שמביאים לידים ומגדילים את העסק."
+  description="Argo Navis בונה מערכת אחת שמחברת את מה שכבר יש לכם, מוציאה את העסק מהגיליונות, ורצה מהטלפון."
   locale="he"
   dir="rtl"
 >
-  <!-- HERO — first value statement and primary CTA -->
+
+  <!-- HERO — owner-supplied headline (Hebrew translation), single CTA, zero numbers. -->
   <Hero
-    headline="האתר והתהליכים שלכם - חדים, מקצועיים ועובדים באמת."
-    subline="רוב העסקים מאבדים כסף בין הסדקים. אנחנו סוגרים אותם."
-    cta={{ label: "דברו איתנו", href: "/he/#contact" }}
+    headline="הדבר היחיד שמחזיק את העסק שלכם ביחד זה אתם וגיליון אקסל?"
+    subline="אנחנו בונים מערכת אחת שמחברת את מה שכבר יש לכם ורצה מהטלפון. בלי תוכנה חדשה, בלי נעילה לספק."
+    cta={{ label: "דברו איתנו על המערכת שלכם", href: "/he/#contact" }}
   />
 
-  <!-- SERVICES OVERVIEW — same 3 service pillars as EN homepage -->
-  <ServicesSection
-    heading="מה אנחנו עושים"
-    services={[
-      {
-        title:       "אתרים",
-        description: "האתר הוא הרושם הראשון שלכם. בואו נגרום לו לעבוד.",
-        href:        "/he/websites",
-        cta:         "קראו עוד",
-        accent:      "gold",
-      },
-      {
-        title:       "אוטומציות",
-        description: "לתת למשימות החוזרות לרוץ לבד, בזמן שאתם מתמקדים בצמיחה.",
-        href:        "/he/automations",
-        cta:         "קראו עוד",
-        accent:      "slate",
-      },
-    ]}
+  <!-- ACHIEVEMENT STRIPS — one strip per case study, each linking to its full story. -->
+  <AchievementsStrip
+    intro="כמה פרויקטים שעשינו ללקוחות — עסקים אמיתיים, תוצאות אמיתיות."
+    strips={strips}
   />
 
-  <!-- TRUST BLOCK — short brand statement, matching EN page intent -->
-  <WhyUs
-    headline="סטנדרט גבוה. בכל פעם מחדש."
-    body="כל פרויקט נבנה כאילו השם שלנו עליו. כי הוא באמת."
+  <!-- VISION / ATTITUDE — the editorial "why us" statement. -->
+  <VisionSection paragraphs={visionParagraphs} />
+
+  <!-- WAY OF WORKING — three compact one-liners. -->
+  <StepsSection
+    heading="איך אנחנו עובדים"
+    steps={wayOfWorkingSteps}
   />
 
-  <!-- PROCESS — "How it works" localized to Hebrew -->
-  <ProcessBlock heading="איך זה עובד" steps={processSteps} />
-
-  <!-- CONTACT FORM — localized labels, same backend/source pattern -->
+  <!--
+    CONTACT — converts to the same diagnostic conversation as every other
+    HE page. No source tag defined in the copy file, consistent with EN.
+  -->
   <ContactForm
-    heading="מוכנים להפסיק לאבד הזדמנויות?"
-    subheading="ספרו לנו מה קורה בעסק, ואנחנו ניקח את זה משם."
+    heading="עדיין עושים את זה ביד?"
+    subheading="אם גיליון אקסל, פנקס, או הזיכרון שלכם מחזיקים חלק מהעסק ביחד — זו בדיוק השיחה ששווה לקיים. ספרו לנו איך הדברים מתנהלים היום — נגיד לכם בכנות אם שווה לתקן ומאיפה להתחיל."
+    submitLabel="התחילו בשיחת אבחון"
+    reassurance="בלי מצגת מוכנה מראש. קודם שואלים על העסק שלכם."
     source="landing-he"
     fields={fields}
-    submitLabel="בואו נדבר"
-    reassurance="בלי לחץ, בלי מכירה אגרסיבית, רק שיחה מקצועית."
     loadingText="שולחים..."
     successText="קיבלנו, נחזור אליכם בהקדם."
     turnstileHint="הגנת בוטים עדיין לא הוגדרה."
@@ -127,4 +193,5 @@ const fields = [
       whatsapp: "מספר ווטסאפ (כולל קידומת)",
     }}
   />
+
 </Layout>

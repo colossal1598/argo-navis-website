@@ -361,6 +361,7 @@ function isHebrew(source: string): boolean {
 
 function leadReplySubjectHe(source: string): string {
   const subjects: Record<string, string> = {
+    "landing-he":     "קיבלנו את הפנייה שלך לשיחת אבחון — Argo Navis",
     "websites-he":    "קיבלנו את הבריף שלך לאתר — Argo Navis",
     "automations-he": "קיבלנו את הפנייה שלך לאוטומציה — Argo Navis",
     "systems-he":     "קיבלנו את הבריף שלך למערכת — Argo Navis",
@@ -379,6 +380,7 @@ function leadReplySubjectHe(source: string): string {
 
 function sourceLabelHe(source: string): string {
   const labels: Record<string, string> = {
+    "landing-he":     "שיחת אבחון לעסק שלך",
     "websites-he":    "אתר חדש",
     "automations-he": "אוטומציה עסקית",
     "systems-he":     "מערכת חדשה",
