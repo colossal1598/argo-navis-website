@@ -34,3 +34,6 @@ pnpm-debug.log*
 .apm/
 .cursor/
 .agents/
+
+# Local wrangler build artifacts (adapter-generated, machine-specific paths)
+.wrangler/
