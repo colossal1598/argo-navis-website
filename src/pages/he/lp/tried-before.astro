@@ -1,0 +1,131 @@
+---
+/*
+  PAGE GOAL (HE, campaign LP): Meta ads → owner who ALREADY tried to
+  solve this (developer quotes in the tens of thousands, off-the-shelf
+  CRM that didn't fit, freelancer who vanished) leaves details → short
+  free call → paid אבחון credited against the project. Hardest, most
+  skeptical audience — honesty about money is the differentiator.
+  One conversion action: the form. HE only, no EN mirror.
+
+  Copy source: .apm/memory/copy/he/lp-tried-before-he.md — re-read that
+  file before editing any string below; it is the approved source of truth.
+
+  PRICE NOTE: the אבחון price is deliberately not shown yet. When the
+  owner fixes a ₪ figure, replace the step-3 description with:
+  "עוברים על התהליכים אחד-אחד, ויוצאים עם תמונה ברורה של מה שווה לבנות
+  ומה לא — כולל אם התשובה היא שלא כדאי. האבחון עולה ₪X, והסכום מתקזז
+  מול הפרויקט אם ממשיכים."
+
+  Section order (bg alternation): Hero → Pain (tonal 800) → Changes
+  (base 950) → Steps (tonal 800) → Proof (900) → Form (950).
+*/
+import LandingLayout from "../../../layouts/LandingLayout.astro";
+import LPHero from "../../../components/LPHero.astro";
+import ChecklistSection from "../../../components/ChecklistSection.astro";
+import ProofSection from "../../../components/ProofSection.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+
+const painItems = [
+  { label: "הצעת מחיר של עשרות אלפים ולוח זמנים של חצי שנה, בשביל משהו שנראה לכם פשוט." },
+  { label: "ניסיתם CRM מדף. אחרי חודש חזרתם לאקסל, כי הוא בנוי לעסק של מישהו אחר." },
+  { label: "פרילנסר התחיל, נעלם, והשאיר חצי מערכת שאף אחד לא יודע לתחזק." },
+  { label: "בסוף החלטתם שהכי בטוח להישאר עם מה שיש. גם אם זה אוכל לכם ערבים." },
+];
+
+const changesItems = [
+  { label: "מערכת שבנויה על התהליך שלכם.", description: "התהליך שלכם כבר עובד — הוא פשוט רץ באקסל ולא בתוכנה. בונים סביב מה שכבר קיים אצלכם, לא מחליפים אותו בתוכנת מדף כללית." },
+  { label: "שבועות, לא חצי שנה.", description: "המערכות שבנינו לקחו בין שבוע לחודשיים, כולל העברת כל הנתונים הישנים." },
+  { label: "בלי דמי מנוי מנופחים.", description: "המערכות שלנו רצות על תשתית שעולה ₪0 בחודש. משלמים פעם אחת על הבנייה, לא כל חודש מחדש." },
+  { label: "הנתונים שלכם, אצלכם.", description: "לא תלויים בנו כדי שהמערכת תמשיך לרוץ. אם נפרדים — הכל נשאר אצלכם." },
+];
+
+const stepsItems = [
+  { label: "משאירים פרטים כאן למטה.", description: "שם, איך נוח לחזור אליכם, ומשפט על העסק. פחות מדקה." },
+  { label: "שיחה קצרה, ללא תשלום.", description: "רבע שעה על איך העסק רץ היום. בלי נאום מכירות מוכן מראש — קודם שואלים." },
+  { label: "אם יש מה לתקן — אבחון בתשלום.", description: "עוברים על התהליכים אחד-אחד, ויוצאים עם תמונה ברורה של מה שווה לבנות ומה לא — כולל אם התשובה היא שלא כדאי. הסכום מתקזז מול הפרויקט אם ממשיכים." },
+];
+
+const fields = [
+  { id: "name", label: "השם שלכם", type: "text" as const, placeholder: "איך קוראים לכם?", required: true },
+  { id: "email", label: "אימייל", type: "email" as const, placeholder: "you@business.com", required: true },
+  {
+    id:          "message",
+    label:       "מה העסק עושה, ומה כבר ניסיתם?",
+    type:        "textarea" as const,
+    placeholder: "לדוגמה: מוסך. קיבלנו הצעה ל-CRM ב-80 אלף וברחנו.",
+    required:    true,
+  },
+];
+
+const contactMethods = [
+  { id: "whatsapp" as const, label: "וואטסאפ" },
+  { id: "phone" as const, label: "טלפון" },
+  { id: "email" as const, label: "אימייל" },
+  { id: "telegram" as const, label: "טלגרם" },
+];
+---
+
+<LandingLayout
+  title="כבר ניסיתם למצוא מפתח. חזרתם לאקסל."
+  description="בין תוכנת מדף שלא מתאימה למפתח שנעלם באמצע — רוב העסקים מוותרים. יש גם דרך שעובדת: קודם בודקים אם שווה לבנות, ורק אז משלמים על פיתוח."
+  locale="he"
+  dir="rtl"
+>
+
+  <!-- HERO -->
+  <LPHero
+    headline="כבר ניסיתם למצוא מפתח. חזרתם לאקסל."
+    subline="בין תוכנת מדף שלא מתאימה למפתח שנעלם באמצע — רוב העסקים מוותרים. יש גם דרך שעובדת: קודם בודקים אם שווה לבנות, ורק אז משלמים על פיתוח."
+  />
+
+  <!-- PAIN -->
+  <ChecklistSection
+    intro="נשמע מוכר?"
+    items={painItems}
+    tone="tonal"
+  />
+
+  <!-- WHAT CHANGES -->
+  <ChecklistSection
+    heading="מה משתנה"
+    items={changesItems}
+  />
+
+  <!-- HOW IT WORKS — the funnel, paid אבחון stated openly -->
+  <ChecklistSection
+    heading="איך זה עובד"
+    items={stepsItems}
+    tone="tonal"
+  />
+
+  <!-- PROOF -->
+  <ProofSection
+    text="עסק להפצת דלק קיבל בדיוק את זה: 21 גיליונות אקסל הוחלפו במערכת עובדת אחת תוך שבוע פיתוח, כ-1,900 רשומות הועברו פנימה — והתשתית עולה ₪0 בחודש."
+    caseStudyHref="/he/systems/fuel-distribution"
+    caseStudyLabel="הסיפור המלא, כולל מה שהשתבש בדרך ←"
+  />
+
+  <!-- START THE CONVERSATION -->
+  <ContactForm
+    heading="ספרו לנו מה חיפשתם ולא מצאתם."
+    subheading="משאירים פרטים, וחוזרים אליכם תוך 24 שעות בימי עסקים לתיאום שיחה קצרה."
+    fields={fields}
+    contactMethods={contactMethods}
+    submitLabel="לתיאום שיחה קצרה"
+    reassurance="השיחה הראשונה ללא תשלום ובלי התחייבות — ואם התשובה תהיה שלא כדאי לכם לבנות כלום, נגיד את זה."
+    source="lp-tried-before-he"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+
+</LandingLayout>

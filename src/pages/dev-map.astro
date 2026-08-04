@@ -1,0 +1,120 @@
+---
+/*
+  PAGE GOAL: TEMP DEV TOOL — DO NOT COMMIT, DO NOT DEPLOY.
+  Owner navigation page for pre-launch review: full site map + LP comparison
+  chart, so every page (incl. the 4 uncommitted Hebrew LP variant drafts) is
+  one click away while running `npm run dev`. Visit at /dev-map.
+  This file is untracked on purpose; delete it after launch.
+*/
+const enMain = [
+  { href: "/",            label: "Homepage" },
+  { href: "/automations", label: "Automations (service)" },
+  { href: "/websites",    label: "Websites (service)" },
+  { href: "/systems",     label: "Systems (service)" },
+  { href: "/ai-agents",   label: "AI Agents (service)" },
+];
+const enCases = [
+  { href: "/systems/fuel-distribution",  label: "Case: Fuel distribution (flagship)" },
+  { href: "/automations/travel-agency",  label: "Case: Travel agency" },
+  { href: "/systems/marketing-agency",   label: "Case: Marketing agency" },
+  { href: "/automations/reception",      label: "Case: Reception" },
+];
+const utility = [
+  { href: "/styleguide", label: "Styleguide (internal, noindex)" },
+  { href: "/does-not-exist", label: "404 test (EN — SSR, only works on deploy/preview)" },
+  { href: "/he/does-not-exist", label: "404 test (HE — SSR, only works on deploy/preview)" },
+];
+const heMirrors = [
+  { href: "/he",              label: "עמוד הבית" },
+  { href: "/he/automations",  label: "אוטומציות" },
+  { href: "/he/websites",     label: "אתרים" },
+  { href: "/he/systems",      label: "מערכות" },
+  { href: "/he/ai-agents",    label: "סוכני AI" },
+  { href: "/he/systems/fuel-distribution", label: "קייס: הפצת דלק" },
+  { href: "/he/automations/travel-agency", label: "קייס: סוכנות נסיעות" },
+  { href: "/he/systems/marketing-agency",  label: "קייס: סוכנות שיווק" },
+  { href: "/he/automations/reception",     label: "קייס: Reception" },
+];
+
+/* LP CHART — the campaign decision table. status: LIVE = committed on main; DRAFT = uncommitted variant. */
+const lpChart = [
+  { href: "/he/lp/spreadsheets",      status: "LIVE",  source: "lp-spreadsheets-he",      headline: "האקסל שירת אתכם נאמנה. עכשיו הוא הפך לעבודה שנייה." },
+  { href: "/he/lp/connected-systems", status: "LIVE",  source: "lp-connected-systems-he", headline: "אתה לא צריך עוד תוכנה. אתה צריך שמה שיש יתחיל לדבר אחד עם השני." },
+  { href: "/he/lp/missed-calls",      status: "LIVE",  source: "lp-missed-calls-he",      headline: "שיחה שלא נענתה לא מצלצלת פעמיים. היא פשוט עוברת למתחרה שלכם." },
+  { href: "/he/lp/ai-agents",         status: "LIVE",  source: "lp-ai-agents-he",         headline: "AI זה לא העניין. לחסוך לכם זמן — זה כן." },
+  { href: "/he/lp/order",             status: "DRAFT", source: "lp-order-he",             headline: "העסק גדל. השיטה עדיין בראש שלכם." },
+  { href: "/he/lp/runs-itself",       status: "DRAFT", source: "lp-runs-itself-he",       headline: "כמה שעות בשבוע אתם הפקידים של עצמכם?" },
+  { href: "/he/lp/stop-the-leaks",    status: "DRAFT", source: "lp-stop-the-leaks-he",    headline: "הכסף לא נעלם בבת אחת. הוא מטפטף מהסדקים." },
+  { href: "/he/lp/tried-before",      status: "DRAFT", source: "lp-tried-before-he",      headline: "כבר ניסיתם למצוא מפתח. חזרתם לאקסל." },
+];
+const enLps = [
+  { href: "/lp/spreadsheets",      source: "lp-spreadsheets" },
+  { href: "/lp/connected-systems", source: "lp-connected-systems" },
+  { href: "/lp/missed-calls",      source: "lp-missed-calls" },
+  { href: "/lp/ai-agents",         source: "lp-ai-agents" },
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>DEV MAP — temp</title>
+    <style>
+      :root { color-scheme: dark; }
+      body { margin: 0; padding: 2rem 1.5rem 4rem; background: #0b1120; color: #e2e8f0; font: 15px/1.5 Inter, system-ui, sans-serif; }
+      main { max-width: 64rem; margin: 0 auto; }
+      h1 { font-size: 1.4rem; margin: 0 0 .25rem; }
+      .warn { color: #fbbf24; font-size: .85rem; margin-bottom: 2rem; }
+      h2 { font-size: 1.05rem; margin: 2.25rem 0 .75rem; border-bottom: 1px solid #1e293b; padding-bottom: .4rem; }
+      ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: .25rem .75rem; }
+      a { color: #93b4f8; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+      th, td { text-align: start; padding: .5rem .6rem; border-bottom: 1px solid #1e293b; vertical-align: top; }
+      th { color: #94a3b8; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+      .tag { display: inline-block; padding: .1rem .4rem; border: 1px solid; border-radius: 3px; font-size: .72rem; font-weight: 700; }
+      .live  { color: #4ade80; border-color: #4ade8055; }
+      .draft { color: #fbbf24; border-color: #fbbf2455; }
+      .he { direction: rtl; font-family: Heebo, Inter, sans-serif; }
+      code { color: #94a3b8; font-size: .8rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Dev Map (temp)</h1>
+      <p class="warn">⚠ Untracked dev tool — not part of the deploy. Delete after launch. DRAFT rows are uncommitted files and will NOT go live with a push.</p>
+
+      <h2>LP chart — pick the campaign winner (Hebrew)</h2>
+      <table>
+        <thead><tr><th>Status</th><th>Route</th><th>Headline</th><th>Source tag</th></tr></thead>
+        <tbody>
+          {lpChart.map((lp) => (
+            <tr>
+              <td><span class={`tag ${lp.status === "LIVE" ? "live" : "draft"}`}>{lp.status}</span></td>
+              <td><a href={lp.href}>{lp.href}</a></td>
+              <td class="he">{lp.headline}</td>
+              <td><code>{lp.source}</code></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h2>English LPs</h2>
+      <ul>{enLps.map((lp) => <li><a href={lp.href}>{lp.href}</a> <code>{lp.source}</code></li>)}</ul>
+
+      <h2>English — main site</h2>
+      <ul>{enMain.map((p) => <li><a href={p.href}>{p.label}</a></li>)}</ul>
+
+      <h2>English — case studies</h2>
+      <ul>{enCases.map((p) => <li><a href={p.href}>{p.label}</a></li>)}</ul>
+
+      <h2>Hebrew mirrors</h2>
+      <ul class="he">{heMirrors.map((p) => <li><a href={p.href}>{p.label}</a></li>)}</ul>
+
+      <h2>Utility</h2>
+      <ul>{utility.map((p) => <li><a href={p.href}>{p.label}</a></li>)}</ul>
+    </main>
+  </body>
+</html>

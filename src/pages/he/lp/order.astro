@@ -1,0 +1,128 @@
+---
+/*
+  PAGE GOAL (HE, campaign LP): Meta ads → owner who runs the business
+  manually (orders in WhatsApp, debts in a notebook, inventory in their
+  head) leaves details → short free call → paid אבחון credited against
+  the project. One conversion action: the form. HE only, no EN mirror.
+
+  Copy source: .apm/memory/copy/he/lp-order-he.md — re-read that file
+  before editing any string below; it is the approved source of truth.
+
+  PRICE NOTE: the אבחון price is deliberately not shown yet. When the
+  owner fixes a ₪ figure, replace the step-3 description with:
+  "עוברים על התהליכים אחד-אחד, ויוצאים עם תמונה ברורה של מה שווה לבנות
+  ומה לא. האבחון עולה ₪X, והסכום מתקזז מול הפרויקט אם ממשיכים."
+
+  Section order (bg alternation): Hero → Pain (tonal 800) → Changes
+  (base 950) → Steps (tonal 800) → Proof (900) → Form (950).
+*/
+import LandingLayout from "../../../layouts/LandingLayout.astro";
+import LPHero from "../../../components/LPHero.astro";
+import ChecklistSection from "../../../components/ChecklistSection.astro";
+import ProofSection from "../../../components/ProofSection.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+
+const painItems = [
+  { label: "רק אתם יודעים מה באמת קורה בעסק. כל שאלה עוברת דרככם." },
+  { label: "ההזמנות נכנסות בוואטסאפ, נרשמות במחברת, ומועתקות לאקסל בלילה. אם נזכרים." },
+  { label: "יום חופש אחד — ובחזרה מחכה ערימה שלוקחת שבוע לסדר." },
+  { label: "אתם בטוחים ששום דבר לא נופל. רוב הזמן אתם צודקים." },
+];
+
+const changesItems = [
+  { label: "מערכת אחת שמחזיקה את הכל.", description: "הזמנות, לקוחות, חובות, מלאי — במקום אחד, לא בשלושה כלים ובראש שלכם." },
+  { label: "מה שכבר יש לכם מתחבר, לא מוחלף.", description: "וואטסאפ, מורנינג, האקסל הישן — הנתונים עוברים פנימה, שום דבר לא נזרק." },
+  { label: "מישהו אחר סוף־סוף יכול לענות.", description: "כשהמידע יושב במערכת ולא רק בראש שלכם, גם מי שהוא לא אתם יכול לטפל בהזמנה." },
+  { label: "רץ מהטלפון.", description: "כי אתם לא ליד שולחן. רוב היום אתם בשטח." },
+];
+
+const stepsItems = [
+  { label: "משאירים פרטים כאן למטה.", description: "שם, איך נוח לחזור אליכם, ומשפט על העסק. פחות מדקה." },
+  { label: "שיחה קצרה, ללא תשלום.", description: "רבע שעה על איך העסק רץ היום. בלי נאום מכירות מוכן מראש — קודם שואלים." },
+  { label: "אם יש מה לתקן — אבחון בתשלום.", description: "עוברים על התהליכים אחד-אחד, ויוצאים עם תמונה ברורה של מה שווה לבנות ומה לא — גם אם בסוף מחליטים לא להמשיך. הסכום מתקזז מול הפרויקט אם ממשיכים." },
+];
+
+const fields = [
+  { id: "name", label: "השם שלכם", type: "text" as const, placeholder: "איך קוראים לכם?", required: true },
+  { id: "email", label: "אימייל", type: "email" as const, placeholder: "you@business.com", required: true },
+  {
+    id:          "message",
+    label:       "מה העסק עושה, ומה מנוהל היום ביד או בראש?",
+    type:        "textarea" as const,
+    placeholder: "לדוגמה: אינסטלציה. ההזמנות בוואטסאפ והחובות במחברת.",
+    required:    true,
+  },
+];
+
+const contactMethods = [
+  { id: "whatsapp" as const, label: "וואטסאפ" },
+  { id: "phone" as const, label: "טלפון" },
+  { id: "email" as const, label: "אימייל" },
+  { id: "telegram" as const, label: "טלגרם" },
+];
+---
+
+<LandingLayout
+  title="העסק גדל. השיטה עדיין בראש שלכם."
+  description="הזמנות בוואטסאפ, חובות במחברת, מלאי בזיכרון. אנחנו בונים מערכת אחת שמחזיקה את הכל — ורצה מהטלפון."
+  locale="he"
+  dir="rtl"
+>
+
+  <!-- HERO -->
+  <LPHero
+    headline="העסק גדל. השיטה עדיין בראש שלכם."
+    subline="הזמנות בוואטסאפ, חובות במחברת, מלאי בזיכרון. אנחנו בונים מערכת אחת שמחזיקה את הכל — ורצה מהטלפון."
+  />
+
+  <!-- PAIN -->
+  <ChecklistSection
+    intro="תזהו לפחות אחד מאלה:"
+    items={painItems}
+    tone="tonal"
+  />
+
+  <!-- WHAT CHANGES -->
+  <ChecklistSection
+    heading="מה משתנה"
+    items={changesItems}
+  />
+
+  <!-- HOW IT WORKS — the funnel, paid אבחון stated openly -->
+  <ChecklistSection
+    heading="איך זה עובד"
+    items={stepsItems}
+    tone="tonal"
+  />
+
+  <!-- PROOF -->
+  <ProofSection
+    text="עסק משפחתי להפצת דלק עבד בדיוק ככה — 21 גיליונות אקסל חודשיים ומלאי שנוהל בראש. תוך שבוע פיתוח אחד הכל עבר למערכת אחת: ~1,900 רשומות משלוח, שום דבר לא הלך לאיבוד."
+    caseStudyHref="/he/systems/fuel-distribution"
+    caseStudyLabel="הסיפור המלא: מאקסל כאוטי למערכת אחת בשבוע ←"
+  />
+
+  <!-- START THE CONVERSATION -->
+  <ContactForm
+    heading="בואו נראה מה יושב לכם על הראש."
+    subheading="משאירים פרטים, חוזרים אליכם תוך 24 שעות בימי עסקים לשיחה קצרה."
+    fields={fields}
+    contactMethods={contactMethods}
+    submitLabel="לתיאום שיחה קצרה"
+    reassurance="השיחה הראשונה ללא תשלום ובלי התחייבות. אם יתקדם לאבחון בתשלום — תדעו את זה, ואת המחיר, מראש."
+    source="lp-order-he"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+
+</LandingLayout>

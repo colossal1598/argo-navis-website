@@ -1,0 +1,130 @@
+---
+/*
+  PAGE GOAL (HE, campaign LP): Meta ads → owner drowning in repetitive
+  manual work (copying orders from WhatsApp to Excel, retyping the same
+  messages, updating one payment in three places) leaves details →
+  short free call → paid אבחון credited against the project. Wary of
+  "AI magic" hype — the copy stays concrete and unquantified except for
+  the sourced proof line. One conversion action: the form. HE only.
+
+  Copy source: .apm/memory/copy/he/lp-runs-itself-he.md — re-read that
+  file before editing any string below; it is the approved source of truth.
+
+  PRICE NOTE: the אבחון price is deliberately not shown yet. When the
+  owner fixes a ₪ figure, replace the step-3 description with:
+  "עוברים על התהליכים אחד-אחד, ויוצאים עם תמונה ברורה של מה שווה לבנות
+  ומה לא. האבחון עולה ₪X, והסכום מתקזז מול הפרויקט אם ממשיכים."
+
+  Section order (bg alternation): Hero → Pain (tonal 800) → Changes
+  (base 950) → Steps (tonal 800) → Proof (900) → Form (950).
+*/
+import LandingLayout from "../../../layouts/LandingLayout.astro";
+import LPHero from "../../../components/LPHero.astro";
+import ChecklistSection from "../../../components/ChecklistSection.astro";
+import ProofSection from "../../../components/ProofSection.astro";
+import ContactForm from "../../../components/ContactForm.astro";
+
+const painItems = [
+  { label: "כל ערב אותו טקס: להעביר את ההזמנות מהוואטסאפ לאקסל." },
+  { label: "מקלידים את אותה הודעה בפעם העשירית היום, רק עם שם אחר." },
+  { label: "לקוח שילם — ועכשיו צריך לעדכן את זה בשלושה מקומות." },
+  { label: "מה שבאמת צריך אתכם — תפעול, מכירות, הצעות מחיר — נדחה לסוף היום. אם נשאר כוח." },
+];
+
+const changesItems = [
+  { label: "האוטומציה מעתיקה. אתם מחליטים.", description: "מה שנכנס בערוץ אחד מתעדכן בכל השאר — בלי שתיגעו." },
+  { label: "הודעות יוצאות לבד.", description: "אישורי הזמנה, תזכורות, מענה כשאתם לא זמינים — מהמספר של העסק עצמו." },
+  { label: "כל פעולה מתועדת.", description: "יומן פעילות שמראה מה כל אוטומציה עשתה, אם הצליחה, וכמה עלתה." },
+  { label: "מתחילים קטן.", description: "אוטומציה אחת, למשימה אחת שמעצבנת אתכם היום. עובדת ומרוויחה זמן? מוסיפים עוד. לא? לא התחייבתם למערכת שלמה." },
+];
+
+const stepsItems = [
+  { label: "משאירים פרטים כאן למטה.", description: "שם, איך נוח לחזור אליכם, ומשפט על העסק. פחות מדקה." },
+  { label: "שיחה קצרה, ללא תשלום.", description: "רבע שעה על איך העסק רץ היום. בלי נאום מכירות מוכן מראש — קודם שואלים." },
+  { label: "אם יש מה לתקן — אבחון בתשלום.", description: "עוברים על התהליכים אחד-אחד, ויוצאים עם תמונה ברורה של מה שווה לבנות ומה לא. אם בשיחה הקצרה יתברר שאין הרבה מה לעשות — נגיד את זה, ולא נציע אבחון בכלל. הסכום מתקזז מול הפרויקט אם ממשיכים." },
+];
+
+const fields = [
+  { id: "name", label: "השם שלכם", type: "text" as const, placeholder: "איך קוראים לכם?", required: true },
+  { id: "email", label: "אימייל", type: "email" as const, placeholder: "you@business.com", required: true },
+  {
+    id:          "message",
+    label:       "מה העסק עושה, ומה המשימה שחוזרת על עצמה הכי הרבה?",
+    type:        "textarea" as const,
+    placeholder: "לדוגמה: חנות רהיטים. כל הזמנה מוקלדת שלוש פעמים.",
+    required:    true,
+  },
+];
+
+const contactMethods = [
+  { id: "whatsapp" as const, label: "וואטסאפ" },
+  { id: "phone" as const, label: "טלפון" },
+  { id: "email" as const, label: "אימייל" },
+  { id: "telegram" as const, label: "טלגרם" },
+];
+---
+
+<LandingLayout
+  title="כמה שעות בשבוע אתם הפקידים של עצמכם?"
+  description="להעתיק הזמנות, להקליד את אותה הודעה, להעביר נתונים ממקום למקום — המחשב יכול לעשות את זה לבד. אתם עדיין עושים את זה ביד."
+  locale="he"
+  dir="rtl"
+>
+
+  <!-- HERO -->
+  <LPHero
+    headline="כמה שעות בשבוע אתם הפקידים של עצמכם?"
+    subline="להעתיק הזמנות, להקליד את אותה הודעה, להעביר נתונים ממקום למקום — המחשב יכול לעשות את זה לבד. אתם עדיין עושים את זה ביד."
+  />
+
+  <!-- PAIN -->
+  <ChecklistSection
+    intro="היום נגמר, והעבודה עוד לא:"
+    items={painItems}
+    tone="tonal"
+  />
+
+  <!-- WHAT CHANGES -->
+  <ChecklistSection
+    heading="מה משתנה"
+    items={changesItems}
+  />
+
+  <!-- HOW IT WORKS — the funnel, paid אבחון stated openly -->
+  <ChecklistSection
+    heading="איך זה עובד"
+    items={stepsItems}
+    tone="tonal"
+  />
+
+  <!-- PROOF -->
+  <ProofSection
+    text="סוכנות נסיעות רצה היום עם 8 אוטומציות — ממענה אוטומטי ללקוחות ועד רישום כרטיסים מנתוני חיוב — וחוסכת כ-10 שעות בשבוע של הקלדות והעברות ידניות."
+    caseStudyHref="/he/automations/travel-agency"
+    caseStudyLabel="מה בדיוק בנינו שם ←"
+  />
+
+  <!-- START THE CONVERSATION -->
+  <ContactForm
+    heading="איזו משימה הכי מעצבנת אצלכם?"
+    subheading="משאירים פרטים, חוזרים אליכם תוך 24 שעות בימי עסקים לשיחה קצרה."
+    fields={fields}
+    contactMethods={contactMethods}
+    submitLabel="לתיאום שיחה קצרה"
+    reassurance="השיחה הראשונה ללא תשלום ובלי התחייבות."
+    source="lp-runs-itself-he"
+    loadingText="שולחים..."
+    successText="קיבלנו, נחזור אליכם בהקדם."
+    turnstileHint="הגנת בוטים עדיין לא הוגדרה."
+    challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
+    contactMethodLabel="איך נוח לכם שנחזור אליכם?"
+    contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
+    contactDetailsPlaceholders={{
+      email: "",
+      phone: "מספר טלפון (כולל קידומת)",
+      telegram: "שם משתמש בטלגרם (עם @)",
+      whatsapp: "מספר ווטסאפ (כולל קידומת)",
+    }}
+  />
+
+</LandingLayout>
