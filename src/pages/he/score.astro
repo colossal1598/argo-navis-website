@@ -1,0 +1,728 @@
+---
+/*
+  PAGE GOAL (HE, lead-magnet tool): סדרת לינקדאין → הקורא פותח את כלי
+  הציון → עונה על 5 שאלות → משאיר שם + מייל בשער → מקבל ציון נראוּת
+  0–100, איך זה נראה ביום-יום וצעד חינמי אחד → ה-CTA של הטווח מפנה
+  לאזור יצירת הקשר באתר הראשי לשיחת היכרות קצרה. פעולת המרה אחת: שער
+  המייל (ה-CTA של הטווח הוא ההמשך).
+
+  Copy source: .apm/memory/copy/he/score-he.md — re-read that file
+  before editing any string below; it is the approved source of truth.
+
+  Scoring (client-side, mirrored by api/score.ts range checks):
+  score = round((q2*0.30 + q5*0.30 + q3*0.15 + q4*0.15) / 0.90) —
+  the weights sum to 0.90, so dividing normalizes the range to 10–100
+  (a perfect set scores 100). q1 is a qualifier — submitted, never
+  scored. Bands: <=40 "blind" · 41–70 "foggy" · 71–100 "clear" — ids
+  must match api/score.ts.
+
+  Structural mirror of src/pages/score.astro — same sections, same
+  classes; only copy, locale and dir differ. Section order (bg
+  alternation; step flow, one section visible at a time):
+  Intro (950) → Quiz (tonal 800) → Email gate (950) → Results (950).
+*/
+import LandingLayout from "../../layouts/LandingLayout.astro";
+import { type SiteLocale, withLocale } from "../../lib/locale";
+
+const locale: SiteLocale = "he";
+const source = "score-he" as const;
+/*
+  CONVERSION TARGET — same site-level target every piece of chrome
+  already uses (Navigation.astro ctaHref, Footer.astro, Hero.astro):
+  the ContactForm section on the homepage (id="contact"). There is no
+  standalone /contact route in this project.
+*/
+const contactHref = withLocale("/#contact", locale);
+
+const meta = {
+  title: "מספרים אמיתיים או תחושת בטן? מבחן של 2 דקות לעסק שלכם",
+  description:
+    "5 שאלות, בערך 2 דקות, ציון בין 0 ל-100 — כמה אתם באמת רואים את המספרים של העסק, ומה הצעד האחד שיחזיר לכם שעות בחודש.",
+};
+
+const intro = {
+  headline: "מספרים אמיתיים, או תחושת בטן?",
+  lines: [
+    "5 שאלות, בערך 2 דקות. אין תשובות נכונות — יש תמונה כנה של כמה אתם באמת רואים את העסק.",
+    "אלה אותן שאלות שאנחנו שואלים בתחילת כל שיחת היכרות עם בעל עסק. לא חידון — אבחון.",
+    "בסוף מקבלים ציון בין 0 ל-100, מה הוא אומר ביום-יום, וצעד אחד חינמי שאפשר לעשות עוד היום.",
+  ],
+  startButton: "בואו נבדוק",
+};
+
+/*
+  QUESTIONS — q1 option values are stable English keys (identical on the
+  EN mirror, so analytics segment across locales); q2–q5 option values
+  are the numeric weights from the copy file, sent as answers.q2..q5.
+*/
+interface QuizOption {
+  label: string;
+  value: string;
+}
+interface QuizQuestion {
+  id: "q1" | "q2" | "q3" | "q4" | "q5";
+  question: string;
+  options: QuizOption[];
+}
+
+const questions: QuizQuestion[] = [
+  {
+    id: "q1",
+    question: "איך אתם מנהלים היום את המספרים של העסק?",
+    options: [
+      { label: "תוכנת הנהלת חשבונות (למשל מורנינג, חשבונית ירוקה, רווחית)", value: "accounting-software" },
+      { label: "רק Excel או Google Sheets", value: "sheets-only" },
+      { label: "שילוב של כמה כלים — בלי חיבור ביניהם", value: "mixed-tools" },
+      { label: "על הנייר, או בראש", value: "paper-or-head" },
+    ],
+  },
+  {
+    id: "q2",
+    question:
+      "כשאתם צריכים מספר — כמה יש בבנק, אילו חשבוניות עוד לא שולמו, כמה נשאר מהחודש — איך אתם משיגים אותו?",
+    options: [
+      { label: "המספר אצלי בראש, ועדכני", value: "100" },
+      { label: "מבט אחד במערכת אחת — והמספר שם, מדויק", value: "75" },
+      { label: "מצליבים ידנית בין שניים-שלושה מקומות עד שיוצא מספר", value: "35" },
+      { label: "שואלים את הנהלת החשבונות — ומחכים", value: "15" },
+    ],
+  },
+  {
+    id: "q3",
+    question: "באיזו תדירות אתם מסתכלים על המספרים האמיתיים — לא רק על יתרת הבנק?",
+    options: [
+      { label: "כל יום", value: "100" },
+      { label: "פעם בשבוע", value: "75" },
+      { label: "פעם בחודש, כשהדוחות מגיעים", value: "40" },
+      { label: "רק כשמשהו מרגיש לא בסדר", value: "10" },
+    ],
+  },
+  {
+    id: "q4",
+    question: "כמה זמן בשבוע הולך על לאסוף מספרים — לבדוק, להעתיק, להצליב?",
+    options: [
+      { label: "פחות מחצי שעה", value: "100" },
+      { label: "חצי שעה עד שעתיים", value: "70" },
+      { label: "שעתיים עד חמש שעות", value: "35" },
+      { label: "יותר מחמש שעות", value: "10" },
+    ],
+  },
+  {
+    id: "q5",
+    question: 'אם היינו שואלים אתכם עכשיו "העסק רווחי החודש?" — כמה הייתם בטוחים בתשובה?',
+    options: [
+      { label: "בטוחים לגמרי — יש מספרים אמיתיים מאחורי התשובה", value: "100" },
+      { label: "די בטוחים — תחושת בטן טובה", value: "60" },
+      { label: "לא בטוחים — היינו צריכים לבדוק", value: "25" },
+      { label: "אין מושג עד שרואה החשבון אומר", value: "5" },
+    ],
+  },
+];
+
+const gate = {
+  heading: "עוד רגע — לאן לשלוח את התוצאה?",
+  body: "הציון יופיע כאן על המסך מיד. את המייל אנחנו צריכים כדי לשלוח לכם את התוצאה המלאה ואת הצעד החינמי המומלץ — שיהיו אצלכם גם אחרי שתסגרו את הדף.",
+  nameLabel: "השם שלכם",
+  namePlaceholder: "איך קוראים לכם?",
+  emailLabel: "אימייל",
+  emailPlaceholder: "you@business.com",
+  button: "לציון שלי",
+  privacy: "בלי ספאם ובלי רשימות תפוצה. אנחנו לא מוכרים ולא מעבירים כתובות — מייל אחד עם התוצאה, וזהו.",
+  loading: "מחשבים...",
+  errorGeneric: "משהו השתבש בשליחה. נסו שוב — התשובות שלכם לא הלכו לאיבוד.",
+  errorMissing: "צריך שם ומייל כדי לקבל את התוצאה.",
+  errorInvalidEmail: "כתובת המייל לא נראית תקינה.",
+};
+
+const micro = {
+  progress: "שאלה {n} מתוך 5",
+  back: "חזרה",
+  next: "ממשיכים",
+  submit: "לתוצאה",
+  success: "תודה, הפרטים שלכם התקבלו.",
+  labels: {
+    score: "הציון שלכם",
+    dayToDay: "איך זה נראה ביום-יום",
+    time: "הזמן שמתחבא פה",
+    action: "צעד אחד, בחינם, עוד היום",
+    next: "ומה הלאה",
+  },
+};
+
+/*
+  Q4 → time placeholders (mapping table from the copy file), keyed by
+  the numeric q4 option value. Substituted into the band's time hook
+  ({q4_weekly} / {q4_monthly}) client-side after scoring.
+*/
+const q4Map: Record<string, { weekly: string; monthly: string }> = {
+  "100": { weekly: "פחות מחצי שעה בשבוע", monthly: "בערך שעתיים בחודש" },
+  "70": { weekly: "עד שעתיים בשבוע", monthly: "עד 8 שעות בחודש" },
+  "35": { weekly: "2–5 שעות בשבוע", monthly: "8–20 שעות בחודש" },
+  "10": { weekly: "יותר מ-5 שעות בשבוע", monthly: "יותר מ-20 שעות בחודש — יומיים עבודה ויותר" },
+};
+
+/* RESULT BANDS — ids must match api/score.ts's allowed enum. */
+interface ResultBand {
+  id: "blind" | "foggy" | "clear";
+  name: string;
+  pattern: string;
+  dayToDay: string;
+  timeHook: string;
+  freeAction: string;
+  honestContext: string;
+  ctaCopy: string;
+  ctaButton: string;
+}
+
+const bands: ResultBand[] = [
+  {
+    id: "blind",
+    name: "על עיוור",
+    pattern: "הפתעת סוף החודש",
+    dayToDay:
+      "יתרת הבנק היא הדוח היחיד שנפתח כל יום. איך היה החודש באמת? מתגלה כשרואה החשבון שולח דוח — שבועות אחרי שהחודש נגמר. עד אז מנהלים לפי תחושה, ורוב הזמן התחושה בסדר. אבל כשהיא טועה — מגלים מאוחר, כשכבר אי אפשר לתקן.",
+    timeHook:
+      'לפי מה שסימנתם, הולכות לכם {q4_weekly} רק על לרדוף אחרי מספרים — {q4_monthly}. זה לא רק זמן: זה הראש שתפוס כל היום בשאלה "לא שכחתי משהו?". הזמן הזה יכול להיות מעקב אמיתי אחרי חובות, לקוח חדש — או ערב אחד בשבוע שנגמר בזמן.',
+    freeAction:
+      "לפני שאתם סוגרים את היום — פתקים בטלפון, שלושה מספרים: כמה יש בבנק, כמה חייבים לכם, כמה אתם חייבים. עשר דקות. תעשו את זה שלושה ימים ברצף, ותרגישו את ההבדל בין לנחש לבין לדעת.",
+    honestContext:
+      "נגיד את זה ביושר: ציון נמוך לא אומר עסק גרוע. הוא אומר שהעסק רץ על הזיכרון והאינטואיציה שלכם. זה עובד — עד שהעסק גדל צעד אחד מעבר למה שראש אחד מחזיק.",
+    ctaCopy:
+      "ההפתעה של סוף החודש לא נעלמת מעצמה — היא רק מתייקרת. שיחת היכרות קצרה, רבע שעה, ללא תשלום: מספרים על העסק, שומעים מה אפשר לחבר, ויוצאים עם תמונה ברורה יותר גם אם זה נגמר שם.",
+    ctaButton: "לתיאום שיחה קצרה",
+  },
+  {
+    id: "foggy",
+    name: "ערפל",
+    pattern: "מלכודת ההצלבות",
+    dayToDay:
+      'המספרים קיימים — הם פשוט גרים בכמה מקומות. קצת בתוכנה, קצת באקסל, קצת בראש. כל תשובה אמיתית דורשת הצלבה ידנית, וכל הצלבה היא עוד חצי שעה שנעלמת. רוב הזמן זה מסתדר. אבל "רוב הזמן" זה בדיוק המקום שבו חשבונית או חוב נופלים בלי ששמים לב.',
+    timeHook:
+      "{q4_weekly} על הצלבות זה {q4_monthly}. וזה עוד לפני העומס השקט — לזכור מה עודכן איפה, ומה עוד לא. השעות האלה יכולות להיות עבודה שמכניסה כסף, או פשוט ראש נקי בסוף היום.",
+    freeAction:
+      "בחרו את המספר האחד שאתם מצליבים הכי הרבה — אצל רוב העסקים זה חובות פתוחים. החליטו איזו מערכת היא האמת לגביו, עדכנו אותה שם פעם אחת, והפסיקו ליישר את שאר המקומות. מקור אמת אחד למספר אחד — זו ההתחלה של כל סדר.",
+    honestContext:
+      'זה השלב שהכי קל להיתקע בו: הכל "בערך עובד", אז אף פעם אין רגע שמכריח לסדר. אבל זה גם השלב הכי זול לצאת ממנו — המערכות כבר קיימות, הן פשוט לא מדברות אחת עם השנייה.',
+    ctaCopy:
+      "אין פה שריפה — יש הזדמנות. אם מתישהו תרצו לראות איך הכלים שכבר יש לכם מתחברים למספר אחד אמין, שיחה קצרה ללא תשלום היא התחלה טובה. בלי נאום מכירות — קודם שואלים.",
+    ctaButton: "לתיאום שיחה קצרה",
+  },
+  {
+    id: "clear",
+    name: "תמונה ברורה",
+    pattern: "יד על הדופק",
+    dayToDay:
+      "אתם יודעים כמה יש בבנק, מי חייב לכם וכמה, ואם החודש רווחי — בלי לנחש ובלי לחכות לדוח. ההחלטות נשענות על מספרים, לא על תחושה. זה לא מובן מאליו, וזה שווה לכם שקט שרוב בעלי העסקים לא מכירים.",
+    timeHook:
+      "אם סימנתם פחות מחצי שעה בשבוע — ככה זה אמור להיראות, תשמרו על זה. אם עדיין הולכות שעות על איסוף ידני — זה החלק האחרון שנשאר לסגור, והוא שווה {q4_monthly} של ראש נקי.",
+    freeAction:
+      "מבחן קטן: בקשו ממישהו אחר בעסק — או מהנהלת החשבונות — לשלוף את המספר החשוב של השבוע בלי לשאול אתכם. אם הם מצליחים, השיטה שלכם באמת עובדת. אם לא — מצאתם את הנקודה היחידה שעדיין תלויה רק בכם.",
+    honestContext:
+      "בפועל, ציון כזה אומר שבניתם שיטה — לא רק אספתם כלים. הסיכון היחיד שנשאר הוא ששיטה כזאת יושבת לפעמים על אדם אחד. שווה לוודא שהיא שורדת גם שבוע בלעדיכם.",
+    ctaCopy:
+      "אין לנו מה למכור לכם פה — אתם במקום טוב, וזו עבודה שלכם. אם מתישהו תרצו עוד זוג עיניים על השיטה, או שהעסק יגדל והיא תתחיל לחרוק — אנחנו פה.",
+    ctaButton: "להשאיר פרטים לשיחה, כשיתאים לכם",
+  },
+];
+
+/*
+  Turnstile — same wiring as ContactForm.astro: widget only when a site
+  key exists, token only demanded when a widget can actually render.
+  Challenge-missing string reuses he/lp/order.astro's existing line (the
+  copy file has no line for this state).
+*/
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
+const turnstileRequired = import.meta.env.PROD && Boolean(turnstileSiteKey);
+const challengeErrorText = "יש להשלים את אימות האבטחה לפני שליחה.";
+
+/*
+  No-JS fallback line — not in the copy file (it only covers the tool
+  itself); functional chrome, link label reuses the band CTA button.
+*/
+const noscriptLine = "הכלי הזה צריך JavaScript כדי לעבוד. אפשר לדלג עליו ולדבר איתנו ישירות —";
+
+/* Everything the client-side state machine needs, serialized once. */
+const cfg = {
+  locale,
+  source,
+  progressTemplate: micro.progress,
+  nextLabel: micro.next,
+  submitStepLabel: micro.submit,
+  gateButton: gate.button,
+  loadingText: gate.loading,
+  errorMissing: gate.errorMissing,
+  errorInvalidEmail: gate.errorInvalidEmail,
+  errorGeneric: gate.errorGeneric,
+  challengeErrorText,
+  turnstileRequired,
+  q4Map,
+};
+---
+
+<LandingLayout title={meta.title} description={meta.description} locale={locale} dir="rtl">
+
+  <!-- INTRO — always rendered (works without JS); only the start button is JS-gated -->
+  <section id="intro-section" class="bg-surface-950 px-6 py-section-lg text-start md:py-section-xl">
+    <div class="mx-auto max-w-3xl">
+      <h1 class="reveal text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl lg:text-6xl">
+        {intro.headline}
+      </h1>
+      <div class="mt-6 max-w-xl space-y-4">
+        {intro.lines.map((line, i) => (
+          <p class="reveal text-lg leading-relaxed text-text-muted" style={`--reveal-delay: ${80 + i * 80}`}>
+            {line}
+          </p>
+        ))}
+      </div>
+
+      <!-- Start button ships hidden; the quiz script un-hides it, so no-JS visitors never see a dead button. -->
+      <button type="button" id="start-btn" hidden class="btn btn-primary btn-lg mt-10">
+        {intro.startButton}
+      </button>
+
+      <noscript>
+        <p class="mt-10 text-text-muted">
+          {noscriptLine}
+          <a href={contactHref} class="chip-accent-text focus-ring rounded-sm underline underline-offset-4">
+            {bands[0].ctaButton}
+          </a>
+        </p>
+      </noscript>
+    </div>
+  </section>
+
+  <!-- QUIZ — one question at a time; fieldset per question, radios styled as option cards -->
+  <section id="quiz-section" hidden class="bg-surface-800 px-6 py-section-md">
+    <div class="mx-auto max-w-2xl">
+
+      <!-- Progress — live text + thin segmented bar (no dots, no circles) -->
+      <div class="mb-8">
+        <p id="progress-text" aria-live="polite" class="text-sm font-medium text-text-muted">
+          {micro.progress.replace("{n}", "1")}
+        </p>
+        <div class="mt-3 flex gap-1.5" aria-hidden="true">
+          {questions.map(() => (
+            <div data-progress-seg class="quiz-seg"></div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Question viewport — opacity fade between questions (duration-200, --ease-out) -->
+      <div id="question-viewport" class="transition-opacity duration-200 ease-out">
+        {questions.map((q) => (
+          <fieldset data-question={q.id} hidden>
+            <!-- tabindex="-1": focus lands here on every step change so screen readers announce the new question -->
+            <legend tabindex="-1" class="text-xl font-bold leading-snug text-text-primary outline-none md:text-2xl">
+              {q.question}
+            </legend>
+            <div class="mt-6 flex flex-col gap-3">
+              {q.options.map((opt) => (
+                <label class="option-card">
+                  <input type="radio" name={q.id} value={opt.value} class="peer sr-only" />
+                  <!-- Square check indicator — small-radius rectangle, never a circle -->
+                  <span
+                    aria-hidden="true"
+                    class="option-check"
+                  ></span>
+                  <span>{opt.label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+      </div>
+
+      <!-- Back / Next — Next disabled until an option is picked; last step swaps to the submit label -->
+      <div class="mt-8 flex items-center justify-between gap-4">
+        <button type="button" id="back-btn" class="btn btn-secondary btn-md btn-on-800">{micro.back}</button>
+        <button type="button" id="next-btn" class="btn btn-primary btn-md btn-on-800" disabled>{micro.next}</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- EMAIL GATE — after Q5, before the result; same submit shape as ContactForm.astro -->
+  <section id="gate-section" hidden class="bg-surface-950 px-6 py-section-md">
+    <div class="mx-auto max-w-xl">
+      <h2 id="gate-heading" tabindex="-1" class="text-2xl font-bold text-text-primary outline-none md:text-3xl">
+        {gate.heading}
+      </h2>
+      <p class="mt-3 leading-relaxed text-text-muted">{gate.body}</p>
+
+      <form id="score-form" novalidate class="mt-8 space-y-6">
+        <div>
+          <label for="lead-name" class="field-label">
+            {gate.nameLabel}
+            <span class="ms-1 font-bold text-text-primary">*</span>
+          </label>
+          <input type="text" id="lead-name" name="name" autocomplete="name" placeholder={gate.namePlaceholder} required class="input" />
+        </div>
+
+        <div>
+          <label for="lead-email" class="field-label">
+            {gate.emailLabel}
+            <span class="ms-1 font-bold text-text-primary">*</span>
+          </label>
+          <input type="email" id="lead-email" name="email" autocomplete="email" placeholder={gate.emailPlaceholder} required class="input" />
+        </div>
+
+        {turnstileSiteKey && (
+          <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="auto"></div>
+        )}
+
+        <p id="gate-error" role="alert" class="hidden text-sm form-error-text"></p>
+
+        <div>
+          <button type="submit" id="gate-submit" class="btn btn-primary btn-lg">
+            {gate.button}
+          </button>
+          <p class="mt-3 text-sm text-text-muted">{gate.privacy}</p>
+        </div>
+      </form>
+
+      <!-- Back to Q5 — leaving the gate never clears the radios, so answers survive -->
+      <button type="button" id="gate-back-btn" class="btn btn-secondary btn-md mt-8">
+        {micro.back}
+      </button>
+    </div>
+  </section>
+
+  <!-- RESULTS — score number + rectangular segment meter (no circular gauge), then the matching band -->
+  <section id="results-section" hidden class="bg-surface-950 px-6 py-section-lg">
+    <div class="mx-auto max-w-2xl">
+
+      <h2 id="results-heading" tabindex="-1" class="text-sm font-semibold text-text-muted outline-none">
+        {micro.labels.score}
+      </h2>
+      <div class="mt-2 flex items-baseline gap-3">
+        <span id="score-number" class="text-5xl font-extrabold tracking-tight text-text-primary md:text-6xl">0</span>
+        <span class="text-lg font-semibold text-text-muted">מתוך 100</span>
+      </div>
+
+      <!-- Meter — 10 bordered rectangles, surface-step fill; JS fills round(score/10) of them -->
+      <div class="mt-6 flex gap-1.5" aria-hidden="true">
+        {Array.from({ length: 10 }).map(() => (
+          <div data-meter-seg class="meter-seg"></div>
+        ))}
+      </div>
+
+      <p role="status" class="mt-4 text-sm text-text-muted">{micro.success}</p>
+
+      {bands.map((band) => (
+        <div data-band={band.id} hidden class="mt-12">
+          <span class="badge badge-brand">{band.name}</span>
+          <h3 class="mt-4 text-2xl font-bold text-text-primary md:text-3xl">{band.pattern}</h3>
+
+          <div class="mt-8 space-y-8">
+            <div>
+              <h4 class="text-sm font-semibold chip-accent-text">{micro.labels.dayToDay}</h4>
+              <p class="mt-2 leading-relaxed text-text-muted">{band.dayToDay}</p>
+            </div>
+
+            <div>
+              <h4 class="text-sm font-semibold chip-accent-text">{micro.labels.time}</h4>
+              <!-- data-time-hook: {q4_weekly}/{q4_monthly} substituted client-side from the Q4 answer -->
+              <p data-time-hook class="mt-2 leading-relaxed text-text-muted">{band.timeHook}</p>
+            </div>
+
+            <div class="panel-static">
+              <h4 class="text-sm font-semibold chip-accent-text">{micro.labels.action}</h4>
+              <p class="mt-2 leading-relaxed text-text-soft">{band.freeAction}</p>
+            </div>
+
+            <p class="border-s-2 border-border-subtle ps-4 text-sm leading-relaxed text-text-muted">
+              {band.honestContext}
+            </p>
+
+            <div>
+              <h4 class="text-sm font-semibold chip-accent-text">{micro.labels.next}</h4>
+              <p class="mt-2 leading-relaxed text-text-muted">{band.ctaCopy}</p>
+              <a href={contactHref} class="btn btn-primary btn-lg btn-wrap mt-6 text-center">
+                {band.ctaButton}
+              </a>
+            </div>
+          </div>
+        </div>
+      ))}
+
+    </div>
+  </section>
+
+<!-- Page scripts sit INSIDE the layout slot — after </html> browsers only
+     reparent them (works, but invalid HTML). Order matters: the inline state
+     machine defines the global Turnstile onload callback named by the
+     explicit-render loader below it. -->
+<script define:vars={{ cfg }}>
+  /* ── STATE MACHINE — intro → q1..q5 → email gate → results ── */
+  const introSection = document.getElementById("intro-section");
+  const quizSection = document.getElementById("quiz-section");
+  const gateSection = document.getElementById("gate-section");
+  const resultsSection = document.getElementById("results-section");
+  const sections = [introSection, quizSection, gateSection, resultsSection];
+
+  const startBtn = document.getElementById("start-btn");
+  const backBtn = document.getElementById("back-btn");
+  const nextBtn = document.getElementById("next-btn");
+  const viewport = document.getElementById("question-viewport");
+  const progressText = document.getElementById("progress-text");
+  const progressSegs = Array.from(document.querySelectorAll("[data-progress-seg]"));
+  const fieldsets = Array.from(document.querySelectorAll("fieldset[data-question]"));
+
+  const form = document.getElementById("score-form");
+  const nameInput = document.getElementById("lead-name");
+  const emailInput = document.getElementById("lead-email");
+  const submitBtn = document.getElementById("gate-submit");
+  const errorBox = document.getElementById("gate-error");
+  const gateHeading = document.getElementById("gate-heading");
+  const gateBackBtn = document.getElementById("gate-back-btn");
+
+  const resultsHeading = document.getElementById("results-heading");
+  const scoreNumber = document.getElementById("score-number");
+  const meterSegs = Array.from(document.querySelectorAll("[data-meter-seg]"));
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let current = 0;
+
+  /* JS is running — reveal the start button (ships hidden for no-JS visitors). */
+  startBtn.hidden = false;
+
+  function showSection(section, focusTarget) {
+    sections.forEach((s) => {
+      s.hidden = s !== section;
+    });
+    /* "instant": html has scroll-behavior:smooth, which programmatic scrolls
+       inherit and prefers-reduced-motion does NOT disable. */
+    window.scrollTo({ top: 0, behavior: "instant" });
+    if (focusTarget) focusTarget.focus({ preventScroll: true });
+  }
+
+  function showQuestion(index) {
+    current = index;
+    fieldsets.forEach((fs, i) => {
+      fs.hidden = i !== index;
+    });
+    progressText.textContent = cfg.progressTemplate.replace("{n}", String(index + 1));
+    /* Fill state is the .quiz-seg-filled modifier ONLY — a JS-toggled raw
+       utility loses to .quiz-seg's own @apply'd background. */
+    progressSegs.forEach((seg, i) => {
+      seg.classList.toggle("quiz-seg-filled", i <= index);
+    });
+    nextBtn.textContent = index === fieldsets.length - 1 ? cfg.submitStepLabel : cfg.nextLabel;
+    nextBtn.disabled = !fieldsets[index].querySelector("input:checked");
+    const legend = fieldsets[index].querySelector("legend");
+    if (legend) legend.focus({ preventScroll: true });
+  }
+
+  /*
+    Opacity fade between questions — skipped entirely under
+    prefers-reduced-motion. `current` is set synchronously (not inside the
+    timeout) and any pending fade is cancelled first, so two clicks within
+    the 200ms window can't act on a stale step or replay a stale
+    transition (Q5 Back→Next skipping to the gate with a rewind; Q1
+    Next→Back stranding `current` at 1 on the intro).
+  */
+  let fadeTimeoutId = 0;
+  function transitionToQuestion(index) {
+    current = index;
+    window.clearTimeout(fadeTimeoutId);
+    if (reducedMotion.matches) {
+      showQuestion(index);
+      return;
+    }
+    viewport.classList.add("opacity-0");
+    fadeTimeoutId = window.setTimeout(() => {
+      showQuestion(index);
+      viewport.classList.remove("opacity-0");
+    }, 200);
+  }
+
+  startBtn.addEventListener("click", () => {
+    showSection(quizSection);
+    showQuestion(current);
+  });
+
+  backBtn.addEventListener("click", () => {
+    if (current === 0) {
+      showSection(introSection, startBtn);
+      return;
+    }
+    transitionToQuestion(current - 1);
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (!fieldsets[current].querySelector("input:checked")) return;
+    if (current < fieldsets.length - 1) {
+      transitionToQuestion(current + 1);
+    } else {
+      showSection(gateSection, gateHeading);
+      renderTurnstileIfNeeded();
+    }
+  });
+
+  /* Back from the email gate → Q5. Radios are never reset, so answers survive. */
+  gateBackBtn.addEventListener("click", () => {
+    showSection(quizSection);
+    showQuestion(fieldsets.length - 1);
+  });
+
+  /* Picking any option enables Next for the current question. */
+  quizSection.addEventListener("change", (e) => {
+    if (e.target instanceof HTMLInputElement && e.target.type === "radio") {
+      nextBtn.disabled = false;
+    }
+  });
+
+  /*
+    ── TURNSTILE (explicit render) ──
+    The widget used to implicit-render inside the hidden gate at page load,
+    so its token (~300s TTL) could expire while the visitor was still
+    answering. The loader is ?render=explicit now and the widget renders
+    exactly once, the first time the gate is actually shown. Whichever
+    happens last wins: gate reached before the script loads → the global
+    onload callback renders; script loaded first → the call on gate entry
+    renders. cfg.turnstileRequired degradation is untouched — no site key
+    means no mount element and nothing renders or is demanded.
+  */
+  const turnstileMount = document.querySelector(".cf-turnstile");
+  let turnstileRendered = false;
+  function renderTurnstileIfNeeded() {
+    if (turnstileRendered || !turnstileMount) return;
+    const api = globalThis.turnstile;
+    if (!api || typeof api.render !== "function") return;
+    api.render(turnstileMount, {
+      sitekey: turnstileMount.getAttribute("data-sitekey"),
+      theme: "auto",
+    });
+    turnstileRendered = true;
+  }
+  globalThis.renderScoreTurnstile = () => {
+    if (!gateSection.hidden) renderTurnstileIfNeeded();
+  };
+
+  /* ── SCORING + SUBMIT ── */
+  function readAnswers() {
+    const val = (q) => {
+      const checked = quizSection.querySelector(`input[name="${q}"]:checked`);
+      return checked ? checked.value : "";
+    };
+    return {
+      q1: val("q1"),
+      q2: Number(val("q2")),
+      q3: Number(val("q3")),
+      q4: Number(val("q4")),
+      q5: Number(val("q5")),
+    };
+  }
+
+  function showGateError(message) {
+    errorBox.textContent = message;
+    errorBox.classList.remove("hidden");
+    submitBtn.disabled = false;
+    submitBtn.textContent = cfg.gateButton;
+  }
+
+  function renderResults(score, band, q4Value) {
+    scoreNumber.textContent = String(score);
+    const filledCount = Math.round(score / 10);
+    /* Fill state is the .meter-seg-filled modifier ONLY (bg + border in one
+       class) — JS-toggled raw utilities lose to .meter-seg's @apply'd base. */
+    meterSegs.forEach((seg, i) => {
+      seg.classList.toggle("meter-seg-filled", i < filledCount);
+    });
+    const times = cfg.q4Map[String(q4Value)];
+    document.querySelectorAll("[data-band]").forEach((el) => {
+      const active = el.getAttribute("data-band") === band;
+      el.hidden = !active;
+      if (active && times) {
+        const hook = el.querySelector("[data-time-hook]");
+        if (hook) {
+          hook.textContent = hook.textContent
+            .replaceAll("{q4_weekly}", times.weekly)
+            .replaceAll("{q4_monthly}", times.monthly);
+        }
+      }
+    });
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBox.classList.add("hidden");
+
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    if (!name || !email) {
+      showGateError(cfg.errorMissing);
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showGateError(cfg.errorInvalidEmail);
+      return;
+    }
+
+    const formData = new FormData(form);
+    const token = formData.get("cf-turnstile-response");
+    if (!token && cfg.turnstileRequired) {
+      showGateError(cfg.challengeErrorText);
+      return;
+    }
+
+    const answers = readAnswers();
+    /* score = (q2·0.30 + q5·0.30 + q3·0.15 + q4·0.15) / 0.90 — the weights sum
+       to 0.90, so dividing normalizes the range to 10–100 (perfect set = 100).
+       q1 unscored; bands match api/score.ts. */
+    const score = Math.round((answers.q2 * 0.3 + answers.q5 * 0.3 + answers.q3 * 0.15 + answers.q4 * 0.15) / 0.9);
+    const band = score <= 40 ? "blind" : score <= 70 ? "foggy" : "clear";
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = cfg.loadingText;
+
+    const payload = {
+      name,
+      email,
+      answers,
+      score,
+      band,
+      locale: cfg.locale,
+      source: cfg.source,
+    };
+    if (typeof token === "string" && token) {
+      payload["cf-turnstile-response"] = token;
+    }
+
+    try {
+      const res = await fetch("/api/score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+
+      if (res.ok) {
+        renderResults(score, band, answers.q4);
+        showSection(resultsSection, resultsHeading);
+      } else {
+        showGateError(json.error ?? cfg.errorGeneric);
+        const turnstileApi = globalThis.turnstile;
+        if (turnstileApi && typeof turnstileApi.reset === "function") {
+          turnstileApi.reset();
+        }
+      }
+    } catch {
+      showGateError(cfg.errorGeneric);
+      const turnstileApi = globalThis.turnstile;
+      if (turnstileApi && typeof turnstileApi.reset === "function") {
+        turnstileApi.reset();
+      }
+    }
+  });
+</script>
+
+{turnstileSiteKey && (
+  <script
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=renderScoreTurnstile"
+    async
+    defer
+  ></script>
+)}
+
+</LandingLayout>

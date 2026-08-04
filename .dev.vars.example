@@ -25,6 +25,11 @@ SUPABASE_SECRET_KEY=sb_secret_your-secret-key-here
 # specifically want to test the verification call itself.
 TURNSTILE_SECRET_KEY=your-turnstile-secret-key
 
+# n8n webhook that receives SMB Visibility Score quiz leads (api/score.ts).
+# Leave blank in dev — the route skips the forward (with a console.warn)
+# and still returns 200, so the quiz keeps working without n8n.
+SCORE_WEBHOOK_URL=
+
 # Resend — transactional email (lead auto-reply + owner notification).
 # Leave this BLANK during routine dev/form testing: if it's set, real
 # emails will be sent to real addresses (including the owner's inbox) for

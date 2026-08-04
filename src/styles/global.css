@@ -213,6 +213,27 @@ body {
 .btn:disabled {
   @apply cursor-not-allowed opacity-50;
 }
+/*
+  Wrapping modifier for .btn — long labels (e.g. the score results CTA)
+  must wrap on small screens. A plain `whitespace-normal` utility
+  stacked in markup does NOT win against .btn's own whitespace-nowrap
+  (same appended-late component-class mechanism as .focus-ring-on-900),
+  so the modifier is defined here, after .btn, to win by source order.
+  Pair as `class="btn btn-primary btn-wrap"`.
+*/
+.btn-wrap {
+  @apply whitespace-normal;
+}
+/*
+  Offset-color modifier for .btn on a bg-surface-800 section (e.g. the
+  score quiz step) — the button mirror of .focus-ring-on-900: a plain
+  `focus:ring-offset-surface-800` utility stacked in markup loses to
+  .btn's own hardcoded offset, so it's defined here, after .btn, to win
+  by source order. Pair as `class="btn ... btn-on-800"`.
+*/
+.btn-on-800 {
+  @apply focus:ring-offset-surface-800;
+}
 
 /* Icon-only controls (theme/language toggle, hamburger, social icons) —
    square footprint, smaller radius than a full button. */
@@ -471,6 +492,56 @@ html[data-theme="light"] .showcase-prose a:hover {
 }
 html[data-theme="light"] .form-error-text {
   color: var(--color-red-700);
+}
+
+/*
+  ─────────────────────────────────────────────────────────────────
+  Score tool (score.astro / he/score.astro) — quiz + results pieces.
+
+  The filled state modifiers (.quiz-seg-filled, .meter-seg-filled) are
+  component classes defined AFTER their base on purpose: the quiz JS
+  toggles them, and a JS-toggled plain utility (e.g. bg-brand-500)
+  loses to the base's own @apply'd background — same appended-late
+  mechanism documented at .focus-ring-on-900. The page JS must toggle
+  ONLY these modifier classes, never raw utilities.
+  ─────────────────────────────────────────────────────────────────
+*/
+
+/* Option card — one radio answer per label; checked state styled via
+   has-[:checked] at full-opacity brand border (hover stays at /60). */
+.option-card {
+  @apply flex cursor-pointer items-start gap-3 rounded-sm border border-border-subtle bg-surface-900 px-4 py-3.5 text-sm leading-relaxed text-text-soft transition-colors duration-200 ease-out hover:border-brand-500/60 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-500/5 has-[:checked]:font-medium has-[:checked]:text-text-primary has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-400 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-surface-800;
+}
+/* Square check indicator inside .option-card — small-radius rectangle,
+   never a circle; fills on the sibling radio's :checked. */
+.option-check {
+  @apply mt-1 h-3.5 w-3.5 shrink-0 rounded-xs border border-border-subtle transition-colors duration-200 peer-checked:border-brand-500 peer-checked:bg-brand-500;
+}
+
+/* Quiz progress segment — thin rectangle; JS adds .quiz-seg-filled up
+   to (and including) the current step. */
+.quiz-seg {
+  @apply h-1 flex-1 rounded-xs bg-surface-700 transition-colors duration-300 ease-out;
+}
+.quiz-seg-filled {
+  @apply bg-brand-500;
+}
+
+/* Results meter segment — bordered rectangle; JS adds .meter-seg-filled
+   on round(score/10) segments. The filled state swaps BOTH background
+   and border — a bg-only swap leaves border-border-subtle showing
+   through on the brand fill. */
+.meter-seg {
+  @apply h-3 flex-1 rounded-xs border border-border-subtle bg-surface-800 transition-colors duration-300 ease-out;
+}
+.meter-seg-filled {
+  @apply border-brand-500 bg-brand-500;
+}
+
+/* Static panel — .card's shape and surface without the hover treatment,
+   for non-interactive callouts (e.g. the score free-action panel). */
+.panel-static {
+  @apply rounded-2xl border border-border-subtle bg-surface-900 p-6;
 }
 
 /*
