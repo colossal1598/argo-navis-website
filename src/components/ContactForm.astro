@@ -16,7 +16,12 @@
                    Override whatsappDividerText/whatsappFormLabel/
                    whatsappSuccessLabel individually if a page needs
                    different phrasing than the shared default.
+    thankYouHref — where confirmed success redirects to (Task 4.6).
+                   Defaults to the locale-correct dedicated thank-you
+                   page ("/thank-you" or "/he/thank-you"). Override only
+                   if a page ever needs a different destination.
 */
+import { withLocale } from "../lib/locale";
 import { type SiteLocale, whatsappCopy, whatsappHref } from "../lib/whatsapp";
 
 interface FieldConfig {
@@ -47,6 +52,7 @@ interface Props {
   whatsappDividerText?: string;
   whatsappFormLabel?: string;
   whatsappSuccessLabel?: string;
+  thankYouHref?: string;
 }
 
 interface ContactMethodConfig {
@@ -140,6 +146,7 @@ const {
   whatsappDividerText = whatsappCopy[locale].dividerText,
   whatsappFormLabel = whatsappCopy[locale].formLabel,
   whatsappSuccessLabel = whatsappCopy[locale].successLabel,
+  thankYouHref = withLocale("/thank-you", locale),
 } = Astro.props;
 
 // Build-time URL-encoding (Task 4.5) — never hand-paste percent-encoding.
@@ -404,7 +411,7 @@ const turnstileRequired = import.meta.env.PROD && Boolean(turnstileSiteKey);
   ></script>
 )}
 
-<script define:vars={{ loadingText, submitLabel, turnstileRequired, challengeErrorText, contactDetailsRequiredText, methodNeedsDetails, mergedContactDetailsPlaceholders, source }}>
+<script define:vars={{ loadingText, submitLabel, turnstileRequired, challengeErrorText, contactDetailsRequiredText, methodNeedsDetails, mergedContactDetailsPlaceholders, source, thankYouHref }}>
   const form       = document.getElementById("lead-form");
   const btn        = document.getElementById("submit-btn");
   const errorBox   = document.getElementById("form-error");
@@ -567,12 +574,29 @@ const turnstileRequired = import.meta.env.PROD && Boolean(turnstileSiteKey);
       const json = await res.json();
 
       if (res.ok) {
-        form.classList.add("hidden");
-        successBox.classList.remove("hidden");
-        // Fire the Lead conversion only on confirmed success — never on
-        // click, never speculatively — so ad-platform reporting matches
-        // real saved leads, not just form-submit attempts.
-        trackLead(metaEventId);
+        // Task 4.6: redirect to the dedicated thank-you page instead of
+        // an inline success swap (owner feedback: the inline swap
+        // "warps and looks unprofessional"). Hand off the event ID (and
+        // source, for the Lead event's content_name) via sessionStorage
+        // — the thank-you page's LeadDedupTracker reads + immediately
+        // removes it and fires the actual fbq('track','Lead') call, so
+        // a direct visit or refresh of that page never re-fires it.
+        // CAPI dedup is unaffected: the same event_id was already
+        // persisted via this same /api/leads POST, above.
+        try {
+          sessionStorage.setItem("lead_eid", metaEventId);
+          sessionStorage.setItem("lead_source", source);
+          location.assign(thankYouHref);
+        } catch {
+          // Fallback only — sessionStorage blocked (e.g. some private-
+          // browsing modes) or the redirect otherwise failed to kick
+          // off. Old inline-swap behavior, including firing Lead here
+          // directly since the thank-you page will never get a chance
+          // to run its own dedup script.
+          form.classList.add("hidden");
+          successBox.classList.remove("hidden");
+          trackLead(metaEventId);
+        }
       } else {
         errorBox.textContent = json.error ?? "Something went wrong.";
         errorBox.classList.remove("hidden");

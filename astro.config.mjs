@@ -26,11 +26,13 @@ export default defineConfig({
     ever exists): it's already noindexed on-page (Layout's `noindex`
     prop), but the sitemap integration doesn't read that prop — it was
     still being listed, which is inconsistent with "don't index this"
-    (launch verification finding, Task 4.1).
+    (launch verification finding, Task 4.1). /thank-you (+ /he mirror)
+    excluded the same way (Task 4.6) — a post-conversion redirect
+    target, also noindexed on-page, not content that should rank.
   */
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/styleguide'),
+      filter: (page) => !page.includes('/styleguide') && !page.includes('/thank-you'),
     }),
   ],
 

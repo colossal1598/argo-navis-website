@@ -27,6 +27,7 @@ const copy: Record<SiteLocale, {
   lpAiAgents:          string;
   lpConnectedSystems:  string;
   lpMissedCalls:       string;
+  lpOrder:             string;
 }> = {
   en: {
     servicesHeading: "Services",
@@ -43,6 +44,11 @@ const copy: Record<SiteLocale, {
     lpAiAgents:          "Custom AI Agents",
     lpConnectedSystems:  "Connected Systems",
     lpMissedCalls:       "Missed Calls",
+    /* No EN /lp/order route exists (Meta-ads campaign page, HE only —
+       see Task 4.3) — this label is never rendered; routeExists()
+       below filters this link out on EN pages. Kept here only because
+       the copy object's type requires every key on both locales. */
+    lpOrder:             "The Business Is Growing",
   },
   he: {
     servicesHeading: "שירותים",
@@ -59,6 +65,7 @@ const copy: Record<SiteLocale, {
     lpAiAgents:          "AI מותאם אישית",
     lpConnectedSystems:  "לחבר מערכות",
     lpMissedCalls:       "שיחות שלא מפספסים",
+    lpOrder:             "העסק גדל",
   },
 };
 const t = copy[locale];
@@ -95,6 +102,11 @@ const lpLinks = [
   { label: t.lpAiAgents, href: withLocale("/lp/ai-agents", locale) },
   { label: t.lpConnectedSystems, href: withLocale("/lp/connected-systems", locale) },
   { label: t.lpMissedCalls, href: withLocale("/lp/missed-calls", locale) },
+  /* /lp/order (Task 4.6): HE-only Meta-ads campaign page, no EN route —
+     routeExists() below drops it on EN pages and keeps it on HE pages,
+     same self-filtering as every other Guides link. Unpublished drafts
+     (e.g. runs-itself) are deliberately NOT added here. */
+  { label: t.lpOrder, href: withLocale("/lp/order", locale) },
 ].filter((link) => routeExists(link.href));
 
 /*

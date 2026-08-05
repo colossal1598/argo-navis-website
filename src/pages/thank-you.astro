@@ -1,0 +1,78 @@
+---
+/*
+  PAGE GOAL: dedicated thank-you page for every ContactForm submission
+  sitewide (Task 4.6) — replaces the inline success-text swap the owner
+  flagged as "warps and looks unprofessional" on the live site.
+  ContactForm.astro now redirects here (location.assign) on confirmed
+  success instead of swapping in inline success markup; the Meta `Lead`
+  conversion fires from here instead of the form page (see
+  LeadDedupTracker.astro) — exactly once, never on a direct visit or a
+  refresh of this page. `noindex` — this is a post-conversion page, not
+  content that should rank, and it's excluded from the sitemap
+  (astro.config.mjs) the same way /styleguide is.
+
+  Copy voice: matches the existing 24-hour reassurance line already used
+  across the site's EN ContactForm instances (see systems/automations/
+  websites/ai-agents index pages: "We usually reply within 24 hours.")
+  plus the campaign pages' no-caveat weekend promise (Task 4.3 dropped
+  "business days" from the HE campaign pages' 24-hour line so the
+  promise includes Friday/Saturday) — worded here for an EN reader as
+  "including weekends".
+
+  BACK-TO-HOMEPAGE LINK: points at "/", the real EN homepage route.
+  During the campaign period only, "/" 302s to "/he" at the edge (see
+  public/_redirects — a deliberately temporary rule, comment reads
+  "delete this line to restore the EN homepage at /"). An EN visitor
+  clicking this button will bounce to the Hebrew homepage until that
+  redirect is removed post-campaign. Left as "/" rather than worked
+  around: (a) the redirect is explicitly temporary and self-documenting,
+  (b) hardcoding a different target would need undoing the moment the
+  redirect is lifted, (c) the live campaign LPs are HE-only, so EN
+  traffic reaching this exact page is expected to be minimal for the
+  duration. Flagged in the Task 4.6 log for the Manager/owner.
+*/
+import Layout from "../layouts/Layout.astro";
+import LeadDedupTracker from "../components/LeadDedupTracker.astro";
+import { whatsappCopy, whatsappHref } from "../lib/whatsapp";
+
+const whatsappLink = whatsappHref("en");
+---
+
+<Layout
+  title="Thanks"
+  description="We've got your details — we'll be in touch within 24 hours."
+  noindex
+>
+  <LeadDedupTracker />
+
+  <!-- THANK-YOU CONTENT — short, direct, no fluff. Single column, same rhythm as Hero.astro. -->
+  <section class="bg-surface-950 px-6 py-section-lg text-start md:py-section-xl">
+    <div class="mx-auto max-w-xl">
+      <h1 class="reveal text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl">
+        The details are with us.
+      </h1>
+      <p class="reveal mt-5 text-lg text-text-muted" style="--reveal-delay: 80">
+        We'll get back to you within 24 hours — including weekends.
+      </p>
+
+      <!-- WHATSAPP CTA + BACK TO HOMEPAGE -->
+      <div class="reveal mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center" style="--reveal-delay: 160">
+        <a
+          href={whatsappLink}
+          target="_blank"
+          rel="noopener"
+          data-whatsapp-cta="thank-you"
+          class="btn btn-secondary btn-lg"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20 11.8a8 8 0 0 1-11.8 7L4 20l1.4-4A8 8 0 1 1 20 11.8zm-8-6.3a6.3 6.3 0 0 0-5.4 9.5l.2.3-.8 2.4 2.5-.8.2.1A6.3 6.3 0 1 0 12 5.5zm3.4 8c-.2-.1-1.3-.6-1.5-.7-.2-.1-.4-.1-.5.1-.1.2-.6.7-.7.8-.1.1-.3.1-.5 0a5.2 5.2 0 0 1-1.5-.9 5.8 5.8 0 0 1-1.1-1.3c-.1-.2 0-.3.1-.4l.3-.4.2-.3c.1-.1 0-.3 0-.4l-.7-1.6c-.2-.4-.3-.3-.5-.3h-.4c-.1 0-.4 0-.6.3s-.8.7-.8 1.8.8 2.1.9 2.2c.1.1 1.6 2.5 4 3.4.5.2.8.3 1.1.4.5.1 1 .1 1.4.1.4-.1 1.3-.5 1.5-1s.2-.9.1-1-.2-.2-.4-.3z" />
+          </svg>
+          {whatsappCopy.en.successLabel}
+        </a>
+        <a href="/" class="btn btn-primary btn-lg">
+          Back to homepage
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

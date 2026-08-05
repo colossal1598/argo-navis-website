@@ -1,0 +1,61 @@
+---
+/*
+  LEAD DEDUP + WHATSAPP CLICK TRACKING (Task 4.6) — used only on the two
+  thank-you pages (src/pages/thank-you.astro, src/pages/he/thank-you.astro).
+  Two responsibilities:
+
+    1. Fire the Meta `Lead` conversion exactly once per real form
+       submission. ContactForm.astro's redirect flow hands off the
+       event ID (and source tag, for the `content_name` param) via
+       sessionStorage right before navigating here. Reading the key and
+       immediately removing it means a direct visit or a refresh of
+       this page never re-fires the event — the key is simply absent
+       on any load after the first. CAPI dedup is unaffected: the same
+       event_id was already persisted via the /api/leads insert before
+       the redirect happened.
+
+    2. Wire the same guarded `fbq('track','Contact')` click tracking
+       ContactForm.astro's WhatsApp buttons already use (Task 4.5) for
+       this page's own WhatsApp CTA — same `[data-whatsapp-cta]`
+       contract, so one shared handler covers both call sites.
+
+  Both guarded identically: try/catch, `typeof fbq === "function"`
+  check — a missing/blocked pixel (or a browser that disallows
+  sessionStorage, e.g. some private-browsing modes) is always a silent
+  no-op, never a visible error on this page.
+*/
+---
+<script>
+  (function () {
+    try {
+      const eid = sessionStorage.getItem("lead_eid");
+      if (eid) {
+        const contentName = sessionStorage.getItem("lead_source");
+        // Remove before firing — belt-and-suspenders against a reload
+        // racing the fbq call itself re-triggering this branch.
+        sessionStorage.removeItem("lead_eid");
+        sessionStorage.removeItem("lead_source");
+
+        const fbq = globalThis.fbq;
+        if (typeof fbq === "function") {
+          fbq("track", "Lead", contentName ? { content_name: contentName } : {}, { eventID: eid });
+        }
+      }
+    } catch {
+      // Tracking must never surface an error to the visitor — silent no-op.
+    }
+  })();
+
+  document.querySelectorAll("[data-whatsapp-cta]").forEach((link) => {
+    link.addEventListener("click", () => {
+      try {
+        const fbq = globalThis.fbq;
+        if (typeof fbq === "function") {
+          fbq("track", "Contact");
+        }
+      } catch {
+        // Tracking must never surface an error to the visitor — silent no-op.
+      }
+    });
+  });
+</script>

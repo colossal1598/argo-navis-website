@@ -1,0 +1,65 @@
+---
+/*
+  PAGE GOAL (HE): mirrors src/pages/thank-you.astro exactly, section for
+  section — see that file's PAGE GOAL comment for the full rationale
+  (redirect flow, dedup, noindex/sitemap exclusion). This is the page
+  the campaign LPs' ContactForm instances redirect to (source tags
+  lp-order-he, lp-spreadsheets-he, etc.) as well as every other HE
+  ContactForm on the site.
+
+  24-HOUR LINE: explicitly states the promise includes Friday-Saturday
+  (the Israeli weekend) — matching Task 4.3's fix to the campaign pages'
+  own 24-hour line, which dropped a "בימי עסקים" (business days) caveat
+  per an explicit owner decision. Keep that decision consistent here.
+
+  BACK-TO-HOMEPAGE LINK: "/he" — the real HE homepage route, unaffected
+  by the temporary "/" → "/he" campaign-period redirect (see the EN
+  page's PAGE GOAL comment for that caveat, which doesn't apply here).
+*/
+import Layout from "../../layouts/Layout.astro";
+import LeadDedupTracker from "../../components/LeadDedupTracker.astro";
+import { whatsappCopy, whatsappHref } from "../../lib/whatsapp";
+
+const whatsappLink = whatsappHref("he");
+---
+
+<Layout
+  title="תודה"
+  description="קיבלנו את הפרטים שלכם — נחזור אליכם תוך 24 שעות."
+  locale="he"
+  dir="rtl"
+  noindex
+>
+  <LeadDedupTracker />
+
+  <!-- THANK-YOU CONTENT — short, direct, no fluff. Single column, same rhythm as Hero.astro. -->
+  <section class="bg-surface-950 px-6 py-section-lg text-start md:py-section-xl">
+    <div class="mx-auto max-w-xl">
+      <h1 class="reveal text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl">
+        תודה, הפרטים אצלנו.
+      </h1>
+      <p class="reveal mt-5 text-lg text-text-muted" style="--reveal-delay: 80">
+        נחזור אליכם תוך 24 שעות — כולל שישי-שבת.
+      </p>
+
+      <!-- WHATSAPP CTA + BACK TO HOMEPAGE -->
+      <div class="reveal mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center" style="--reveal-delay: 160">
+        <a
+          href={whatsappLink}
+          target="_blank"
+          rel="noopener"
+          data-whatsapp-cta="thank-you"
+          class="btn btn-secondary btn-lg"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20 11.8a8 8 0 0 1-11.8 7L4 20l1.4-4A8 8 0 1 1 20 11.8zm-8-6.3a6.3 6.3 0 0 0-5.4 9.5l.2.3-.8 2.4 2.5-.8.2.1A6.3 6.3 0 1 0 12 5.5zm3.4 8c-.2-.1-1.3-.6-1.5-.7-.2-.1-.4-.1-.5.1-.1.2-.6.7-.7.8-.1.1-.3.1-.5 0a5.2 5.2 0 0 1-1.5-.9 5.8 5.8 0 0 1-1.1-1.3c-.1-.2 0-.3.1-.4l.3-.4.2-.3c.1-.1 0-.3 0-.4l-.7-1.6c-.2-.4-.3-.3-.5-.3h-.4c-.1 0-.4 0-.6.3s-.8.7-.8 1.8.8 2.1.9 2.2c.1.1 1.6 2.5 4 3.4.5.2.8.3 1.1.4.5.1 1 .1 1.4.1.4-.1 1.3-.5 1.5-1s.2-.9.1-1-.2-.2-.4-.3z" />
+          </svg>
+          {whatsappCopy.he.successLabel}
+        </a>
+        <a href="/he" class="btn btn-primary btn-lg">
+          לעמוד הבית
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
