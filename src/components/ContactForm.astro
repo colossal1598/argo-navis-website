@@ -344,7 +344,7 @@ const turnstileRequired = import.meta.env.PROD && Boolean(turnstileSiteKey);
   ></script>
 )}
 
-<script define:vars={{ loadingText, submitLabel, turnstileRequired, challengeErrorText, contactDetailsRequiredText, methodNeedsDetails, mergedContactDetailsPlaceholders }}>
+<script define:vars={{ loadingText, submitLabel, turnstileRequired, challengeErrorText, contactDetailsRequiredText, methodNeedsDetails, mergedContactDetailsPlaceholders, source }}>
   const form       = document.getElementById("lead-form");
   const btn        = document.getElementById("submit-btn");
   const errorBox   = document.getElementById("form-error");
@@ -390,6 +390,56 @@ const turnstileRequired = import.meta.env.PROD && Boolean(turnstileSiteKey);
     applyContactMethodState(contactMethodInput.value);
   }
 
+  /*
+    META TRACKING (Task 4.4) — best-effort only, never allowed to affect
+    the visible submit flow. Every function here is wrapped so a cookie
+    read failing, fbq being undefined (pixel not configured/blocked by
+    the visitor), or any other tracking hiccup can never block or error
+    the actual lead submission.
+  */
+  function readCookie(name) {
+    const escaped = name.replace(/[.$?*|{}()[\]\\/+^]/g, "\\$&");
+    const match = document.cookie.match(new RegExp("(?:^|; )" + escaped + "=([^;]*)"));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  // _fbp is set automatically by the Meta Pixel base script once it loads
+  // (fb.1.<timestamp>.<random>) — just read it, never construct it.
+  function getFbp() {
+    try {
+      return readCookie("_fbp");
+    } catch {
+      return null;
+    }
+  }
+
+  // _fbc is also set automatically by the pixel when a visitor arrives
+  // via an ad click, but a visitor can submit before the pixel finishes
+  // loading (or with the pixel unconfigured/blocked) — fall back to
+  // building it from the fbclid URL param per Meta's documented format.
+  function getFbc() {
+    try {
+      const cookie = readCookie("_fbc");
+      if (cookie) return cookie;
+      const fbclid = new URLSearchParams(window.location.search).get("fbclid");
+      if (!fbclid) return null;
+      return `fb.1.${Date.now()}.${fbclid}`;
+    } catch {
+      return null;
+    }
+  }
+
+  function trackLead(eventId) {
+    try {
+      const fbq = globalThis.fbq;
+      if (typeof fbq === "function") {
+        fbq("track", "Lead", { content_name: source }, { eventID: eventId });
+      }
+    } catch {
+      // Tracking must never surface an error to the visitor — silent no-op.
+    }
+  }
+
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -420,6 +470,15 @@ const turnstileRequired = import.meta.env.PROD && Boolean(turnstileSiteKey);
 
     const data = Object.fromEntries(formData);
 
+    // Generated fresh per submit — shared with the fbq('track','Lead', ...)
+    // call below so Meta can dedup this browser event against the
+    // server-side CAPI event the owner's n8n workflow sends for the same
+    // row (same event_id on both sides is what dedup keys off).
+    const metaEventId = crypto.randomUUID();
+    data.meta_event_id = metaEventId;
+    data.fbc = getFbc();
+    data.fbp = getFbp();
+
     try {
       const res  = await fetch("/api/leads", {
         method:  "POST",
@@ -431,6 +490,10 @@ const turnstileRequired = import.meta.env.PROD && Boolean(turnstileSiteKey);
       if (res.ok) {
         form.classList.add("hidden");
         successBox.classList.remove("hidden");
+        // Fire the Lead conversion only on confirmed success — never on
+        // click, never speculatively — so ad-platform reporting matches
+        // real saved leads, not just form-submit attempts.
+        trackLead(metaEventId);
       } else {
         errorBox.textContent = json.error ?? "Something went wrong.";
         errorBox.classList.remove("hidden");

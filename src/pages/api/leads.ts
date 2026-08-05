@@ -18,6 +18,14 @@ export const prerender = false;
     message text
     source  text   (which page / form type the lead came from)
 
+  Optional Meta-tracking columns (Task 4.4) — see src/lib/schema.sql for
+  the migration SQL. Insert degrades gracefully if these don't exist yet
+  (see the column-missing-safe retry below), so adding them is not a
+  blocker for the lead pipeline itself, only for tracking dedup:
+    meta_event_id text  (shared with the browser's fbq('track','Lead', ...) call)
+    fbc           text  (Meta click ID, from the _fbc cookie or fbclid param)
+    fbp           text  (Meta browser ID, from the _fbp cookie)
+
   The SQL to create it is in the README under "Supabase Setup".
 */
 const TABLE = "leads";
@@ -40,6 +48,9 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const { name, email, website, message, source = "landing", contact_method: contactMethod, contact_details: contactDetails } = body;
+  const metaEventId = trimmedOrNull(body.meta_event_id, 255);
+  const fbc = trimmedOrNull(body.fbc, 255);
+  const fbp = trimmedOrNull(body.fbp, 255);
   const turnstileToken = body["cf-turnstile-response"] ?? body.turnstileToken;
   const turnstileSecret = env.TURNSTILE_SECRET_KEY;
   const isProd = import.meta.env.PROD;
@@ -116,20 +127,54 @@ export const POST: APIRoute = async ({ request }) => {
     up locally, or the vars unset/misconfigured in Cloudflare Pages). Without
     this guard that throw was unhandled and surfaced as a raw 500 error page
     instead of the same JSON error contract every other failure path uses.
+
+    Column-missing-safe fallback (Task 4.4): meta_event_id/fbc/fbp are new
+    columns added via a one-time SQL migration the owner runs manually
+    (src/lib/schema.sql). Until that migration runs on the LIVE table, an
+    insert that includes these columns fails — live-verified this comes
+    back from supabase-js as PostgREST code PGRST204, "Could not find the
+    '<col>' column of 'leads' in the schema cache" (NOT the raw Postgres
+    42703 shape; isUndefinedColumnError() below checks both). Rather than
+    lose the lead over a missing tracking column, retry ONCE without the
+    three tracking fields — the lead is always saved; only Meta dedup
+    degrades (still fine, since the Pixel's own browser-side Lead event
+    still fires — CAPI just won't have a matching server event to dedup
+    against for that one row). Logged via console.error so the gap is
+    visible in Cloudflare Workers logs until the migration is run.
   */
+  const leadRow = {
+    name:    name.trim(),
+    email: emailValue,
+    website: website?.trim() || null,  /* optional — null if not provided */
+    contact_method: preferredContactMethod,
+    contact_details: preferredContactMethod === "email" ? null : normalizedContactDetails,
+    message: message.trim(),
+    source,
+  };
+
   let insertErrorMessage: string | null = null;
   try {
     const supabase = createSupabaseClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY);
     const { error } = await supabase.from(TABLE).insert({
-      name:    name.trim(),
-      email: emailValue,
-      website: website?.trim() || null,  /* optional — null if not provided */
-      contact_method: preferredContactMethod,
-      contact_details: preferredContactMethod === "email" ? null : normalizedContactDetails,
-      message: message.trim(),
-      source,
+      ...leadRow,
+      meta_event_id: metaEventId,
+      fbc,
+      fbp,
     });
-    if (error) insertErrorMessage = error.message;
+
+    if (error) {
+      if (isUndefinedColumnError(error)) {
+        console.error(
+          "Supabase insert failed — meta_event_id/fbc/fbp columns don't exist yet. " +
+          "Retrying without them so the lead isn't lost. Run the migration in src/lib/schema.sql to enable Meta tracking persistence.",
+          error.message,
+        );
+        const retry = await supabase.from(TABLE).insert(leadRow);
+        if (retry.error) insertErrorMessage = retry.error.message;
+      } else {
+        insertErrorMessage = error.message;
+      }
+    }
   } catch (err) {
     insertErrorMessage = err instanceof Error ? err.message : "Unknown Supabase client error";
   }
@@ -524,6 +569,42 @@ function json(data: object, status: number) {
     status,
     headers: { "Content-Type": "application/json" },
   });
+}
+
+/*
+  Meta-tracking field helpers (Task 4.4). These fields arrive from the
+  client as untrusted strings (or are absent) — trim, drop empties to
+  null, and cap length so a malformed/oversized value can't bloat the
+  row. 255 chars is generous headroom over real fbc/fbp/event-id shapes
+  (fbc/fbp are short structured strings, event_id is a UUID).
+*/
+function trimmedOrNull(value: unknown, maxLength: number): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed ? trimmed.slice(0, maxLength) : null;
+}
+
+/*
+  Detects a missing-column failure so the insert retry (above) only
+  fires for the specific missing-migration case, not for other insert
+  errors (RLS, bad data, etc.) that should surface normally.
+
+  Two shapes observed, both handled:
+  - Raw Postgres "undefined_column" error, code 42703, e.g. from a
+    direct SQL failure.
+  - Supabase's PostgREST layer (what supabase-js actually surfaces for
+    a `.insert()` against an unrecognized column) returns its OWN code,
+    PGRST204, with message "Could not find the '<col>' column of
+    '<table>' in the schema cache" — NOT 42703 and NOT matching a plain
+    "column ... does not exist" pattern. Verified live against the real
+    table pre-migration (Task 4.4): supabase-js returned exactly this
+    PGRST204 shape, which the initial version of this check missed
+    entirely — catching it here is what makes the fallback actually work.
+*/
+function isUndefinedColumnError(error: { code?: string; message?: string }): boolean {
+  if (error.code === "42703" || error.code === "PGRST204") return true;
+  const message = error.message ?? "";
+  return /column .* does not exist/i.test(message) || /could not find the .* column/i.test(message);
 }
 
 interface TurnstileVerifyResponse {

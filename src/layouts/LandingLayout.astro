@@ -16,6 +16,7 @@
                              meant to be indexed.
 */
 import { type SiteLocale, stripLocalePrefix, withLocale } from "../lib/locale";
+import MetaPixel from "../components/MetaPixel.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -140,6 +141,15 @@ const fontFamily = locale === "he"
 
     <meta name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="dark light" />
+
+    <!--
+      Meta Pixel — env-gated, see MetaPixel.astro. The ad campaign points
+      at LPs rendered by THIS layout, so this is the pixel placement that
+      matters most for the imminent launch — but it's included in both
+      layouts for consistent sitewide PageView/retargeting signal.
+    -->
+    <MetaPixel />
+
     <script is:inline>
       (() => {
         const key = "argo-theme";

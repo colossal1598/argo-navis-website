@@ -1,6 +1,7 @@
 ---
 import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
+import MetaPixel from "../components/MetaPixel.astro";
 import "../styles/global.css";
 import { stripLocalePrefix, type SiteLocale, withLocale } from "../lib/locale";
 
@@ -89,6 +90,9 @@ const hebrewURL = new URL(withLocale(canonicalPath, "he"), siteUrl);
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="dark light" />
+
+    <!-- Meta Pixel — env-gated, see MetaPixel.astro. Sitewide for PageView / retargeting signal. -->
+    <MetaPixel />
     <script is:inline>
       (() => {
         const key = "argo-theme";

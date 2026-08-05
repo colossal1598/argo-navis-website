@@ -1,0 +1,47 @@
+---
+/*
+  META PIXEL — browser-side base code (fbq init + sitewide PageView),
+  gated entirely on PUBLIC_META_PIXEL_ID being set at build time.
+
+  When the env var is unset (local dev, or before the owner adds it to
+  Cloudflare Pages), this component renders NOTHING — no <script>, no
+  <noscript> fallback image, not even an `fbq` stub. Zero tracking
+  bytes ship until the owner turns this on.
+
+  Include in the <head> of both Layout.astro and LandingLayout.astro so
+  every page (main site + standalone LPs) gets PageView + retargeting
+  audience signal, even though the campaign only points at two LPs —
+  see Task 4.4.
+
+  ContactForm.astro fires the actual `Lead` conversion event separately,
+  on real form success only, with a shared eventID for CAPI dedup.
+*/
+const pixelId = import.meta.env.PUBLIC_META_PIXEL_ID;
+---
+
+{pixelId && (
+  <Fragment>
+    <script define:vars={{ pixelId }}>
+      /* Standard Meta Pixel base snippet — https://developers.facebook.com/docs/meta-pixel/get-started */
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', pixelId);
+      fbq('track', 'PageView');
+    </script>
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display:none"
+        src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
+        alt=""
+      />
+    </noscript>
+  </Fragment>
+)}
