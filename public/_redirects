@@ -1,3 +1,5 @@
+# TEMP (campaign period): Hebrew-first root. 302 on purpose — delete this line to restore the EN homepage at /.
+/ /he 302
 /campaigns /  301
 /he/campaigns /he/  301
 /automations/crm-slack-routing /automations  301
