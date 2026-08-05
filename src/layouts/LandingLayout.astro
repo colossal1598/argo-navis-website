@@ -42,10 +42,41 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
   at all, so every LP (4 pages × 2 locales = 8 indexed pages) was
   missing them. Same `stripLocalePrefix`/`withLocale` pairing Layout.astro
   uses, so EN/HE LPs correctly point at each other in both directions.
+
+  ROUTE-EXISTENCE CHECK (Task 4.3 fix): unlike the main Layout, LPs are
+  sometimes locale-exclusive by design — e.g. /he/lp/order is a Meta-ads
+  page with no EN counterpart. Emitting an "en" (and therefore
+  "x-default", which points at the EN URL) alternate to a route that
+  doesn't exist would hand search engines a broken link. Same
+  `import.meta.glob`/`routeExists` pattern Navigation.astro already uses
+  for nav-link filtering, applied here to alternate-link filtering.
 */
+const pageFiles = import.meta.glob("../pages/**/*.astro");
+const existingRoutes = new Set(
+  Object.keys(pageFiles).map((file) => {
+    const route = file
+      .replace("../pages", "")
+      .replace(/\/index\.astro$/, "")
+      .replace(/\.astro$/, "");
+    return route === "" ? "/" : route;
+  })
+);
+function routeExists(path: string): boolean {
+  // Astro.url.pathname carries a trailing slash during static prerender
+  // (directory-style output routes) but existingRoutes keys don't —
+  // normalize before checking, same trim Navigation.astro's
+  // nearestExistingPath uses.
+  const normalized = path.replace(/\/+$/, "") || "/";
+  return existingRoutes.has(normalized);
+}
+
 const canonicalPath = stripLocalePrefix(Astro.url.pathname);
-const englishURL = new URL(withLocale(canonicalPath, "en"), siteUrl);
-const hebrewURL = new URL(withLocale(canonicalPath, "he"), siteUrl);
+const englishPath = withLocale(canonicalPath, "en");
+const hebrewPath = withLocale(canonicalPath, "he");
+const englishRouteExists = routeExists(englishPath);
+const hebrewRouteExists = routeExists(hebrewPath);
+const englishURL = new URL(englishPath, siteUrl);
+const hebrewURL = new URL(hebrewPath, siteUrl);
 
 /* Minimal footer copy — just a way back to the main site, no nav/service links. */
 const copy: Record<SiteLocale, { backToSite: string; rights: string }> = {
@@ -82,9 +113,9 @@ const fontFamily = locale === "he"
     <meta name="description" content={description} />
 
     <link rel="canonical" href={canonicalURL} />
-    <link rel="alternate" hreflang="en" href={englishURL} />
-    <link rel="alternate" hreflang="he" href={hebrewURL} />
-    <link rel="alternate" hreflang="x-default" href={englishURL} />
+    {englishRouteExists && <link rel="alternate" hreflang="en" href={englishURL} />}
+    {hebrewRouteExists && <link rel="alternate" hreflang="he" href={hebrewURL} />}
+    {englishRouteExists && <link rel="alternate" hreflang="x-default" href={englishURL} />}
 
     <!-- NOINDEX — opt-in only; landing pages are indexed by default -->
     {noindex && <meta name="robots" content="noindex, nofollow" />}
