@@ -31,3 +31,9 @@ TURNSTILE_SECRET_KEY=your-turnstile-secret-key
 # every test submission. Email sending is skipped entirely when this is
 # empty — the 200 response is never blocked either way.
 RESEND_API_KEY=
+
+# n8n lead webhook URL (server-side only — never exposed to the browser).
+# Leave BLANK during routine dev/form testing: if it's set, every test
+# submission fires the owner's real Telegram alert and a Meta CAPI event.
+# The send is skipped entirely when this is empty.
+N8N_LEAD_WEBHOOK_URL=

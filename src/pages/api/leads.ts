@@ -136,10 +136,10 @@ export const POST: APIRoute = async ({ request }) => {
     '<col>' column of 'leads' in the schema cache" (NOT the raw Postgres
     42703 shape; isUndefinedColumnError() below checks both). Rather than
     lose the lead over a missing tracking column, retry ONCE without the
-    three tracking fields — the lead is always saved; only Meta dedup
-    degrades (still fine, since the Pixel's own browser-side Lead event
-    still fires — CAPI just won't have a matching server event to dedup
-    against for that one row). Logged via console.error so the gap is
+    three tracking fields — the lead is always saved; only the DB copy of
+    the tracking fields degrades. CAPI dedup itself is unaffected since
+    Aug 2026: the Worker sends meta_event_id/fbc/fbp to n8n directly from
+    this request (see the failsafe block below), not from the DB row. Logged via console.error so the gap is
     visible in Cloudflare Workers logs until the migration is run.
   */
   const leadRow = {
@@ -179,9 +179,79 @@ export const POST: APIRoute = async ({ request }) => {
     insertErrorMessage = err instanceof Error ? err.message : "Unknown Supabase client error";
   }
 
+  /*
+    ── Failsafe: deliver the lead to n8n directly from the Worker ──
+    Until Aug 2026 the n8n webhook was fired by a Supabase DATABASE
+    trigger (pg_net, AFTER INSERT on leads) — which meant Supabase was a
+    single point of failure: when the free-tier project auto-paused
+    mid-campaign, every submission 500'd and the lead vanished (no row,
+    no webhook, no Telegram alert, no Meta CAPI event). Live incident:
+    the DB was down Aug 11–13 2026 while the order/spreadsheets Meta
+    campaign ran.
+
+    Now the Worker itself POSTs every lead to n8n (Telegram alert + Meta
+    CAPI fan-out happen there), on every submission — not only when the
+    DB is down — so this path is exercised continuously instead of being
+    an untested disaster-only branch. The old DB trigger must stay
+    DROPPED, or every lead reaches n8n twice and Meta receives duplicate
+    CAPI events.
+
+    The webhook URL is intentionally an env var (Cloudflare Worker
+    settings + .dev.vars locally), NEVER hardcoded: the owner requires
+    the n8n endpoint to be invisible to the front end. This file only
+    executes server-side (prerender=false), but keeping the URL out of
+    the source entirely also keeps it out of the repo and any built
+    artifact. When the var is unset the send is skipped (loud in prod
+    logs) — same graceful-degradation pattern as Turnstile above.
+
+    Success contract: the visitor gets a success response when the lead
+    reached AT LEAST ONE of Supabase / n8n. Only both failing returns
+    the 500 — that failure mode requires two independent systems down at
+    once, and the visitor-facing error is the last resort.
+  */
+  let n8nDelivered = false;
+  const n8nWebhookUrl = env.N8N_LEAD_WEBHOOK_URL;
+  if (n8nWebhookUrl) {
+    try {
+      const n8nRes = await fetch(n8nWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        /*
+          Payload mirrors what the old DB trigger sent (to_jsonb(new) —
+          the flat row), so the existing n8n workflow keeps working
+          unchanged. `saved:false` flags a lead that ONLY exists in this
+          webhook (DB insert failed) — surfaced in Telegram so the owner
+          knows to re-add the row manually.
+        */
+        body: JSON.stringify({
+          ...leadRow,
+          meta_event_id: metaEventId,
+          fbc,
+          fbp,
+          created_at: new Date().toISOString(),
+          saved: !insertErrorMessage,
+        }),
+        /* Hard 5s cap — a slow/hanging n8n must never stall the form. */
+        signal: AbortSignal.timeout(5000),
+      });
+      n8nDelivered = n8nRes.ok;
+      if (!n8nRes.ok) {
+        console.error("n8n lead webhook returned non-OK status:", n8nRes.status);
+      }
+    } catch (n8nError) {
+      console.error("n8n lead webhook error:", n8nError instanceof Error ? n8nError.message : n8nError);
+    }
+  } else if (isProd) {
+    console.error("N8N_LEAD_WEBHOOK_URL is missing in production — the DB-down lead failsafe (and Telegram/CAPI delivery) is disabled until it's configured.");
+  }
+
   if (insertErrorMessage) {
     console.error("Supabase insert error:", insertErrorMessage);
-    return json({ error: t("Could not save your message. Please try again.", "לא הצלחנו לשמור את ההודעה. נסו שוב.") }, 500);
+    if (!n8nDelivered) {
+      return json({ error: t("Could not save your message. Please try again.", "לא הצלחנו לשמור את ההודעה. נסו שוב.") }, 500);
+    }
+    /* Lead rescued by the n8n leg — visible in logs, invisible to the visitor. */
+    console.error("Lead was NOT saved to Supabase but WAS delivered to n8n (saved:false) — re-add the row manually from the Telegram alert.");
   }
 
   /* ── Send emails via Resend ── */

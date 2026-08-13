@@ -37,3 +37,6 @@ pnpm-debug.log*
 
 # Local wrangler build artifacts (adapter-generated, machine-specific paths)
 .wrangler/
+
+# Owner's scratch notes — contain internal endpoint hostnames, never commit
+TODO-swap-api.txt
