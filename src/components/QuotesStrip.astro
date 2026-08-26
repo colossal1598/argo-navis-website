@@ -1,0 +1,45 @@
+---
+/*
+  QUOTES STRIP — a compact strip of short client-message lines, lifted
+  verbatim from real WhatsApp/recommendation messages (source + editing
+  notes: .apm/memory/copy/he/homepage-he.md). No attribution is
+  published by design — quotes only, no name/photo/CTA/heading.
+
+  DELIBERATELY NOT A CARD ROW: no borders, boxes, or shadows — the text
+  sits directly on the page background so it reads as quiet, ambient
+  proof rather than another boxed section competing with
+  AchievementsStrip's panels right above it.
+
+  LAYOUT — quotes wrap 3-then-2 on desktop: `flex flex-wrap
+  justify-center` with each quote given a ~30% basis means 3 fit per
+  row; the trailing 2 wrap to a second row and get centered by the
+  parent's `justify-center` (no manual row-splitting — this holds for
+  any quote count, not just exactly 5). Single column, full width, on
+  mobile.
+
+  PROPS:
+    quotes — array of quote strings, rendered in order. No hard-coded
+             copy in this component — every string arrives via this
+             prop, callers own the copy.
+*/
+interface Props {
+  quotes: string[];
+}
+
+const { quotes } = Astro.props;
+---
+
+<section class="px-6 py-section-sm">
+  <div class="mx-auto max-w-3xl">
+    <div class="flex flex-wrap justify-center gap-x-10 gap-y-6">
+      {quotes.map((quote, i) => (
+        <p
+          class="reveal basis-full text-center text-sm leading-relaxed text-text-muted sm:basis-[28%] sm:text-base"
+          style={`--reveal-delay: ${i * 80}`}
+        >
+          <span class="chip-accent-text me-1" aria-hidden="true">״</span>{quote}
+        </p>
+      ))}
+    </div>
+  </div>
+</section>

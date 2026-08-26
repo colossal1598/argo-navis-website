@@ -27,6 +27,7 @@
 import Layout from "../../layouts/Layout.astro";
 import Hero from "../../components/Hero.astro";
 import AchievementsStrip from "../../components/AchievementsStrip.astro";
+import QuotesStrip from "../../components/QuotesStrip.astro";
 import VisionSection from "../../components/VisionSection.astro";
 import StepsSection from "../../components/StepsSection.astro";
 import ContactForm from "../../components/ContactForm.astro";
@@ -73,26 +74,50 @@ const strips = [
   },
 ];
 
-/* VISION / ATTITUDE — no heading in the approved copy, don't add one. */
-const visionParagraphs = [
-  "הרבה עסקים קטנים עדיין מתנהלים כמו לפני עשרים שנה — גיליון אקסל שרק אדם אחד מבין, פנקס לכל השאר, ערב בחודש שהולך לאיבוד על ההתאמות ביניהם. זו לא בעיה טכנולוגית. זה פשוט מה שקורה כשלאף אחד לא היה זמן לתקן את זה.",
-  "אנחנו מתקנים את זה בלי למכור לכם עוד תוכנה שצריך לנהל. אתם הבעלים של הנתונים שלכם ושל המערכת שלכם — בלי דמי חודש שרק עולים, בלי ספק שאי אפשר לעזוב, בלי חוזה ארגוני שנבנה לעסק גדול פי עשרים מכם.",
-  "במקום שבו AI באמת חוסך זמן, אנחנו משתמשים בו — צר, מדויק, למשימה אמיתית אחת. איפה שהוא לא — אנחנו לא דוחפים אותו בכוח.",
+/* CLIENT QUOTES — real client WhatsApp/recommendation messages, published
+   VERBATIM (zero editing, per owner decision 2026-08-26) — original
+   wording, spelling, and run-on style preserved as received, no em
+   dashes. No attribution published by design. Source of truth + notes:
+   .apm/memory/copy/he/homepage-he.md. */
+const clientQuotes = [
+  "אחרי שבדקנו לא מעט הצעות מחיר, הוא נתן לנו מחיר הוגן וזול משמעותית ביחס לכל מה שמצאנו, מבלי להתפשר לרגע על איכות העבודה.",
+  "הוא תמיד זמין, עונה במהירות לכל שאלה, בודק כל פרט קטן, ומלווה אותנו יד ביד לאורך כל התהליך. הרגשנו שיש לנו שותף אמיתי שאכפת לו שהכל יעבוד בצורה מושלמת.",
+  "התוכנה עצמה עלתה על כל הציפיות שלנו. היא נוחה מאוד לשימוש, מהירה, מסודרת, אינטואיטיבית, ומכילה פתרונות שלא חשבנו עליהם בכלל.",
+  "איזה כיף התוכנה הזאת ממש מרגיש כאילו עלינו ליגה 😅",
+  "ואי התוכנה הזאת שבנית לנו עשתה לי חיייים קלים לגמרי הכל מסודר מול העניים באמת עפנו עליה",
 ];
 
-/* WAY OF WORKING — depth on each step lives on the service pages. */
+/* VISION / ATTITUDE — no heading in the approved copy, don't add one.
+   rewritten 2026-08-26: owner draft, sharpened; AI paragraph bridged to
+   the fit-what-helps principle. */
+const visionParagraphs = [
+  "הרבה עסקים קטנים עדיין מתנהלים כמו לפני עשרים שנה: מטלות ידניות שחוזרות על עצמן כל יום, אקסל מסובך במקרה הטוב, והחלטות שמתקבלות מתחושת בטן במקום מנתונים.",
+  "אנחנו מתקנים את זה ועושים איתכם סדר בעזרת טכנולוגיה: מתאימים לעסק בדיוק את מה שיעזור לו לצמוח, והנתונים והמערכת נשארים בבעלות שלכם.",
+  "אותו עיקרון תקף גם ל-AI: איפה שהוא באמת חוסך זמן, נשתמש בו, ממוקד ולמשימה אמיתית. איפה שלא, לא נדחוף אותו בכוח.",
+];
+
+/* WAY OF WORKING — the 3 one-liners were replaced 2026-08-26 by the
+   owner's full 5-stage process (אבחון → איפיון → בנייה → השקה → ליווי). */
 const wayOfWorkingSteps = [
   {
-    label:       "אבחון קודם.",
-    description: "מבט קצר וזול על איפה הזמן והכסף דולפים.",
+    label:       "אבחון",
+    description: "נשמע ונשאל אתכם על העסק כדי לקבל תמונת מצב ברורה. תכנון ראשוני, ערך אמיתי בשבילכם.",
   },
   {
-    label:       "אז בונים.",
-    description: "הנתונים שלכם עוברים פנימה, מתחברים למה שאתם משתמשים בו, רצים מהטלפון.",
+    label:       "איפיון",
+    description: "כמה שיחות שבהן נכנסים לעובי הקורה: תסבירו לנו לעומק על התהליך שלכם, נרד יחד לפרטים הקטנים כדי לדייק את התכנון כמה שאפשר.",
   },
   {
-    label:       "אז נשארים זמינים.",
-    description: "שינויים לפי הצורך, גיבויים אוטומטיים, מספר אחד להתקשר אליו.",
+    label:       "בנייה",
+    description: "בדרך כלל שבועיים-שלושה של עבודה מהצד שלנו, בתקשורת מלאה ועם פידבק לאורך הדרך.",
+  },
+  {
+    label:       "השקה",
+    description: "המערכת באוויר, עובדת במלואה ומשתלבת חלק בשגרת העבודה שלכם.",
+  },
+  {
+    label:       "ליווי",
+    description: "תקופה מוסכמת מראש שבה אנחנו מלטשים ומבצעים את השינויים הקטנים שצצים, כדי שהחוויה שלכם תהיה מושלמת.",
   },
 ];
 
@@ -141,23 +166,26 @@ const fields = [
   dir="rtl"
 >
 
-  <!-- HERO — owner-supplied headline (Hebrew translation), single CTA, zero numbers. -->
+  <!-- HERO — general trust/consulting-first headline, approved 2026-08-26, single CTA, zero numbers. -->
   <Hero
-    headline="הדבר היחיד שמחזיק את העסק שלכם ביחד זה אתם וגיליון אקסל?"
-    subline="אנחנו בונים מערכת אחת שמחברת את מה שכבר יש לכם ורצה מהטלפון. בלי תוכנה חדשה, בלי נעילה לספק."
-    cta={{ label: "דברו איתנו על המערכת שלכם", href: "/he/#contact" }}
+    headline="לפני שבונים לכם משהו, אנחנו יושבים להבין איך העסק באמת עובד."
+    subline="מערכות, אוטומציות וכלים חכמים לעסקים קטנים — בנויים סביבכם, בבעלותכם. בלי דמי מנוי שרק עולים, בלי התחייבות לספק."
+    cta={{ label: "דברו איתנו על העסק שלכם", href: "/he/#contact" }}
   />
 
   <!-- ACHIEVEMENT STRIPS — one strip per case study, each linking to its full story. -->
   <AchievementsStrip
-    intro="כמה פרויקטים שעשינו ללקוחות — עסקים אמיתיים, תוצאות אמיתיות."
+    intro="שלושה עסקים אמיתיים, שלוש מערכות שרצות היום. אלו המספרים:"
     strips={strips}
   />
+
+  <!-- CLIENT QUOTES — real client messages, verbatim; no attribution by design. -->
+  <QuotesStrip quotes={clientQuotes} />
 
   <!-- VISION / ATTITUDE — the editorial "why us" statement. -->
   <VisionSection paragraphs={visionParagraphs} />
 
-  <!-- WAY OF WORKING — three compact one-liners. -->
+  <!-- WAY OF WORKING — five-stage process, owner's full copy per stage. -->
   <StepsSection
     heading="איך אנחנו עובדים"
     steps={wayOfWorkingSteps}
@@ -166,12 +194,14 @@ const fields = [
   <!--
     CONTACT — converts to the same diagnostic conversation as every other
     HE page. No source tag defined in the copy file, consistent with EN.
+    Heading/subheading/submitLabel generalized 2026-08-26 (trust/consulting
+    direction, Excel angle dropped).
   -->
   <ContactForm
     locale="he"
-    heading="עדיין עושים את זה ביד?"
-    subheading="אם גיליון אקסל, פנקס, או הזיכרון שלכם מחזיקים חלק מהעסק ביחד — זו בדיוק השיחה ששווה לקיים. ספרו לנו איך הדברים מתנהלים היום — נגיד לכם בכנות אם שווה לתקן ומאיפה להתחיל."
-    submitLabel="התחילו בשיחת אבחון"
+    heading="בואו נדבר על העסק שלכם"
+    subheading="שיחה ראשונה בלי התחייבות: מספרים לנו איך העסק מתנהל היום, ואנחנו אומרים בכנות אם יש מה לשפר ומאיפה להתחיל."
+    submitLabel="שלחו ונדבר"
     reassurance="בלי מצגת מוכנה מראש. קודם שואלים על העסק שלכם."
     source="landing-he"
     fields={fields}
