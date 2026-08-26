@@ -57,8 +57,8 @@ const { heading, steps } = Astro.props;
 
       {steps.map((step, i) => (
         <li class="reveal relative flex gap-5" style={`--reveal-delay: ${i * 100}`}>
-          <!-- NUMBER CHIP — small-radius rectangle, never a circle/pill -->
-          <div class="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-brand-500/30 bg-surface-950 text-sm font-bold text-brand-400">
+          <!-- NUMBER CHIP — small-radius rectangle, never a circle/pill. bg-surface-900 (round 7): one step above the section's 950 so the chip sits ON the page instead of dissolving into it. -->
+          <div class="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-brand-500/30 bg-surface-900 text-sm font-bold chip-accent-text">
             {i + 1}
           </div>
           <div class="pt-1.5">

@@ -11,8 +11,11 @@
   AchievementsStrip's `bg-surface-900` surface and closes that
   section's border frame (border-b here + `flushBottom` on
   AchievementsStrip = the two sections read as ONE continuous proof
-  block). `pt-0` leans on AchievementsStrip's own bottom padding for
-  the internal gap instead of stacking two section paddings.
+  block). The internal gap was originally `pt-0` (leaning on
+  AchievementsStrip's bottom padding alone); owner feedback 2026-08-26
+  — "לתת מרווח בין זה לבין הציטוטים, זה צמוד מדי" — so `pt-12` now
+  adds 48px on top of that padding (~112px total). Still one merged
+  surface/frame, just with clear air between the cards and the quotes.
 
   QUOTE MARKS — each quote is framed by an OPENING and CLOSING
   gershayim (״, U+05F4), rendered as separate accent-colored spans
@@ -42,7 +45,7 @@ const { quotes } = Astro.props;
 ---
 
 <!-- Shares AchievementsStrip's surface + closes its border frame (see comment above). -->
-<section class="border-b border-border-subtle bg-surface-900 px-6 pt-0 pb-section-sm">
+<section class="border-b border-border-subtle bg-surface-900 px-6 pt-12 pb-section-sm">
   <div class="mx-auto max-w-3xl">
     <div class="flex flex-wrap justify-center gap-x-10 gap-y-6">
       {quotes.map((quote, i) => (

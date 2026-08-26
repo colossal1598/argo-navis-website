@@ -9,14 +9,22 @@
   block gets its own heading + one-line subline, its own stats, and a
   closing inline link out to where the full story lives.
 
-  ROUND 6 — FINAL styling pass (owner ships tomorrow). Owner verdict on
-  round 5's solid dark fills: too dark/muddy, `gold-800` specifically
-  read "brownishly bad." Fixed by moving UP the palette scales to
-  bright, saturated, opaque fills (brand-300, gold-400, slate-400) —
-  still theme-invariant (round 5's proven pattern), but now needing
-  DARK text for AA instead of round 5's light text, since the fills
-  themselves are light now. See the `.strip-panel-<tone>` comment in
-  global.css for the full distance/contrast math.
+  ROUND 6 (superseded): bright, saturated, theme-invariant fills
+  (brand-300, gold-400, slate-400) with fixed dark text.
+
+  ROUND 7 (2026-08-26) — depth/refinement pass. Owner direction: the
+  case studies should feel friendlier — "white with a bit of gloss" —
+  and the page shouldn't read flat. The panels are now raised, top-lit
+  cards that follow the theme again (white + gloss in light theme, an
+  elevated lit surface in dark theme), with each case study keeping
+  its color identity via tone-accent stat bars ONLY — a tone-accent
+  top bar was tried in this round and rejected by the owner
+  ("תעלים אותו לגמרי"), so the panel's top edge is just the inset
+  catch-light. All of that lives in the
+  `.strip-panel*` / `.strip-stat` classes in global.css (see there for
+  the token setup and the AA contrast math); text here goes back to
+  the `text-text-primary`/`text-text-muted` theme tokens since the
+  fill follows the theme again.
 
   COMPOSITION — also per round 6: the owner wants "a smooth and compact
   section," explicitly describing the goal as "one flowing row of
@@ -41,33 +49,54 @@
   exception that existed through round 5 no longer applies to anything
   rendered by this component.
 
-  STAT-CELL LOOK — round-1 DNA preserved in spirit (`border-s-2 ...
-  ps-4`, extrabold value, staggered `--reveal-delay`) but adapted for
-  the narrower per-panel column: the accent bar is a plain dark divider
-  (`border-slate-900/20`, flipped from round 5's `border-white/25` now
-  that panel fills are light, not dark).
+  ROUND 8 (2026-08-26) — declutter pass. Owner verdict on the round-7
+  panels: "עמוס, צפוף לי. לא ברור" (busy, cramped, unclear). Four
+  causes, four fixes — NO copy changed:
+    1. No focal element: the stat value (text-lg/xl) sat one type step
+       from the heading (text-base) — nothing owned the card. Values
+       are now text-2xl; everything else is subordinated to them.
+    2. Whitespace starvation: p-4 panels, 10px between stat rows whose
+       descriptions wrap 3-4 lines, mt-3 between every zone — a text
+       wall. Panel padding is p-5 (global.css), subline→stats mt-5,
+       16px between stat rows, value→description mt-1, link mt-auto.
+    3. Accent-bar fragmentation: three per-stat bars of unequal height
+       per card (nine ticks across the section) chopped each card into
+       mini-boxes and fought the panel-edge alignment of heading/link.
+       Replaced by ONE continuous group bar (`.strip-stats`) — one
+       indent, one clear "numbers zone".
+    4. Premature 3-col: the grid split at sm (640px) → ~185px columns.
+       It now splits at md; below that the cards stack full-width.
 
-  CASCADE-LAYER NOTE: `.strip-panel-<tone>` is defined after `.strip-
-  panel` in global.css (same reasoning as `.card-row`/`.card-compact`)
-  so its border-color/background win by source order within the same
-  compiled utilities layer. `text-slate-900`/`text-slate-800` on the
-  heading/value/description/link are plain Tailwind utilities with no
-  competing component-class base setting `color` on those elements —
-  no cascade risk stacking them directly. The closing link still uses
-  `.focus-ring` + `.focus-ring-on-900` (a small, accepted mismatch
-  against non-surface-900 fills, unchanged reasoning from round 5).
+  ROUND 9 (2026-08-26) — owner: "תעלים גם את הצבעים השונים של הפסים
+  בתוך הכרטיסים. שיהיה אחיד." The per-case-study tone colors on the
+  group bars (brand/gold/slate) are gone — every card's bar is now the
+  same brand accent, set directly in `.strip-stats` (global.css). The
+  `tone` prop stays in the API (both homepages still pass it) but is
+  visually inert — nothing maps it to a class anymore.
+
+  STAT-CELL LOOK — round-1 DNA preserved in spirit (extrabold value,
+  staggered `--reveal-delay`); the start-side bar wraps the stats
+  GROUP via `.strip-stats` in global.css (a logical-property bar that
+  mirrors in RTL automatically) instead of each stat drawing its own.
+
+  CASCADE-LAYER NOTE: `.strip-stats` is
+  defined after `.strip-panel` in global.css (same reasoning as
+  `.card-row`/`.card-compact`) so they win by source order within the
+  same compiled utilities layer. The theme-token text utilities on the
+  heading/value/description/link have no competing component-class
+  base setting `color` on those elements — no cascade risk stacking
+  them directly. The closing link still uses `.focus-ring` +
+  `.focus-ring-on-900` (a small, accepted mismatch against the panel
+  fill, unchanged reasoning from round 5).
 
   LINK, NOT A STRETCHED CARD: each panel has real content beyond the
   link (heading, subline, several stats) — a plain inline text link at
   the end reads more honestly than making the numbers themselves seem
   clickable. Underlined (since round 5) rather than color-differentiated
   so it doesn't rely on color alone to read as interactive (WCAG 1.4.1);
-  round 6 flips the underline/text colors from light (round 5, dark
-  fills) to dark (round 6, light fills) — same mechanism, same reason,
-  reversed direction, mirroring how the round-3 `.chip-accent-text`
-  light-theme hover fix went darker while its dark-theme default went
-  lighter for the same underlying reason (resting color already at the
-  higher-contrast end needs to move further from it, not closer).
+  round 7 moves the link to the theme text tokens (muted at rest,
+  primary on hover) since the panel fill follows the theme again —
+  both directions verified AA in global.css's `.strip-panel` comment.
 
   PROPS:
     intro?  — small label above all strips; doubles as this section's
@@ -80,11 +109,12 @@
                 stats   — array of { value, description } pairs
                 href       — link target (case study or product page)
                 linkLabel  — visible link text (e.g. "Read the full story")
-                tone?      — "brand" | "gold" | "slate", which panel
-                             color this strip gets. Defaults to "brand"
-                             if omitted. ("muted"/neutral was removed
-                             in round 6 — zero callers once Reception,
-                             the only strip using a 4th tone, was cut.)
+                tone?      — "brand" | "gold" | "slate". VISUALLY INERT
+                             since round 9 (owner uniformity decision —
+                             all bars are the brand accent now); kept
+                             in the API so existing callers don't
+                             break and the per-strip identity survives
+                             in data if the owner ever reverses.
     note?   — optional small closing line under all strips.
     id?     — optional anchor id.
     flushBottom? — drop this section's bottom border so an immediately
@@ -118,15 +148,6 @@ interface Props {
 }
 
 const { intro, strips, note, id, flushBottom = false } = Astro.props;
-
-// Panel background per tone (global.css). Text/bar/link are shared
-// across all tones as of round 6 (fixed dark colors, verified AA
-// against every fill at once — see global.css for the numbers).
-const TONE_PANEL_CLASS: Record<Tone, string> = {
-  brand: "strip-panel strip-panel-brand",
-  gold:  "strip-panel strip-panel-gold",
-  slate: "strip-panel strip-panel-slate",
-};
 ---
 
 <section id={id} class:list={[flushBottom ? "border-t" : "border-y", "border-border-subtle bg-surface-900 px-6 py-section-sm"]}>
@@ -139,32 +160,31 @@ const TONE_PANEL_CLASS: Record<Tone, string> = {
       </h2>
     )}
 
-    <!-- THREE-ACROSS ROW OF PROOF (round 6) — a genuine grid, not a stacked list, is the main lever for "compact"; 1 column on mobile, 3 at sm+. -->
-    <div class:list={["grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4", intro && "mt-6"]}>
+    <!-- THREE-ACROSS ROW OF PROOF (round 6) — a genuine grid, not a stacked list, is the main lever for "compact"; 1 column on mobile, 3 at md+ (round 8: was sm+, but 640px/3 gave ~185px columns — a "cramped" cause in its own right). -->
+    <div class:list={["grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5", intro && "mt-8"]}>
       {strips.map((strip, i) => {
-        const panelClass = TONE_PANEL_CLASS[strip.tone ?? "brand"];
         return (
-          <article class:list={["reveal flex flex-col", panelClass]} style={`--reveal-delay: ${i * 100}`}>
+          <article class="reveal flex flex-col strip-panel" style={`--reveal-delay: ${i * 100}`}>
 
             <!-- Heading bumped text-sm → text-base (owner feedback: "תגדיל את הפונט מעט גם בכותרת של הקייס סטאדיז"). -->
-            <h3 class="text-base font-semibold text-slate-900">
+            <h3 class="text-base font-semibold text-text-primary">
               {strip.heading}
             </h3>
-            <p class="mt-1 text-xs text-slate-800">
+            <p class="mt-1.5 text-xs leading-relaxed text-text-muted">
               {strip.subline}
             </p>
 
-            <!-- STATS — stacked single column (each panel is only ~1/3 width now, too narrow for its own sub-grid). -->
-            <div class="mt-3 flex flex-col gap-2.5">
+            <!-- STATS — stacked single column (each panel is only ~1/3 width now, too narrow for its own sub-grid). .strip-stats wraps the whole block in ONE brand-accent start-side bar (round 8: one bar per group, not per stat; round 9: uniform brand color, no per-card tones). Values are the card's focal element: text-2xl, everything else quieter. -->
+            <div class="strip-stats mt-5 flex flex-col gap-4">
               {strip.stats.map((stat, j) => (
                 <div
-                  class="reveal border-s-2 border-slate-900/20 ps-3 text-start"
+                  class="reveal"
                   style={`--reveal-delay: ${i * 100 + j * 60}`}
                 >
-                  <p class="text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">
+                  <p class="text-2xl font-extrabold leading-tight tracking-tight text-text-primary">
                     {stat.value}
                   </p>
-                  <p class="text-xs leading-snug text-slate-800">
+                  <p class="mt-1 text-xs leading-relaxed text-text-muted">
                     {stat.description}
                   </p>
                 </div>
@@ -173,15 +193,19 @@ const TONE_PANEL_CLASS: Record<Tone, string> = {
 
             <!--
               CLOSING LINK — plain inline text link, not a stretched card
-              target. Dark, underlined (round 6 — light fills need dark
-              text; underline, not color, signals "interactive").
+              target. Theme-token colors, underlined (round 7 — underline,
+              not color, signals "interactive").
               `py-1 -my-1` widens the tap target a little on mobile
               without adding visible gap (negative margin cancels it).
+              mt-auto (round 8): the three cards' content heights
+              differ, so the links now pin to the panel bottom and
+              align across the row instead of floating at three
+              different heights.
             -->
-            <p class="mt-3 text-xs">
+            <p class="mt-auto pt-5 text-xs">
               <a
                 href={strip.href}
-                class="focus-ring focus-ring-on-900 group -my-1 inline-flex items-center gap-1 rounded-sm py-1 font-medium text-slate-800 underline decoration-slate-800/40 underline-offset-4 hover:text-slate-900 hover:decoration-slate-900/70"
+                class="focus-ring focus-ring-on-900 group -my-1 inline-flex items-center gap-1 rounded-sm py-1 font-medium text-text-muted underline decoration-text-muted/40 underline-offset-4 hover:text-text-primary hover:decoration-text-primary/70"
               >
                 {strip.linkLabel}
                 <!-- rtl:rotate-180 (HE mirror fix): resting arrow must point toward line-start (left in RTL); previously only the hover nudge direction flipped, leaving the glyph pointing the wrong way at rest in RTL. -->

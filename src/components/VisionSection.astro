@@ -7,6 +7,9 @@
 
   bg-surface-800 breaks the page rhythm the same way WhyUs does — a
   tonal step between the surrounding bg-surface-950 sections.
+  section-sheen (round 7) adds a faint top-light wash over that step
+  so the block reads top-lit instead of flat — visible on this mid
+  surface in BOTH themes, fades out inside the section.
 
   PROPS:
     heading?    — optional headline above the paragraphs (omit if the
@@ -21,7 +24,7 @@ interface Props {
 const { heading, paragraphs } = Astro.props;
 ---
 
-<section class="bg-surface-800 px-6 py-section-lg">
+<section class="section-sheen bg-surface-800 px-6 py-section-lg">
   <div class="mx-auto max-w-2xl">
 
     {heading && (

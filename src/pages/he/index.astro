@@ -1,9 +1,16 @@
 ---
 /*
-  PAGE GOAL: Hebrew homepage mirror. Mirrors src/pages/index.astro
-  section-for-section (Hero -> AchievementsStrip -> VisionSection ->
-  StepsSection -> ContactForm), same shared components, RTL via
-  dir="rtl" + locale="he" on Layout. No hand-copied markup.
+  PAGE GOAL: Hebrew homepage mirror. Same shared components as
+  src/pages/index.astro, RTL via dir="rtl" + locale="he" on Layout.
+  No hand-copied markup. SECTION ORDER (owner decision 2026-08-26,
+  "נכון יותר לזרימה של העמוד"): Hero -> VisionSection ->
+  AchievementsStrip + QuotesStrip -> StepsSection -> ContactForm.
+  Vision sits ABOVE the strips. This started as HE-only; on 2026-08-27
+  the EN homepage was aligned to the SAME order and copy (owner:
+  "אותו הדבר באנגלית"), so the two pages mirror again — this page is
+  now the copy source, EN translates from it. Background rhythm
+  alternates cleanly: 950 (hero) -> 800 (vision, tonal step) ->
+  900 (strips+quotes merged block) -> 950 (steps/contact).
 
   Copy source: .apm/memory/copy/he/homepage-he.md — re-read that file
   before editing any string below; it is the approved source of truth,
@@ -38,34 +45,34 @@ import ContactForm from "../../components/ContactForm.astro";
 const strips = [
   {
     heading: "עסק משפחתי להפצת דלק",
-    subline: "שבוע אחד, מאפס — הגיליונות הוחלפו במערכת שמנהלת את כל התפעול.",
+    subline: "שבוע אחד, מאפס: הגיליונות הוחלפו במערכת שמנהלת את כל התפעול.",
     tone: "brand" as const,
     stats: [
       { value: "21 ← 1",     description: "עשרים ואחד גיליונות אקסל, הוחלפו במערכת אחת שנבנתה סביב העסק." },
       { value: "כ-1,900",    description: "רשומות משלוח שנפרשו והותאמו במהלך המחקר על איך העסק באמת פעל." },
-      { value: "₪0 לחודש",   description: "עלות תשתית. רץ כולו על אירוח בשכבת חינם — בלי חשבון שרת, אף פעם." },
+      { value: "₪0 לחודש",   description: "עלות תשתית. רץ כולו על אירוח בשכבת חינם, בלי חשבון שרת, אף פעם." },
     ],
     href:      "/he/systems/fuel-distribution",
     linkLabel: "לסיפור המלא",
   },
   {
-    heading: "סוכנות נסיעות, שתי מערכות שנבנו ברצף",
+    heading: "סוכנות נסיעות",
     subline: "שתי מערכות בהתאמה אישית: פורטל כלים פנימי ואוטומציה בוואטסאפ, כולל ממשק ייעודי.",
     tone: "gold" as const,
     stats: [
       { value: "2",              description: "מערכות בהתאמה אישית: פורטל כלים פנימי ותיבת וואטסאפ שנבנתה מאפס." },
-      { value: "8",               description: "אוטומציות פעילות — מהודעת \"לא זמין\" מותאמת ועד ניהול חברות לקוחות ורישום כרטיסים לפי נתוני חיוב." },
+      { value: "8",               description: "אוטומציות פעילות, מהודעת \"לא זמין\" מותאמת ועד ניהול חברות לקוחות ורישום כרטיסים לפי נתוני חיוב." },
       { value: "כ-10 שעות בשבוע", description: "נחסכות בהקלדת הודעות, העברת מידע ועבודה ידנית." },
     ],
     href:      "/he/automations/travel-agency",
     linkLabel: "לסיפור המלא",
   },
   {
-    heading: "חברת שיווק דיגיטלי — מערכת אחת מאורגנת במקום בלגן",
-    subline: "תכנון תוכן, עבודת מכירות, בקרה פיננסית וגיוס — הכול במעקב ואוטומטי.",
+    heading: "חברת שיווק דיגיטלי",
+    subline: "תכנון תוכן, עבודת מכירות, בקרה פיננסית וגיוס: הכול במעקב ואוטומטי.",
     tone: "slate" as const,
     stats: [
-      { value: "6 ← 1",      description: "כלים נפרדים לתוכן, מכירות, כספים וגיוס — מפלטפורמות הודעות ורשימות כתובות ביד — עכשיו במקום אחד." },
+      { value: "6 ← 1",      description: "כלים נפרדים לתוכן, מכירות, כספים וגיוס (מפלטפורמות הודעות ורשימות כתובות ביד), עכשיו במקום אחד." },
       { value: "20+ אנשים",  description: "נציגי מכירות, עובדים וצוות גיוס שמשתמשים במערכת יום-יום." },
       { value: "כ-56,000$",  description: "נחסכו בשנה אחת, ממכירות אבודות, לקוחות שעזבו, ובקרת ניהול טובה יותר." },
     ],
@@ -173,6 +180,11 @@ const fields = [
     cta={{ label: "דברו איתנו על העסק שלכם", href: "/he/#contact" }}
   />
 
+  <!-- VISION / ATTITUDE — the editorial "why us" statement. Moved above the
+       strips 2026-08-26 (owner: "נכון יותר לזרימה של העמוד"); the EN page
+       was aligned to the same order on 2026-08-27. -->
+  <VisionSection paragraphs={visionParagraphs} />
+
   <!-- ACHIEVEMENT STRIPS — one strip per case study, each linking to its full story.
        flushBottom: QuotesStrip right below shares this section's bg-surface-900 and
        closes the border frame itself, so the two read as one continuous proof block. -->
@@ -184,9 +196,6 @@ const fields = [
 
   <!-- CLIENT QUOTES — real client messages, verbatim; no attribution by design. -->
   <QuotesStrip quotes={clientQuotes} />
-
-  <!-- VISION / ATTITUDE — the editorial "why us" statement. -->
-  <VisionSection paragraphs={visionParagraphs} />
 
   <!-- WAY OF WORKING — five-stage process, owner's full copy per stage. -->
   <StepsSection
