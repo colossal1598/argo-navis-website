@@ -46,7 +46,7 @@ const strips = [
       { value: "₪0 לחודש",   description: "עלות תשתית. רץ כולו על אירוח בשכבת חינם — בלי חשבון שרת, אף פעם." },
     ],
     href:      "/he/systems/fuel-distribution",
-    linkLabel: "לקרוא את כל הסיפור",
+    linkLabel: "לסיפור המלא",
   },
   {
     heading: "סוכנות נסיעות, שתי מערכות שנבנו ברצף",
@@ -58,7 +58,7 @@ const strips = [
       { value: "כ-10 שעות בשבוע", description: "נחסכות בהקלדת הודעות, העברת מידע ועבודה ידנית." },
     ],
     href:      "/he/automations/travel-agency",
-    linkLabel: "לקרוא את כל הסיפור",
+    linkLabel: "לסיפור המלא",
   },
   {
     heading: "חברת שיווק דיגיטלי — מערכת אחת מאורגנת במקום בלגן",
@@ -70,7 +70,7 @@ const strips = [
       { value: "כ-56,000$",  description: "נחסכו בשנה אחת, ממכירות אבודות, לקוחות שעזבו, ובקרת ניהול טובה יותר." },
     ],
     href:      "/he/systems/marketing-agency",
-    linkLabel: "לקרוא את כל הסיפור",
+    linkLabel: "לסיפור המלא",
   },
 ];
 
@@ -173,10 +173,13 @@ const fields = [
     cta={{ label: "דברו איתנו על העסק שלכם", href: "/he/#contact" }}
   />
 
-  <!-- ACHIEVEMENT STRIPS — one strip per case study, each linking to its full story. -->
+  <!-- ACHIEVEMENT STRIPS — one strip per case study, each linking to its full story.
+       flushBottom: QuotesStrip right below shares this section's bg-surface-900 and
+       closes the border frame itself, so the two read as one continuous proof block. -->
   <AchievementsStrip
     intro="שלושה עסקים אמיתיים, שלוש מערכות שרצות היום. אלו המספרים:"
     strips={strips}
+    flushBottom
   />
 
   <!-- CLIENT QUOTES — real client messages, verbatim; no attribution by design. -->

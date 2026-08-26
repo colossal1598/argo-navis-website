@@ -5,10 +5,22 @@
   notes: .apm/memory/copy/he/homepage-he.md). No attribution is
   published by design — quotes only, no name/photo/CTA/heading.
 
-  DELIBERATELY NOT A CARD ROW: no borders, boxes, or shadows — the text
-  sits directly on the page background so it reads as quiet, ambient
-  proof rather than another boxed section competing with
-  AchievementsStrip's panels right above it.
+  DELIBERATELY NOT A CARD ROW: no per-quote borders, boxes, or shadows.
+  Per owner feedback on the live page ("שירגיש מודגש ומאיר יותר"), the
+  strip no longer floats on the page background — it shares
+  AchievementsStrip's `bg-surface-900` surface and closes that
+  section's border frame (border-b here + `flushBottom` on
+  AchievementsStrip = the two sections read as ONE continuous proof
+  block). `pt-0` leans on AchievementsStrip's own bottom padding for
+  the internal gap instead of stacking two section paddings.
+
+  QUOTE MARKS — each quote is framed by an OPENING and CLOSING
+  gershayim (״, U+05F4), rendered as separate accent-colored spans
+  OUTSIDE the verbatim quote text (the quote strings themselves carry
+  no quote marks). U+05F4 is a strong-RTL Hebrew-block character, so
+  both marks sit correctly at the string edges in RTL with no bidi
+  controls needed. Spans + quote stay on ONE source line — template
+  whitespace between them would push the marks off the text.
 
   LAYOUT — quotes wrap 3-then-2 on desktop: `flex flex-wrap
   justify-center` with each quote given a ~30% basis means 3 fit per
@@ -29,15 +41,16 @@ interface Props {
 const { quotes } = Astro.props;
 ---
 
-<section class="px-6 py-section-sm">
+<!-- Shares AchievementsStrip's surface + closes its border frame (see comment above). -->
+<section class="border-b border-border-subtle bg-surface-900 px-6 pt-0 pb-section-sm">
   <div class="mx-auto max-w-3xl">
     <div class="flex flex-wrap justify-center gap-x-10 gap-y-6">
       {quotes.map((quote, i) => (
         <p
-          class="reveal basis-full text-center text-sm leading-relaxed text-text-muted sm:basis-[28%] sm:text-base"
+          class="reveal basis-full text-center text-base font-medium leading-relaxed tracking-tight text-text-soft sm:basis-[28%] sm:text-lg"
           style={`--reveal-delay: ${i * 80}`}
         >
-          <span class="chip-accent-text me-1" aria-hidden="true">״</span>{quote}
+          <span class="chip-accent-text font-semibold me-0.5" aria-hidden="true">״</span>{quote}<span class="chip-accent-text font-semibold ms-0.5" aria-hidden="true">״</span>
         </p>
       ))}
     </div>

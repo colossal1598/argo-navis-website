@@ -87,6 +87,11 @@
                              the only strip using a 4th tone, was cut.)
     note?   — optional small closing line under all strips.
     id?     — optional anchor id.
+    flushBottom? — drop this section's bottom border so an immediately
+              following section that shares `bg-surface-900` and draws
+              its own `border-b` (the HE homepage's QuotesStrip) merges
+              with it into one continuous bordered block. Default false
+              — the EN homepage keeps the self-contained border-y frame.
 */
 interface Stat {
   value:       string;
@@ -109,9 +114,10 @@ interface Props {
   strips: Strip[];
   note?:  string;
   id?:    string;
+  flushBottom?: boolean;
 }
 
-const { intro, strips, note, id } = Astro.props;
+const { intro, strips, note, id, flushBottom = false } = Astro.props;
 
 // Panel background per tone (global.css). Text/bar/link are shared
 // across all tones as of round 6 (fixed dark colors, verified AA
@@ -123,7 +129,7 @@ const TONE_PANEL_CLASS: Record<Tone, string> = {
 };
 ---
 
-<section id={id} class="border-y border-border-subtle bg-surface-900 px-6 py-section-sm">
+<section id={id} class:list={[flushBottom ? "border-t" : "border-y", "border-border-subtle bg-surface-900 px-6 py-section-sm"]}>
   <div class="mx-auto max-w-5xl">
 
     <!-- Intro label — doubles as the section's <h2> landmark -->
@@ -140,7 +146,8 @@ const TONE_PANEL_CLASS: Record<Tone, string> = {
         return (
           <article class:list={["reveal flex flex-col", panelClass]} style={`--reveal-delay: ${i * 100}`}>
 
-            <h3 class="text-sm font-semibold text-slate-900">
+            <!-- Heading bumped text-sm → text-base (owner feedback: "תגדיל את הפונט מעט גם בכותרת של הקייס סטאדיז"). -->
+            <h3 class="text-base font-semibold text-slate-900">
               {strip.heading}
             </h3>
             <p class="mt-1 text-xs text-slate-800">
