@@ -398,9 +398,10 @@ html[data-theme="light"] .chip-accent-text:hover {
                   removed at owner request ("תעלים גם את הצבעים
                   השונים של הפסים... שיהיה אחיד", 2026-08-26), after
                   the accent TOP bar had already been rejected earlier
-                  ("תעלים אותו לגמרי"). All cards now share one brand
-                  bar — see `.strip-stats` below. The panel's top edge
-                  stays just the inset catch-light.
+                  ("תעלים אותו לגמרי"). Round 10 replaced the bar
+                  with per-stat brand dots — see `.strip-stat` below.
+                  The panel's top edge stays just the inset
+                  catch-light.
 
   TEXT goes back to the theme tokens (`text-text-primary` /
   `text-text-muted`) since the fill follows the theme again. Verified
@@ -411,7 +412,7 @@ html[data-theme="light"] .chip-accent-text:hover {
 
   radius-lg (8px), one step up from round 6's rounded-sm — friendlier
   card geometry without ballooning three narrow columns to the 16px
-  card radius. `.strip-stats` is defined after `.strip-panel` (same
+  card radius. `.strip-stat` is defined after `.strip-panel` (same
   source-order reasoning as `.card-row`).
 
   ROUND 8 (2026-08-26) — declutter pass. Owner verdict on round 7:
@@ -419,7 +420,8 @@ html[data-theme="light"] .chip-accent-text:hover {
   white card needs more inner air than a flat slab did, and 16px was
   the single cheapest "cramped" fix. The rest of the pass lives in
   AchievementsStrip.astro (spacing rhythm, value size) and in
-  `.strip-stats` below (one group bar instead of three per-stat bars).
+  `.strip-stat` below (the stats' accent marker — since round 10 a
+  small dot per stat row).
 */
 .strip-panel {
   @apply p-5;
@@ -434,35 +436,45 @@ html[data-theme="light"] .chip-accent-text:hover {
   box-shadow: var(--theme-panel-highlight), var(--theme-shadow-elev);
 }
 /*
-  Stats GROUP inside a strip panel — round 8 replaces round 7's
-  per-stat `.strip-stat` bars with ONE continuous bar on the whole
-  stats block. Rationale: three bars per card × three cards = nine
-  colored ticks of unequal height (description lengths vary), which
-  fragmented each card into mini-boxes and set up a second, ragged
-  start-alignment grid against the heading/subline/link at the panel
-  edge — a core cause of the owner's round-7 "עמוס, צפוף" verdict.
-  One bar groups the numbers into a single clear "proof zone":
-  heading → numbers → link, one indent. Logical properties, so the
-  bar mirrors in RTL automatically.
+  Stat row inside a strip panel — accent-marker history, short:
+  round 7 gave every stat its own tone-colored start bar (9 ragged
+  ticks across the section — a core cause of the owner's "עמוס, צפוף"
+  verdict); round 8 merged them into ONE continuous bar wrapping the
+  stats group; round 9 dropped the per-card tones for a uniform brand
+  color ("שיהיה אחיד"), which also removed the `.strip-panel-<tone>` /
+  `--panel-accent` classes (the `tone` prop on AchievementsStrip.astro
+  remains in the API but is visually inert).
 
-  ROUND 9 (2026-08-26) — the per-card tone colors are gone too.
-  Owner: "תעלים גם את הצבעים השונים של הפסים בתוך הכרטיסים. שיהיה
-  אחיד" — all three cards now share ONE bar color: the brand accent
-  (brand-400 dark / brand-600 light, the same theme step-down the
-  brand tone already used, matching `.chip-accent-text`'s pattern).
-  Brand over a neutral gray so the bar reads as a deliberate accent,
-  not a default blockquote rule. Decorative only — never text, so no
-  AA requirement, but both steps are clearly visible on their panel
-  fills. This removed the `.strip-panel-<tone>` / `--panel-accent`
-  classes (the bars were their only consumer); the `tone` prop on
-  AchievementsStrip.astro remains in the API but is visually inert.
+  ROUND 10 (2026-08-27) — owner: "במקום הפס הצבעוני בסטאדיז, שיהיה
+  נקודות... נקודה לכל מספר כמובן ושישאר מיושר אותו הדבר." The bar is
+  replaced by one small dot per stat row, centered on the stat VALUE's
+  first line. Geometry is unchanged: the old bar was a 2px border +
+  16px padding = an 18px start indent, and the dot gutter keeps that
+  exact 18px (`padding-inline-start: 1.125rem`), so nothing in the
+  card shifts. Dot: 6px circle — a marker glyph, the same knob-scale
+  exception to the no-pill rule as toggle knobs; `top: 0.75rem`
+  centers it on the value's ~30px first line box (text-2xl ×
+  leading-tight). Same uniform brand accent as the round-9 bar
+  (brand-400 dark / brand-600 light, decorative-only so no AA
+  requirement, clearly visible on both panel fills). Logical
+  properties (`inset-inline-start`), so it mirrors in RTL.
 */
-.strip-stats {
-  @apply border-s-2 ps-4 text-start;
-  border-inline-start-color: var(--color-brand-400);
+.strip-stat {
+  @apply relative text-start;
+  padding-inline-start: 1.125rem;
 }
-html[data-theme="light"] .strip-stats {
-  border-inline-start-color: var(--color-brand-600);
+.strip-stat::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.75rem;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background-color: var(--color-brand-400);
+}
+html[data-theme="light"] .strip-stat::before {
+  background-color: var(--color-brand-600);
 }
 
 /*

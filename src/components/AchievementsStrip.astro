@@ -74,12 +74,20 @@
   `tone` prop stays in the API (both homepages still pass it) but is
   visually inert — nothing maps it to a class anymore.
 
-  STAT-CELL LOOK — round-1 DNA preserved in spirit (extrabold value,
-  staggered `--reveal-delay`); the start-side bar wraps the stats
-  GROUP via `.strip-stats` in global.css (a logical-property bar that
-  mirrors in RTL automatically) instead of each stat drawing its own.
+  ROUND 10 (2026-08-27) — owner: "במקום הפס הצבעוני בסטאדיז, שיהיה
+  נקודות... נקודה לכל מספר כמובן ושישאר מיושר אותו הדבר." The round
+  8-9 continuous group bar (`.strip-stats`) is replaced by one small
+  brand dot per stat row (`.strip-stat` in global.css, a ::before
+  marker centered on the value's first line). The start indent is
+  byte-identical to the bar's (18px), so the card geometry and gap
+  rhythm are unchanged; RTL mirroring via logical properties as
+  before. Same uniform brand accent in both themes as the bar had.
 
-  CASCADE-LAYER NOTE: `.strip-stats` is
+  STAT-CELL LOOK — round-1 DNA preserved in spirit (extrabold value,
+  staggered `--reveal-delay`); each stat row carries its accent
+  marker via `.strip-stat` in global.css.
+
+  CASCADE-LAYER NOTE: `.strip-stat` is
   defined after `.strip-panel` in global.css (same reasoning as
   `.card-row`/`.card-compact`) so they win by source order within the
   same compiled utilities layer. The theme-token text utilities on the
@@ -174,11 +182,11 @@ const { intro, strips, note, id, flushBottom = false } = Astro.props;
               {strip.subline}
             </p>
 
-            <!-- STATS — stacked single column (each panel is only ~1/3 width now, too narrow for its own sub-grid). .strip-stats wraps the whole block in ONE brand-accent start-side bar (round 8: one bar per group, not per stat; round 9: uniform brand color, no per-card tones). Values are the card's focal element: text-2xl, everything else quieter. -->
-            <div class="strip-stats mt-5 flex flex-col gap-4">
+            <!-- STATS — stacked single column (each panel is only ~1/3 width now, too narrow for its own sub-grid). Each row is a .strip-stat: a small brand dot per stat, centered on the value's first line (round 10, owner: "נקודה לכל מספר"; replaces round 8-9's continuous group bar at the identical 18px start indent, so the alignment is unchanged). Values are the card's focal element: text-2xl, everything else quieter. -->
+            <div class="mt-5 flex flex-col gap-4">
               {strip.stats.map((stat, j) => (
                 <div
-                  class="reveal"
+                  class="reveal strip-stat"
                   style={`--reveal-delay: ${i * 100 + j * 60}`}
                 >
                   <p class="text-2xl font-extrabold leading-tight tracking-tight text-text-primary">
