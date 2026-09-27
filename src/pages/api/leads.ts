@@ -155,12 +155,13 @@ export const POST: APIRoute = async ({ request }) => {
   let insertErrorMessage: string | null = null;
   try {
     const supabase = createSupabaseClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY);
+    /* Hard 5s cap — a hanging (not refusing) Supabase must never stall the form. */
     const { error } = await supabase.from(TABLE).insert({
       ...leadRow,
       meta_event_id: metaEventId,
       fbc,
       fbp,
-    });
+    }).abortSignal(AbortSignal.timeout(5000));
 
     if (error) {
       if (isUndefinedColumnError(error)) {
@@ -169,7 +170,7 @@ export const POST: APIRoute = async ({ request }) => {
           "Retrying without them so the lead isn't lost. Run the migration in src/lib/schema.sql to enable Meta tracking persistence.",
           error.message,
         );
-        const retry = await supabase.from(TABLE).insert(leadRow);
+        const retry = await supabase.from(TABLE).insert(leadRow).abortSignal(AbortSignal.timeout(5000));
         if (retry.error) insertErrorMessage = retry.error.message;
       } else {
         insertErrorMessage = error.message;
@@ -204,10 +205,8 @@ export const POST: APIRoute = async ({ request }) => {
     artifact. When the var is unset the send is skipped (loud in prod
     logs) — same graceful-degradation pattern as Turnstile above.
 
-    Success contract: the visitor gets a success response when the lead
-    reached AT LEAST ONE of Supabase / n8n. Only both failing returns
-    the 500 — that failure mode requires two independent systems down at
-    once, and the visitor-facing error is the last resort.
+    Success contract: see the owner-email block below — any ONE of
+    Supabase / n8n / direct Telegram / owner email is enough.
   */
   let n8nDelivered = false;
   const n8nWebhookUrl = env.N8N_LEAD_WEBHOOK_URL;
@@ -247,23 +246,107 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (insertErrorMessage) {
     console.error("Supabase insert error:", insertErrorMessage);
-    if (!n8nDelivered) {
-      return json({ error: t("Could not save your message. Please try again.", "לא הצלחנו לשמור את ההודעה. נסו שוב.") }, 500);
-    }
-    /* Lead rescued by the n8n leg — visible in logs, invisible to the visitor. */
-    console.error("Lead was NOT saved to Supabase but WAS delivered to n8n (saved:false) — re-add the row manually from the Telegram alert.");
   }
 
-  /* ── Send emails via Resend ── */
+  /*
+    ── Direct Telegram alert — only when n8n did NOT deliver ──
+    n8n normally sends the Telegram alert, so this fires only when n8n
+    is down (no duplicate alerts when it's up). Calls the Telegram Bot
+    API straight from the Worker. Token + chat id are env vars, never
+    hardcoded. Counts as a delivery leg in the success contract below.
+  */
+  let telegramDelivered = false;
+  const telegramToken = env.TELEGRAM_BOT_TOKEN;
+  const telegramChatId = env.TELEGRAM_CHAT_ID;
+  if (!n8nDelivered && telegramToken && telegramChatId) {
+    const lines = [
+      `⚠️ New lead (n8n down${insertErrorMessage ? ", NOT in DB — re-add manually" : ""})`,
+      `Name: ${name.trim()}`,
+      `Email: ${emailValue}`,
+      `Contact via: ${preferredContactMethod}${normalizedContactDetails ? ` — ${normalizedContactDetails}` : ""}`,
+      ...(website?.trim() ? [`Website: ${website.trim()}`] : []),
+      `Source: ${source}`,
+      "",
+      message.trim(),
+    ];
+    try {
+      const tgRes = await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        /* Plain text (no parse_mode) — lead content can't break the message formatting. */
+        body: JSON.stringify({ chat_id: telegramChatId, text: lines.join("\n").slice(0, 4000) }),
+        signal: AbortSignal.timeout(5000),
+      });
+      telegramDelivered = tgRes.ok;
+      if (!tgRes.ok) console.error("Telegram direct alert returned non-OK status:", tgRes.status);
+    } catch (tgError) {
+      console.error("Telegram direct alert error:", tgError instanceof Error ? tgError.message : tgError);
+    }
+  } else if (!n8nDelivered && isProd) {
+    console.error("TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID missing — no direct Telegram alert while n8n is down.");
+  }
+
+  /*
+    ── Owner notification via Resend — the third delivery leg ──
+    Sent BEFORE the success decision, not after it: Supabase and n8n
+    can be down at the same time (live incident Sep 2026 — both down,
+    every form 500'd and the owner email never ran because it sat after
+    the early return). Resend is an independent provider, so it counts
+    as a delivery leg on its own. The subject flags a lead that is
+    missing from Supabase / Telegram so the owner knows to re-add it.
+
+    Note: resend.emails.send() reports failures in `error`, it does NOT
+    throw — the result must be checked explicitly.
+  */
   const resendKey = env.RESEND_API_KEY;
+  const resend = resendKey ? new Resend(resendKey) : null;
+  let ownerEmailDelivered = false;
+
+  if (resend) {
+    const missing = [insertErrorMessage && "DB", !n8nDelivered && !telegramDelivered && "Telegram"].filter(Boolean);
+    const flag = missing.length ? `[NOT IN ${missing.join(" + ")}] ` : "";
+    try {
+      const { error: ownerEmailError } = await resend.emails.send({
+        from: "Argo Navis Leads <leads@argo-navis.net>",
+        to: "jason@argo-navis.net",
+        subject: `${flag}New lead: ${name.trim()} via ${source}`,
+        html: buildOwnerNotificationHtml({
+          name: name.trim(),
+          email: emailValue,
+          website: website?.trim() || null,
+          preferredContactMethod,
+          normalizedContactDetails,
+          message: message.trim(),
+          source,
+        }),
+      });
+      ownerEmailDelivered = !ownerEmailError;
+      if (ownerEmailError) console.error("Resend owner notification error:", ownerEmailError.message);
+    } catch (emailError) {
+      console.error("Resend owner notification error:", emailError);
+    }
+  } else if (isProd) {
+    console.error("RESEND_API_KEY is missing in production — the owner email leg is disabled.");
+  }
+
+  /*
+    Success contract: the visitor gets a success response when the lead
+    reached AT LEAST ONE of Supabase / n8n / direct Telegram / owner
+    email. Only all of them failing returns the 500.
+  */
+  if (insertErrorMessage && !n8nDelivered && !telegramDelivered && !ownerEmailDelivered) {
+    return json({ error: t("Could not save your message. Please try again.", "לא הצלחנו לשמור את ההודעה. נסו שוב.") }, 500);
+  }
+  if (insertErrorMessage || !n8nDelivered) {
+    console.error(`Lead partially delivered — db:${!insertErrorMessage} n8n:${n8nDelivered} telegram:${telegramDelivered} email:${ownerEmailDelivered}`);
+  }
+
+  /* ── Auto-reply to the lead via Resend (only once the lead is safe) ── */
   const hebrew = hebrewSource;
 
-  if (resendKey) {
+  if (resend) {
     try {
-      const resend = new Resend(resendKey);
-
-      /* 1. Auto-reply to the lead */
-      await resend.emails.send({
+      const { error: replyError } = await resend.emails.send({
         from: "Argo Navis <hello@argo-navis.net>",
         to: emailValue,
         subject: hebrew ? leadReplySubjectHe(source) : leadReplySubject(source),
@@ -285,25 +368,10 @@ export const POST: APIRoute = async ({ request }) => {
               normalizedContactDetails,
             }),
       });
-
-      /* 2. Owner notification */
-      await resend.emails.send({
-        from: "Argo Navis Leads <leads@argo-navis.net>",
-        to: "jason@argo-navis.net",
-        subject: `New lead: ${name.trim()} via ${source}`,
-        html: buildOwnerNotificationHtml({
-          name: name.trim(),
-          email: emailValue,
-          website: website?.trim() || null,
-          preferredContactMethod,
-          normalizedContactDetails,
-          message: message.trim(),
-          source,
-        }),
-      });
+      if (replyError) console.error("Resend auto-reply error:", replyError.message);
     } catch (emailError) {
-      // Never blocks the form submission — lead is already saved to Supabase
-      console.error("Resend error:", emailError);
+      // Never blocks the form submission — the lead is already delivered above
+      console.error("Resend auto-reply error:", emailError);
     }
   }
 

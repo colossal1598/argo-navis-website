@@ -37,3 +37,9 @@ RESEND_API_KEY=
 # submission fires the owner's real Telegram alert and a Meta CAPI event.
 # The send is skipped entirely when this is empty.
 N8N_LEAD_WEBHOOK_URL=
+
+# Telegram direct alert — used ONLY when the n8n webhook fails (n8n
+# normally sends the Telegram alert). Same bot + chat n8n uses.
+# Leave BLANK during routine dev/form testing.
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
