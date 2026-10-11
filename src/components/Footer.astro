@@ -23,6 +23,7 @@ const copy: Record<SiteLocale, {
   contact:         string;
   tagline:         string;
   rights:          string;
+  privacy:         string;
   lpSpreadsheets:      string;
   lpAiAgents:          string;
   lpConnectedSystems:  string;
@@ -40,6 +41,7 @@ const copy: Record<SiteLocale, {
     contact:         "Contact",
     tagline:         "We build systems and sites that generate leads and scale your business.",
     rights:          "All rights reserved.",
+    privacy:         "Privacy Policy",
     lpSpreadsheets:      "Off the Spreadsheets",
     lpAiAgents:          "Custom AI Agents",
     lpConnectedSystems:  "Connected Systems",
@@ -61,6 +63,7 @@ const copy: Record<SiteLocale, {
     contact:         "דברו איתנו",
     tagline:         "אנחנו בונים מערכות ואתרים שמביאים לידים ומקדמים את העסק שלכם.",
     rights:          "כל הזכויות שמורות.",
+    privacy:         "מדיניות פרטיות",
     lpSpreadsheets:      "לצאת מהגיליונות",
     lpAiAgents:          "AI מותאם אישית",
     lpConnectedSystems:  "לחבר מערכות",
@@ -145,6 +148,9 @@ const socials = [
 
 /* LEGAL TEXT — change the year or company name */
 const year = new Date().getFullYear();
+/* Privacy link: only renders where the policy page exists (HE only for now). */
+const privacyHref = withLocale("/privacy-policy", locale);
+const showPrivacy = routeExists(privacyHref);
 const companyName = "Argo Navis";
 ---
 
@@ -210,6 +216,12 @@ const companyName = "Argo Navis";
     <!-- Bottom row: copyright -->
     <div class="mt-10 border-t border-border-subtle pt-6 text-center text-xs text-text-muted/80">
       © {year} {companyName}. {t.rights}
+      {showPrivacy && (
+        <Fragment>
+          <span aria-hidden="true"> · </span>
+          <a href={privacyHref} class="transition-colors hover:text-text-primary">{t.privacy}</a>
+        </Fragment>
+      )}
     </div>
 
   </div>

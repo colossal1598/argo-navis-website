@@ -1,0 +1,108 @@
+---
+/*
+  PAGE GOAL (HE): legal trust page. A short, plain-language privacy policy
+  that tells a visitor what the site collects, why, and how to ask for
+  deletion. Linked from the footer on Hebrew pages.
+
+  TO FILL IN: every [PLACEHOLDER] in square brackets below is a personal /
+  legal detail (business name, ID number, address, contact email, update
+  date). Search the file for "[" and replace them before publishing.
+
+  WHAT THE POLICY DESCRIBES (keep in sync with the code):
+    - Contact form (ContactForm.astro -> /api/leads): name, email, phone or
+      other contact detail, message, source page.
+    - Meta Pixel + Conversions API (MetaPixel.astro, LeadDedupTracker.astro).
+    - Cloudflare Turnstile bot check.
+    - Auto-reply email to the lead.
+  If a new tracker or form field is added, update the matching section.
+*/
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout
+  title="מדיניות פרטיות"
+  description="איזה מידע אנחנו אוספים באתר Argo Navis, למה, ואיך מבקשים לעיין בו או למחוק אותו."
+  locale="he"
+  dir="rtl"
+>
+  <!-- HEADER -->
+  <section class="bg-surface-950 px-6 pt-section-lg text-start md:pt-section-xl">
+    <div class="mx-auto max-w-3xl">
+      <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-text-primary md:text-5xl">
+        מדיניות פרטיות
+      </h1>
+      <p class="mt-4 text-text-muted">עודכן לאחרונה: 11/10/2026</p>
+    </div>
+  </section>
+
+  <!-- POLICY BODY — one flat column of short sections, styled by .showcase-prose -->
+  <section class="bg-surface-950 px-6 py-section-lg text-start">
+    <div class="mx-auto max-w-3xl">
+      <div class="showcase-prose !mt-0">
+
+        <h2 class="mt-4 text-2xl font-bold text-text-primary">מי אנחנו</h2>
+        <p>
+          האתר argo-navis.net מופעל על ידי ארגו אונליין (ח.פ 205967649) . כתובת: סוקולוב 92, חולון.
+          לכל שאלה על פרטיות: <a href="mailto:Contact@argo-navis.net">Contact@argo-navis.net]</a>.
+        </p>
+
+        <h2 class="mt-4 text-2xl font-bold text-text-primary">איזה מידע אנחנו אוספים</h2>
+        <p><strong>מה שאתם מוסרים לנו.</strong> כשאתם ממלאים טופס יצירת קשר אנחנו מקבלים:</p>
+        <ul>
+          <li>שם</li>
+          <li>אימייל</li>
+          <li>דרך יצירת קשר מועדפת ופרטי הקשר שלה (למשל מספר טלפון)</li>
+          <li>ההודעה שכתבתם</li>
+          <li>באיזה עמוד באתר מילאתם את הטופס</li>
+        </ul>
+        <p><strong>מה שנאסף אוטומטית.</strong> כשאתם גולשים באתר, כלי המדידה של Meta (פייסבוק ואינסטגרם) רושמים צפייה בעמוד ושומרים מזהה דפדפן (עוגייה). כשאתם שולחים טופס, נשלח אל Meta גם אירוע "ליד", כדי שנדע אילו מודעות הביאו פניות.</p>
+        <p>אנחנו לא אוספים מידע רגיש, לא מספרי כרטיס אשראי, ולא מוכרים מידע לאף גורם.</p>
+
+        <h2 class="mt-4 text-2xl font-bold text-text-primary">למה אנחנו משתמשים במידע</h2>
+        <ul>
+          <li>לחזור אליכם ולענות על הפנייה</li>
+          <li>לשלוח לכם אישור שהפנייה התקבלה</li>
+          <li>למדוד איזה מודעות ועמודים עובדים, ולשפר אותם</li>
+          <li>להגן על הטפסים מפני ספאם ובוטים</li>
+        </ul>
+        <p>לא נשתמש במידע שלכם לרשימת תפוצה בלי שביקשתם.</p>
+
+        <h2 class="mt-4 text-2xl font-bold text-text-primary">עם מי אנחנו משתפים מידע</h2>
+        <p>רק עם ספקים שהאתר והעסק צריכים כדי לעבוד:</p>
+        <ul>
+          <li><strong>אחסון ותשתית:</strong> Cloudflare מארחת את האתר ומפעילה את בדיקת האבטחה של הטפסים (Turnstile).</li>
+          <li><strong>שמירת פניות ועיבוד אוטומטי:</strong> הפרטים שמילאתם בטופס נשמרים במסד נתונים אצל ספק אחסון נתונים, ומועברים למערכת האוטומציה שלנו כדי שנקבל התראה.</li>
+          <li><strong>דיוור:</strong> שירות שליחת אימייל משמש להתראה אלינו ולאישור שנשלח אליכם.</li>
+          <li><strong>פרסום ומדידה:</strong> Meta, כמתואר למעלה.</li>
+        </ul>
+        <p>חלק מהספקים פועלים מחוץ לישראל, ולכן המידע עשוי לעבור לשרתים בחו"ל. אנחנו משתמשים בספקים מוכרים בלבד.</p>
+
+        <h2 class="mt-4 text-2xl font-bold text-text-primary">עוגיות</h2>
+        <p>
+          האתר משתמש בעוגיות של Meta לצורכי מדידה ופרסום. אפשר לחסום אותן בהגדרות הדפדפן, או דרך
+          <a href="https://www.facebook.com/adpreferences" target="_blank" rel="noopener">העדפות המודעות ב-Meta</a>.
+          האתר ימשיך לעבוד גם בלעדיהן.
+        </p>
+
+        <h2 class="mt-4 text-2xl font-bold text-text-primary">כמה זמן אנחנו שומרים מידע</h2>
+        <p>פרטי פנייה נשמרים כל עוד יש בהם צורך לטיפול בפנייה ובקשר איתכם, ולא יותר מ-24 חודשים מעת הקשר האחרונה אלא אם הפכתם ללקוחות. ללקוחות נשמר מידע כנדרש לפי חוק.</p>
+
+        <h2 class="mt-4 text-2xl font-bold text-text-primary">הזכויות שלכם</h2>
+        <p>לפי חוק הגנת הפרטיות מותר לכם לבקש:</p>
+        <ul>
+          <li>לראות איזה מידע שמור עליכם</li>
+          <li>לתקן מידע שגוי</li>
+          <li>למחוק את המידע שלכם</li>
+        </ul>
+        <p>
+          כתבו לנו ל-<a href="mailto:Contact@argo-navis.net">Contact@argo-navis.net</a> ונטפל בבקשה בתוך זמן סביר.
+          אתם לא חייבים למסור לנו מידע, אבל בלי פרטי קשר לא נוכל לחזור אליכם.
+        </p>
+
+        <h2 class="mt-4 text-2xl font-bold text-text-primary">שינויים במדיניות</h2>
+        <p>אם נשנה את המדיניות, הגרסה העדכנית תפורסם בעמוד הזה עם תאריך עדכון חדש.</p>
+
+      </div>
+    </div>
+  </section>
+</Layout>
