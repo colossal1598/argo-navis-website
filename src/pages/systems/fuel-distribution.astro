@@ -1,167 +1,336 @@
 ---
 /*
-  PAGE GOAL: The flagship proof asset for the whole site — a considered
-  visitor's chance to verify the achievements-strip/LP claims are real
-  before booking a diagnostic conversation. Converts to the same
-  diagnostic-conversation form as everywhere else.
+  PAGE GOAL: flagship case study, English. Mirrors the Hebrew page
+  (/he/systems/fuel-distribution) section for section: before/after
+  pain, real screenshots, how the messy Excel was handled, a price/time
+  anchor, then the diagnostic-conversation form.
 
-  Copy source: .apm/memory/copy/case-study-fuel-en.md — re-read that file
-  before editing any string below; it is the approved source of truth,
-  not this file. Anonymized throughout as "a family fuel-distribution
-  business" — no client name, no domain, anywhere on this page (headline,
-  body, meta tags, slug). Business numbers only, no developer/commit
-  metrics (see CLAUDE.md, Content honesty).
+  Copy source: English adaptation (2026-11-24) of the owner's Hebrew
+  draft. The Hebrew page is the source of truth; when its copy changes,
+  update this page to match. Numbers must stay identical across both.
 
-  serviceHref points at /systems — the core custom-system-build service
-  page. That page is being built in parallel by another agent (per the
-  Task 2.5 Task Prompt) and doesn't exist in this worktree yet; the link
-  will resolve once both branches merge to main.
+  Anonymized: "a family fuel-distribution business". No client name or
+  domain. Screenshots show the demo build (Hebrew UI) with sample data.
+  Source tag: systems-fuel-distribution (existing leads.ts key).
 */
-import ShowcaseLayout from "../../layouts/ShowcaseLayout.astro";
-import ShowcaseSection from "../../components/ShowcaseSection.astro";
+import Layout from "../../layouts/Layout.astro";
 import ContactForm from "../../components/ContactForm.astro";
 
+/* Hero numbers bar. Last item is highlighted (the ₪0 running cost). */
 const metrics = [
-  { value: "7 days", label: "development time" },
-  { value: "~870", label: "delivery notes in the database" },
-  { value: "~1,180", label: "customers after deduplication" },
-  { value: "₪0/month", label: "infrastructure cost" },
+  { value: "2 weeks", label: "From chaotic Excel to a live system" },
+  { value: "1,180+", label: "Customer accounts cleaned and merged" },
+  { value: "100%", label: "Automatic sync with Morning" },
+  { value: "₪0 / month", label: "Server and subscription costs", highlight: true },
 ];
 
-const decisions = [
+/* Borders between metric cells: 2×2 grid on mobile, 4 in a row from sm. */
+const metricCellBorder = [
+  "",
+  "border-s",
+  "border-t sm:border-t-0 sm:border-s",
+  "border-s border-t sm:border-t-0",
+];
+
+/* BEFORE list. <strong> lead-in + plain text. */
+const before = [
+  { lead: "\"Who still owes us?\"", text: "To answer that, the owner had to go through the sheets one by one and cross-check invoices in Morning from memory." },
+  { lead: "Forgotten post-dated checks and notes:", text: "Notes like \"pick up check on 05.03\" or payment plans were typed as free text inside an Excel cell and dropped off the radar." },
+  { lead: "No control over liters:", text: "There was no way to know, at any moment, how many liters of diesel came in from the supplier versus how many were actually delivered to customers." },
+  { lead: "Double work every evening:", text: "Delivery notes from the field waited on paper or in WhatsApp until someone got to a computer in the evening to type them in." },
+];
+
+/* AFTER list. */
+const after = [
+  { lead: "Orders board, 15-second entry from the field:", text: "The driver or owner enters liters and customer straight from the phone while fueling." },
+  { lead: "Automatic matching with Morning:", text: "The system pulls invoices and receipts automatically and shows each customer's real balance right away." },
+  { lead: "Notes board and post-dated checks:", text: "Every note, payment promise, and post-dated check is tracked until its due date." },
+  { lead: "Liters and margin at a click:", text: "A live comparison of supplier loads against customer deliveries, including monthly purchase-price changes." },
+];
+
+/* HOW WE DID IT: three steps. */
+const steps = [
   {
-    decision: "No backend — Next.js static export + managed Supabase",
-    why:      "Two authenticated users; row-level security (RLS) handles access. Zero server maintenance for a family business.",
+    label: "Step 01 // Cleaning the mess",
+    title: "Merging 916 duplicate names and typos",
+    text: "In the old Excel, the same customer appeared in 4 different spellings (with a hyphen, without one, a typo, or a broken date). We built a mechanism that merged them into one clean customer account, and search still finds every old spelling.",
   },
   {
-    decision: "Cloudflare Pages for hosting",
-    why:      "Static files, free, fast — the client's own domain stays with their registrar.",
+    label: "Step 02 // Untangling payment notes",
+    title: "Turning free text into working notes",
+    text: "The \"Paid\" column held mixed notes like \"paid half + pick up check on 05.03\". We split every note like that into an exact payment status, a check schedule, and a reminder in the system.",
   },
   {
-    decision: "A single Edge Function for the Morning sync",
-    why:      "The one place that needs a secret (API keys) — never shipped in client-side code.",
-  },
-  {
-    decision: "Untitled UI (React + Tailwind), customized",
-    why:      "No generic-AI look; full right-to-left support, no pill shapes, Hebrew-friendly typography.",
-  },
-  {
-    decision: "Mobile-first on the one critical flow",
-    why:      "Logging a delivery from the field, on a phone — the feature everything else was built around.",
-  },
-  {
-    decision: "Provenance on every record",
-    why:      "Every imported row carries its original sheet and row number, so any figure can be traced back to the source.",
+    label: "Step 03 // Zero upkeep",
+    title: "No monthly fees, no servers to crash",
+    text: "The system runs on secure cloud infrastructure with full automatic backups. No servers to maintain, no thousands of shekels a month in per-user licenses. Every record is linked to its original row in the Excel, so anything can be checked.",
   },
 ];
 
-const resultsTable = [
-  { metric: "Development time", value: "7 days" },
-  { metric: "Delivery notes in the database", value: "~870 (all of 2026)" },
-  { metric: "Supplier loads recorded", value: "~160" },
-  { metric: "Customers after deduplication", value: "~1,180 (from ~916 spreadsheet spelling variants plus Morning's own customer list)" },
-  { metric: "Aliases preserved", value: "~1,400" },
-  { metric: "Morning documents synced", value: "~940" },
-  { metric: "Servers to maintain", value: "0" },
-  { metric: "Monthly infrastructure cost", value: "₪0 (free tiers: Supabase, Cloudflare Pages, GitHub Actions)" },
-];
-
-const takeaways = [
-  "Analyze the data before you design the schema. A full day of profiling the spreadsheet saved weeks of surprises later — the schema came from what the data actually was, not from assumptions.",
-  "Free text is never \"just a field.\" One \"paid\" column broke down into status, method, installment plan, and notes. That decomposition was most of the extraction work.",
-  "Hebrew deduplication needs a human in the loop. The algorithm proposes, the data owner approves — and every old spelling stays searchable as an alias.",
-  "The best architecture for a small business is the one with nothing to maintain. Zero servers, zero infrastructure cost, automatic backups.",
-  "A weak development machine is a planning feature, not a limitation. It forced discipline: typecheck instead of full builds, one process running at a time, cloud-first thinking.",
-  "Written rules beat memory. Working with AI agents, every rule written into a guidance file stopped getting broken — the ones that stayed unwritten kept coming back.",
+/* Contact form fields. email + message are required by api/leads.ts. */
+const fields = [
+  { id: "name", label: "Full name", type: "text" as const, placeholder: "Your name", required: true },
+  { id: "email", label: "Email", type: "email" as const, placeholder: "you@business.com", required: true },
+  {
+    id: "message",
+    label: "In one sentence: what slows your operation down the most today?",
+    type: "text" as const,
+    placeholder: "e.g. tracking orders and payments in Excel / connecting to your invoicing tool...",
+    required: true,
+  },
 ];
 ---
 
-<ShowcaseLayout
-  title="From Chaotic Spreadsheets to a Full Management System in One Week"
-  description="A family fuel-distribution business ran on 21 spreadsheets. Here's the full story of the system that replaced them in one development week — real numbers, real architecture decisions, no invented client details."
-  service="Systems"
-  serviceHref="/systems"
-  headline="From Chaotic Spreadsheets to a Full Management System in One Week"
-  subheadline="A family business distributing fuel to commercial and private customers: diesel for construction companies, bakeries, and farms; heating oil for homes in winter."
-  metaLine={{
-    project:     "Management system for a family fuel-distribution business (diesel and heating oil)",
-    scope:       "One development week, one developer + AI agents",
-    result:      "In production — ~870 delivery notes, ~1,180 customers, ~940 synced accounting documents",
-    disclaimer:  "Every figure in this document is a real order of magnitude — no names, no financial data.",
-  }}
-  metrics={metrics}
-  tags={["Next.js", "Supabase", "Cloudflare Pages", "Morning API"]}
-  decisions={decisions}
-  resultsTable={resultsTable}
-  resultsCallout={"What the numbers don't show: a delivery gets logged from the field, on a phone. \"Who hasn't paid\" is a query now, not an evening with the spreadsheets. A post-dated check shows up on the dashboard before it's due. And the gap between what came in from the supplier and what went out is visible for the first time."}
-  takeaways={takeaways}
+<Layout
+  title="Case study: operations and collections system for a fuel distributor"
+  description="How a family diesel and heating-oil distributor (1,100+ customers) went from 21 Excel sheets to an orders, notes, and collections system that runs from the phone and syncs with Morning, in two weeks."
 >
+  <main class="section-sheen bg-surface-950 px-4 pb-section-md pt-10 sm:px-6 sm:pt-16">
+    <div class="mx-auto max-w-5xl">
 
-  <!-- BACKGROUND -->
-  <ShowcaseSection label="Background" heading="A Real Business, Old-School Tools">
-    <p>Two people run the whole operation, no technical background, mostly from their phones.</p>
-    <p>Every operation lived in one spreadsheet: 21 sheets, one per month per product. Each row was a delivery — date, delivery-note number, liters, town, customer name, invoice number, and a free-text payment status. Alongside it: cloud accounting software (Morning / Green Invoice) that didn't talk to the spreadsheet at all. Every match between a delivery note, an invoice, and a receipt happened by hand, from memory.</p>
-    <p>The exact pains the business described:</p>
-    <ul>
-      <li>"Who still hasn't paid?" — no answer without going sheet by sheet.</li>
-      <li>Post-dated checks, sometimes six months out, noted in a free-text comment and forgotten.</li>
-      <li>No inventory picture: how much came in from the supplier versus how much went out.</li>
-      <li>Logging a delivery from the field meant waiting for the evening and a computer.</li>
-    </ul>
-  </ShowcaseSection>
+      <!-- EYEBROW: story type + build time. Edit the label / badge text here. -->
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border-subtle pb-4">
+        <div class="flex items-center gap-2">
+          <span class="inline-block h-2 w-2 bg-brand-500" aria-hidden="true"></span>
+          <span class="text-xs font-bold uppercase tracking-wider text-text-muted sm:text-sm">
+            <a href="/systems" class="focus-ring rounded-sm hover:text-text-primary">Case study</a> // Logistics and fuel distribution
+          </span>
+        </div>
+        <span class="badge badge-muted">Build time: 2 weeks</span>
+      </div>
 
-  <!-- THE RESEARCH -->
-  <ShowcaseSection label="The Research" heading="What Was Actually in the File">
-    <p>Before a single line of code: a deep, script-based analysis of the file. The file itself was never opened "by hand" — it was too big and too fragile for that. The findings dictated the entire architecture.</p>
-    <p>There was no master data at all. No customer list, no supplier list, no invoice table. Every business entity existed only as free text inside delivery rows. The schema had to be derived, not copied.</p>
-    <p>Real scope: ~1,900 delivery rows total — the volume of records the investigation into how the business actually operated had to untangle and match, not an annual rate. Diesel — few large deliveries (commercial, hundreds to thousands of liters); heating oil — many small deliveries (retail heating), only showing up October through March. Two product lines with opposite characters, in the same file.</p>
-    <p>Data quality — a real minefield:</p>
-    <ul>
-      <li>Dates in 4 different formats, including malformed entries like <code>26/11*2025</code> and <code>16/092025</code>, plus outright wrong years (<code>2925</code>, <code>3036</code>); the header row sat on a different line number in every sheet.</li>
-      <li>~916 different spellings for customer names — the same customer appearing in 3+ variants.</li>
-      <li>The "invoice" column held a real number in newer sheets and the word "issued" (a status word, not a number) in older ones.</li>
-      <li>Multi-value cells ("697+698" — two delivery notes crammed into one cell), and two separate "quantity" columns in the same sheet (in vs. out).</li>
-      <li>The "paid" column mixed status, payment method, installment plan, and reminders ("pick up check 05.03") — all in a single cell.</li>
-    </ul>
-    <p>A surprising finding worth its own feature: tucked in the corner of every sheet was a free-text note about that month's purchase-price change ("up 22 agorot," "down 46 agorot"). A genuinely critical business figure, living as a margin note. In the new system, it became its own table with a dedicated screen.</p>
-  </ShowcaseSection>
+      <!-- HERO: the outcome in one line + real numbers. -->
+      <section class="reveal mb-12 sm:mb-16">
+        <h1 class="mb-6 text-3xl font-black leading-[1.15] tracking-tight text-text-primary sm:text-5xl">
+          From 21 messy Excel sheets to an orders, notes, and collections system that runs from the phone,
+          <span class="underline decoration-brand-500 decoration-4 underline-offset-8">in two weeks.</span>
+        </h1>
+        <p class="mb-8 max-w-3xl text-lg leading-relaxed text-text-soft sm:text-xl">
+          How a family diesel and heating-oil distributor (1,100+ customers) stopped losing post-dated checks and notes, connected field delivery notes straight to invoices in Morning, and got full control over every liter and every shekel owed.
+        </p>
 
-  <!-- HARDEST PROBLEM -->
-  <ShowcaseSection label="The Hardest Problem" heading="Deduplicating Hebrew Names" accent="gold">
-    <p>Merging ~916 name variants down to a few hundred real customers, in Hebrew, without steamrolling anyone:</p>
-    <ol>
-      <li>Round 1 — normalization: stripped extra spaces, spacing around hyphens, stray quote marks.</li>
-      <li>Round 2 — spacing-independent similarity: unified hyphenated and compound-word variants.</li>
-      <li>Round 3 — Levenshtein distance + word order + clustering: caught misspellings and word-order swaps. 40 merges came out of this round alone.</li>
-      <li>A human stayed in the loop: every round produced a CSV of proposed merges — nothing merged automatically without sign-off. Rejected merges were remembered, so they wouldn't be proposed a second time.</li>
-      <li>An aliases table: every historical spelling is kept and mapped to its canonical customer, so search and tagging work on the old spelling too. Today: ~1,400 aliases.</li>
-    </ol>
-  </ShowcaseSection>
+        <!-- Numbers bar: edit the `metrics` array in frontmatter. -->
+        <div class="strip-panel grid grid-cols-2 p-0! sm:grid-cols-4">
+          {metrics.map((m, i) => (
+            <div class:list={["border-border-subtle p-4 sm:p-6", metricCellBorder[i]]}>
+              <div class="strip-stat">
+                <p class:list={["text-2xl font-black sm:text-3xl", m.highlight ? "chip-accent-text" : "text-text-primary"]}>{m.value}</p>
+                <p class="mt-1 text-xs font-medium text-text-muted sm:text-sm">{m.label}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
-  <!-- THE MORNING INTEGRATION -->
-  <ShowcaseSection label="Integrations" heading="The Morning Integration">
-    <p>The official API documentation is a single-page app that doesn't load with a plain fetch request — pulling out the actual reference meant reverse-engineering it from the page's own JavaScript. The output was a full mapping document of every relevant endpoint, kept in the project so future work never has to repeat that.</p>
-    <p>The sync itself: a JWT token, then pulling documents (invoices, receipts, credits), then an upsert keyed on the Morning document ID, then linking those documents to customers and balances. Reconciling the historical backlog used a script that verified counts against Morning directly. Delivery-note-to-invoice-to-receipt relationships are modeled many-to-many, because in the real data one invoice can cover several delivery notes, and one delivery note can be split across invoices.</p>
-  </ShowcaseSection>
+      <!-- BEFORE / AFTER: the pain next to the fix. Lists live in frontmatter. -->
+      <section class="mb-16 grid gap-6 sm:mb-20 md:grid-cols-2">
+        <div class="reveal strip-panel cs-panel-bad sm:p-8!">
+          <div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle pb-3">
+            <h2 class="text-xl font-black text-text-primary">How the business ran before</h2>
+            <span class="badge badge-danger">21 Excel sheets</span>
+          </div>
+          <p class="mb-5 text-sm text-text-muted">
+            Two people running thousands of diesel deliveries to contractors and bakeries, plus heating oil for homes in winter. All from one huge, fragile Excel file that doesn't talk to the bookkeeping:
+          </p>
+          <ul class="space-y-3.5 text-sm text-text-soft sm:text-base">
+            {before.map((item) => (
+              <li class="flex items-start gap-2.5">
+                <svg class="text-danger mt-1 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                  <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+                </svg>
+                <span><strong class="text-text-primary">{item.lead}</strong> {item.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-  <!-- WORKING WITH AI AGENTS -->
-  <ShowcaseSection label="Process" heading="Working With AI Agents — What It Looked Like in Practice">
-    <p>The project was built developer-led, with AI agents doing the work, on a few principles that held up:</p>
-    <ul>
-      <li>Hard rules in guidance files: never open the spreadsheet in the main working context (it burns context budget), never run a heavy process without approval (the machine is load-sensitive), no pill shapes in the design. A rule written once got enforced in every session after.</li>
-      <li>Internal skills for repeated procedures: how to run a migration, how to verify results without overloading the machine, Morning-specific conventions — written once as reusable skills, loaded by any agent when needed.</li>
-      <li>Memory across sessions: decisions and constraints are kept in memory files. Even when a session got wiped mid-project (it happened), the context survived.</li>
-      <li>A human approves, an agent executes: customer merges, data deletions, and deployments always went through a human sign-off at the decision point.</li>
-    </ul>
-  </ShowcaseSection>
+        <div class="reveal strip-panel cs-panel-good sm:p-8!" style="--reveal-delay: 100">
+          <div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle pb-3">
+            <h2 class="text-xl font-black text-text-primary">How it runs today</h2>
+            <span class="badge badge-brand">Custom web system</span>
+          </div>
+          <p class="mb-5 text-sm text-text-muted">
+            No training courses, no changing how the business works: we built a fully Hebrew operations system on top of their historical data that works smoothly on any phone:
+          </p>
+          <ul class="space-y-3.5 text-sm text-text-soft sm:text-base">
+            {after.map((item) => (
+              <li class="flex items-start gap-2.5">
+                <svg class="chip-accent-text mt-1 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <span><strong class="text-text-primary">{item.lead}</strong> {item.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
 
+      <!--
+        SCREENSHOTS: three real screens (Hebrew UI), natural scroll.
+        Images live in /public/images/case-studies/fuel/ (shared with HE).
+      -->
+      <section class="mb-16 sm:mb-24">
+        <div class="mb-8">
+          <span class="text-xs font-bold uppercase tracking-wider text-text-muted">The system at work</span>
+          <h2 class="mt-1 text-2xl font-black text-text-primary sm:text-3xl">
+            A look inside: the screens that replaced Excel and WhatsApp
+          </h2>
+          <p class="mt-1 max-w-2xl text-sm text-text-muted sm:text-base">
+            No complicated menus, no features nobody uses. One system for the office work and the driver's entries from the field.
+          </p>
+        </div>
+
+        <!-- Screen 1: desktop orders board, full width -->
+        <figure class="reveal cs-frame mb-8">
+          <div class="cs-frame-bar">
+            <div class="flex items-center gap-2">
+              <span class="inline-block h-2 w-2 rounded-full bg-surface-700" aria-hidden="true"></span>
+              <span class="inline-block h-2 w-2 rounded-full bg-surface-700" aria-hidden="true"></span>
+              <span class="inline-block h-2 w-2 rounded-full bg-surface-700" aria-hidden="true"></span>
+              <span class="ms-2 font-bold text-text-primary">1. The main office screen: orders, delivery notes, and liters balance</span>
+            </div>
+            <span class="chip-accent-text hidden font-bold sm:inline">● Synced automatically with Morning</span>
+          </div>
+          <img
+            src="/images/case-studies/fuel/01-orders-board.webp"
+            alt="Orders board and delivery notes in the fuel distribution system"
+            width="2560"
+            height="1600"
+            loading="lazy"
+            decoding="async"
+            class="block h-auto w-full bg-white"
+          />
+          <figcaption class="flex flex-col justify-between gap-2 border-t border-border-subtle px-4 py-3.5 text-xs sm:flex-row sm:items-center sm:px-6 sm:text-sm">
+            <span class="font-bold text-text-primary">Everything at a glance:</span>
+            <span class="text-text-muted">Every delivery note is matched automatically to its invoice and receipt in Morning. Open debts show up in red right away.</span>
+          </figcaption>
+        </figure>
+
+        <!-- Screens 2 + 3: notes/checks window (7 cols) next to the phone (5 cols) -->
+        <div class="grid items-start gap-8 lg:grid-cols-12">
+
+          <div class="space-y-6 lg:col-span-7">
+            <figure class="reveal cs-frame">
+              <div class="cs-frame-bar">
+                <span class="font-bold text-text-primary">2. Notes board, post-dated checks, and payment reminders</span>
+                <span class="badge badge-gold">No more notes in Excel</span>
+              </div>
+              <img
+                src="/images/case-studies/fuel/02-notes-and-checks.webp"
+                alt="Notes board with payment follow-ups and post-dated checks"
+                width="2400"
+                height="1500"
+                loading="lazy"
+                decoding="async"
+                class="block h-auto w-full bg-white"
+              />
+              <figcaption class="border-t border-border-subtle p-5">
+                <h3 class="mb-1.5 text-base font-black text-text-primary sm:text-lg">
+                  No post-dated check or payment promise falls through the cracks
+                </h3>
+                <p class="text-xs leading-relaxed text-text-muted sm:text-sm">
+                  In the old Excel, notes like <em>"pick up check on 05.03"</em> or <em>"collect the balance after the holiday"</em> were typed into a text cell and forgotten. In the new system every note like that is a live note linked to the customer, with a real-time reminder.
+                </p>
+              </figcaption>
+            </figure>
+
+            <!-- Side note: the price-change margin notes that became a feature -->
+            <div class="reveal strip-panel sm:p-6!">
+              <div class="chip-accent-text mb-1 text-xs font-bold uppercase">Built for how the business really works</div>
+              <h3 class="mb-2 text-base font-black text-text-primary sm:text-lg">
+                Even the margin notes in Excel became a working tool
+              </h3>
+              <p class="text-xs leading-relaxed text-text-muted sm:text-sm">
+                When we analyzed the customer's Excel, we found that in the corner of every monthly sheet he'd jot a small note: <em>"purchase price up 22 agorot"</em> or <em>"down 46 agorot"</em>. We turned that into a built-in mechanism that calculates the margin on every liter of diesel and heating oil automatically.
+              </p>
+            </div>
+          </div>
+
+          <!-- Screen 3: phone mockup -->
+          <figure class="reveal flex flex-col items-center lg:col-span-5" style="--reveal-delay: 100">
+            <div class="cs-phone">
+              <div class="cs-phone-screen">
+                <img
+                  src="/images/case-studies/fuel/03-mobile-field-view.webp"
+                  alt="Mobile field view: entering a delivery note"
+                  width="1170"
+                  height="2532"
+                  loading="lazy"
+                  decoding="async"
+                  class="block h-auto w-full"
+                />
+              </div>
+            </div>
+            <figcaption class="mt-3 max-w-[300px] text-center">
+              <div class="text-xs font-black text-text-primary">3. Entry from the phone in the field, in 15 seconds</div>
+              <p class="mt-0.5 text-xs text-text-muted">
+                The driver enters the delivery note while fueling. It shows up in the office right away, updates the liters balance, and opens a payment note.
+              </p>
+            </figcaption>
+          </figure>
+
+        </div>
+      </section>
+
+      <!-- OBJECTION: "my Excel is a mess". Three steps live in frontmatter. -->
+      <section class="mb-16 border-t border-border-subtle pt-12 sm:mb-20">
+        <h2 class="mb-3 text-2xl font-black text-text-primary sm:text-3xl">
+          "But Eyal, my Excel is years of mess. How do you move it all without losing a shekel?"
+        </h2>
+        <p class="mb-8 max-w-3xl text-base text-text-soft sm:text-lg">
+          An owner's biggest fear is having to clean up the Excel, or shutting the business down for two months. In this project, <strong class="text-text-primary">the owner didn't have to fix a single row himself.</strong> We took the file as it was and did the grunt work behind the scenes:
+        </p>
+        <div class="grid gap-6 sm:grid-cols-3">
+          {steps.map((s, i) => (
+            <div class="reveal strip-panel sm:p-6!" style={`--reveal-delay: ${i * 100}`}>
+              <div class="mb-2 text-xs font-black uppercase text-text-muted">{s.label}</div>
+              <h3 class="mb-2 text-lg font-black text-text-primary">{s.title}</h3>
+              <p class="text-sm leading-relaxed text-text-soft">{s.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- PRICE & TIME ANCHOR: why this vs. a software house. Owner's figures. -->
+      <section class="reveal strip-panel cs-panel-ink sm:p-10!">
+        <div class="grid items-center gap-6 md:grid-cols-12">
+          <div class="md:col-span-8">
+            <span class="chip-accent-text text-xs font-black uppercase tracking-wider">Why work this way?</span>
+            <h2 class="mb-3 mt-1 text-2xl font-black text-text-primary sm:text-3xl">
+              A typical software house quotes a project like this at <span class="text-danger line-through decoration-2">₪60,000</span> and 4 months of specs.
+            </h2>
+            <p class="text-sm leading-relaxed text-text-soft sm:text-base">
+              You don't need to pay for office towers, project managers, and 10 exhausting spec meetings. With a focused way of working, I build your business a custom system <strong class="text-text-primary">in two to three weeks</strong>, on a sane budget fixed in advance (₪4,000 to ₪20,000, depending on scope).
+            </p>
+          </div>
+          <div class="border-t border-border-subtle pt-4 md:col-span-4 md:border-s md:border-t-0 md:ps-6 md:pt-0">
+            <div class="text-sm font-bold text-text-muted">What's needed from you?</div>
+            <ol class="mt-2 space-y-2 text-sm font-bold text-text-primary">
+              <li>1. A short 15-minute call</li>
+              <li>2. One meeting where you show me your Excel / current workflow</li>
+              <li class="chip-accent-text">3. That's it. From there it's on me until the system is live.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- CONTACT: site-wide lead form (WhatsApp button sits under the form). -->
   <ContactForm
-    slot="cta"
-    heading="Recognize your own business in this?"
-    subheading="A short conversation about how your business actually runs today — no pitch prepared in advance."
-    submitLabel="Start a diagnostic conversation"
-    reassurance="No cost, no commitment — just an honest look at your setup."
+    heading="Recognize your own business in this story?"
+    subheading="Let's spend 15 minutes looking at your spreadsheets or workflow as they are today. No prepared pitch, no commitment. You'll leave with a clear plan and a fixed price."
+    fields={fields}
+    submitLabel="Book a short discovery call (free)"
+    reassurance=""
+    whatsappFormLabel="Message me directly on WhatsApp"
     source="systems-fuel-distribution"
+    contactMethods={[
+      { id: "phone", label: "Phone" },
+      { id: "whatsapp", label: "WhatsApp" },
+      { id: "email", label: "Email" },
+      { id: "telegram", label: "Telegram" },
+    ]}
   />
-
-</ShowcaseLayout>
+</Layout>

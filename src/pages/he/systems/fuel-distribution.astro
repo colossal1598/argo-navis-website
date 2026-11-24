@@ -1,150 +1,338 @@
 ---
 /*
-  PAGE GOAL (HE): flagship case study, Hebrew. Mirrors
-  /systems/fuel-distribution exactly, section for section, via the same
-  ShowcaseLayout structured props (metrics, decisions, resultsTable +
-  resultsCallout, takeaways) and narrative ShowcaseSection blocks — no
-  hand-copied markup.
+  PAGE GOAL (HE): flagship case study, rewritten 2026-11-24 from the
+  owner's new copy + layout draft. Before/after pain, real screenshots,
+  how the messy Excel was handled, a price/time anchor, then the
+  diagnostic-conversation form. Converts to the ContactForm below.
 
-  Copy source: .apm/memory/copy/he/case-study-fuel-he.md — re-read that
-  file before editing any string below; it is the approved source of
-  truth, not this file. That file is the authentic Hebrew original (not
-  a re-translation from the EN adaptation) with three documented,
-  intentional divergences from the pure original (dev-metric removal,
-  a small non-technical wording swap, and a number-framing correction)
-  — see its own header comment for detail. Anonymized throughout as
-  "עסק משפחתי להפצת דלק" — no client name, no domain, anywhere.
+  Copy source: owner-supplied draft (ai_studio_code (4).html, 2026-11-24).
+  Edits vs. the draft: em/en dashes removed (site rule), one Arabic
+  letter typo fixed ("נכתבות"), "(לא חובה)" dropped from the message
+  field because the lead API requires a message.
+
+  Anonymized: "עסק משפחתי להפצת סולר ונפט". No client name or domain.
+  Screenshots show the demo build ("העסק שלך") with sample data.
   Source tag: systems-fuel-distribution-he (existing leads.ts key).
+
+  NOTE: the EN mirror (/systems/fuel-distribution) still has the old
+  structure and the "7 days" framing. It is no longer a 1:1 mirror.
 */
-import ShowcaseLayout from "../../../layouts/ShowcaseLayout.astro";
-import ShowcaseSection from "../../../components/ShowcaseSection.astro";
+import Layout from "../../../layouts/Layout.astro";
 import ContactForm from "../../../components/ContactForm.astro";
 
+/* Hero numbers bar. Last item is highlighted (the ₪0 running cost). */
 const metrics = [
-  { value: "7 ימים", label: "זמן פיתוח" },
-  { value: "~870", label: "תעודות משלוח במסד הנתונים" },
-  { value: "~1,180", label: "לקוחות אחרי דה-דופליקציה" },
-  { value: "₪0/חודש", label: "עלות תשתית" },
+  { value: "שבועיים", label: "מאקסל כאוטי למערכת חיה" },
+  { value: "1,180+", label: "כרטסות לקוח שנוקו ואוחדו" },
+  { value: "100%", label: "סנכרון אוטומטי ל-Morning" },
+  { value: "0 ₪ / חודש", label: "עלות שרתי תשתית ודמי מנוי", highlight: true },
 ];
 
-const decisions = [
-  { decision: "אין backend. Next.js static export + Supabase מנוהל", why: "שני משתמשים מאומתים; RLS עושה את האבטחה. אפס תחזוקת שרתים לעסק משפחתי." },
-  { decision: "Cloudflare Pages לאירוח", why: "קבצים סטטיים, חינם, מהיר — דומיין הלקוח נשאר אצל הרשם." },
-  { decision: "Edge Function יחיד לסנכרון מורנינג", why: "המקום היחיד שדורש סוד (מפתחות API) — לא בקוד הלקוח." },
-  { decision: "Untitled UI (React + Tailwind), מותאם", why: "לא עוד \"לוק AI גנרי\"; RTL מלא, ללא צורות pill, פונט Heebo." },
-  { decision: "מובייל תחילה בזרימה הקריטית", why: "הזנת תעודה מהשטח בטלפון — הפיצ'ר שסביבו הכול נבנה." },
-  { decision: "Provenance על כל רשומה", why: "כל שורה שיובאה נושאת גיליון ושורה מקוריים, כך שכל ספרה אפשר לאמת מול המקור." },
+/* Borders between metric cells: 2×2 grid on mobile, 4 in a row from sm. */
+const metricCellBorder = [
+  "",
+  "border-s",
+  "border-t sm:border-t-0 sm:border-s",
+  "border-s border-t sm:border-t-0",
 ];
 
-const resultsTable = [
-  { metric: "זמן פיתוח", value: "7 ימים" },
-  { metric: "תעודות משלוח ב-DB", value: "~870 (כל 2026)" },
-  { metric: "העמסות ספק", value: "~160" },
-  { metric: "לקוחות אחרי דה-דופליקציה", value: "~1,180 (מ-~916 וריאציות אקסל + לקוחות מורנינג)" },
-  { metric: "aliases משומרים", value: "~1,400" },
-  { metric: "מסמכי מורנינג מסונכרנים", value: "~940" },
-  { metric: "שרתים לתחזוקה", value: "0" },
-  { metric: "עלות תשתית חודשית", value: "₪0 (שכבות חינם: Supabase, Cloudflare Pages, GitHub Actions)" },
+/* BEFORE list. <strong> lead-in + plain text. */
+const before = [
+  { lead: "\"מי עדיין לא שילם לנו?\"", text: "כדי לענות על זה, בעל העסק היה צריך לעבור ידנית גיליון-גיליון ולהצליב מהזיכרון מול חשבוניות ב\"מורנינג\"." },
+  { lead: "צ'קים דחויים ופתקים שנשכחו:", text: "הערות כמו \"לקחת צ'ק ל-05.03\" או פריסת תשלומים נכתבו כטקסט חופשי בתוך תא באקסל ונעלמו מהרדאר." },
+  { lead: "אפס בקרה על מלאי ליטרים:", text: "אי אפשר היה לדעת ברגע נתון כמה ליטר סולר נמשך מהספק לעומת כמה נפרק בפועל אצל הלקוחות." },
+  { lead: "עבודה כפולה בערב:", text: "תעודת משלוח מהשטח חיכתה על נייר או בוואטסאפ עד שיגיעו בערב למחשב להקליד אותה." },
 ];
 
-const takeaways = [
-  "לנתח את הנתונים לפני הסכמה. יום שלם של פרופיילינג לאקסל חסך שבועות של הפתעות — הסכמה נגזרה מהמציאות, לא מהדמיון.",
-  "טקסט חופשי הוא לעולם לא \"רק שדה\". עמודת \"שולם\" אחת התפרקה לסטטוס + אמצעי + פריסה + הערות. זה היה רוב עבודת החילוץ.",
-  "דה-דופליקציה בעברית צריכה אדם בלולאה. אלגוריתם מציע, בעל-הנתונים מאשר. וכל כתיב ישן נשמר כ-alias.",
-  "הארכיטקטורה הכי טובה לעסק קטן היא זו שאין בה מה לתחזק. אפס שרתים, אפס עלות, גיבוי אוטומטי.",
-  "מגבלות סביבה הן פיצ'ר תכנון. מכונת פיתוח חלשה כפתה משמעת: typecheck במקום build, תהליך אחד בכל רגע, cloud-first.",
-  "כללים כתובים > זיכרון. בעבודה עם סוכני AI, כל חוק שנכתב לקובץ הנחיה הפסיק להישבר.",
+/* AFTER list. */
+const after = [
+  { lead: "לוח הזמנות והזנה ב-15 שניות מהשטח:", text: "הנהג או בעל העסק מזינים ליטרים ולקוח ישר מהנייד בזמן התדלוק." },
+  { lead: "הצלבה אוטומטית ל\"מורנינג\":", text: "המערכת מושכת אוטומטית חשבוניות וקבלות ומראה מיד יתרת חוב אמיתית לכל לקוח." },
+  { lead: "לוח פתקים חכם וצ'קים דחויים:", text: "מעקב מסודר אחרי כל פתק, הבטחת תשלום או צ'ק דחוי שמתקרב למועד הפירעון." },
+  { lead: "מאזן ליטרים ורווחיות בלחיצת כפתור:", text: "השוואה חיה בין העמסות ספק לפריקות אצל לקוחות, כולל מעקב שינויי מחיר קנייה חודשיים." },
+];
+
+/* HOW WE DID IT: three steps. */
+const steps = [
+  {
+    label: "שלב 01 // ניקוי הבלגן",
+    title: "איחוד 916 שמות כפולים ושגיאות הקלדה",
+    text: "באקסל הישן אותו לקוח הופיע ב-4 וריאציות שונות (עם מקף, בלי מקף, שגיאת כתיב, או תאריכים משובשים). בנינו מנגנון שמיזג אותם לכרטסת לקוח אחת נקייה, ועדיין זוכר את כל הכינויים הישנים בחיפוש.",
+  },
+  {
+    label: "שלב 02 // פירוק הערות גבייה",
+    title: "הפיכת \"טקסט חופשי\" לפתקים חכמים",
+    text: "עמודת \"שולם\" באקסל הכילה הערות מעורבבות כמו \"שולם חצי + לקחת צ'ק ב-05.03\". פירקנו אוטומטית כל הערה כזו לסטטוס תשלום מדויק, פריסת צ'קים ופתק תזכורת במערכת.",
+  },
+  {
+    label: "שלב 03 // אפס דמי תחזוקה",
+    title: "בלי דמי מנוי חודשיים ובלי שרתים קורסים",
+    text: "המערכת הוקמה על תשתית ענן מאובטחת עם גיבוי אוטומטי מלא, בלי שרתים שצריך לתחזק ובלי לשלם אלפי שקלים בחודש על רישיונות למשתמשים. כל נתון במערכת מקושר לשורת המקור שלו באקסל לאימות מלא.",
+  },
+];
+
+/* Contact form fields. email + message are required by api/leads.ts. */
+const fields = [
+  { id: "name", label: "שם מלא", type: "text" as const, placeholder: "למשל: יוסי לוי", required: true },
+  { id: "email", label: "אימייל", type: "email" as const, placeholder: "you@business.com", required: true },
+  {
+    id: "message",
+    label: "במשפט אחד: מה הכי תוקע את התפעול שלכם היום?",
+    type: "text" as const,
+    placeholder: "למשל: מעקב הזמנות וגבייה באקסל / חיבור למורנינג או פריוריטי...",
+    required: true,
+  },
 ];
 ---
 
-<ShowcaseLayout
-  title="מאקסל כאוטי למערכת ניהול מלאה בשבוע אחד"
-  description="עסק משפחתי להפצת דלק רץ על 21 גיליונות אקסל. הנה הסיפור המלא של המערכת שהחליפה אותם בשבוע פיתוח אחד — מספרים אמיתיים, החלטות ארכיטקטורה אמיתיות, בלי פרטים מזהים."
+<Layout
+  title="סיפור לקוח: מערכת תפעול וגבייה לחברת הפצת דלקים"
+  description="איך עסק משפחתי להפצת סולר ונפט (למעלה מ-1,100 לקוחות) עבר מ-21 גיליונות אקסל למערכת הזמנות, פתקים וגבייה שעובדת מהנייד, מחוברת למורנינג, תוך שבועיים."
   locale="he"
   dir="rtl"
-  service="מערכות"
-  serviceHref="/he/systems"
-  headline="מאקסל כאוטי למערכת ניהול מלאה בשבוע אחד"
-  subheadline="עסק משפחתי שמפיץ דלק ללקוחות מסחריים ופרטיים: סולר לחברות בנייה, מאפיות ומשקים; נפט לחימום ביתי בחורף."
-  metaLine={{
-    project:     "מערכת ניהול לעסק משפחתי להפצת דלק (סולר ונפט)",
-    scope:       "שבוע פיתוח אחד, מפתח אחד + סוכני AI",
-    result:      "בפרודקשן — כ-870 תעודות משלוח, ~1,180 לקוחות, ~940 מסמכי הנהלת חשבונות מסונכרנים",
-    disclaimer:  "כל הנתונים במסמך — סדרי גודל אמיתיים, ללא שמות וללא נתונים כספיים.",
-  }}
-  metrics={metrics}
-  tags={["Next.js", "Supabase", "Cloudflare Pages", "Morning API"]}
-  decisions={decisions}
-  resultsTable={resultsTable}
-  resultsCallout={"ומה שלא נמדד במספרים: תעודה נכנסת מהטלפון בשטח; \"מי לא שילם\" זו שאילתה ולא ערב של גיליונות; צ'ק דחוי צץ בדשבורד לפני מועד הפירעון; ופער פריקות/העמסות גלוי לראשונה."}
-  takeaways={takeaways}
 >
+  <main class="section-sheen bg-surface-950 px-4 pb-section-md pt-10 sm:px-6 sm:pt-16">
+    <div class="mx-auto max-w-5xl">
 
-  <!-- הרקע -->
-  <ShowcaseSection label="הרקע" heading="עסק אמיתי, כלים של פעם">
-    <p>עסק משפחתי שמפיץ דלק ללקוחות מסחריים ופרטיים: סולר לחברות בנייה, מאפיות ומשקים; נפט לחימום ביתי בחורף. שני אנשים מנהלים את הכל, בלי רקע טכני, בעיקר מהטלפון.</p>
-    <p>כל התפעול חי בקובץ אקסל אחד: 21 גיליונות, גיליון לכל חודש לכל מוצר. כל שורה — משלוח: תאריך, מספר תעודה, ליטרים, יישוב, שם לקוח, מספר חשבונית, וסטטוס תשלום בטקסט חופשי. לצד זה — הנהלת חשבונות בענן (מורנינג / Green Invoice) שאינה מדברת עם האקסל בכלל: כל הצלבה בין תעודה לחשבונית לקבלה נעשית ידנית, בזיכרון.</p>
-    <p>הכאבים המדויקים שהעסק תיאר:</p>
-    <ul>
-      <li>"מי עוד לא שילם?" — אין תשובה בלי לעבור גיליון-גיליון.</li>
-      <li>צ'קים דחויים (לפעמים חצי שנה קדימה) נרשמים בהערת טקסט ונשכחים.</li>
-      <li>אין תמונת מלאי: כמה נכנס מהספק מול כמה נמכר.</li>
-      <li>הזנת תעודה מהשטח = לחכות לערב ולמחשב.</li>
-    </ul>
-  </ShowcaseSection>
+      <!-- EYEBROW: story type + build time. Edit the label / badge text here. -->
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border-subtle pb-4">
+        <div class="flex items-center gap-2">
+          <span class="inline-block h-2 w-2 bg-brand-500" aria-hidden="true"></span>
+          <span class="text-xs font-bold tracking-wider text-text-muted sm:text-sm">
+            <a href="/he/systems" class="focus-ring rounded-sm hover:text-text-primary">סיפור לקוח</a> // לוגיסטיקה והפצת דלקים
+          </span>
+        </div>
+        <span class="badge badge-muted">זמן הקמה: שבועיים</span>
+      </div>
 
-  <!-- המחקר -->
-  <ShowcaseSection label="המחקר" heading="מה באמת יש בקובץ">
-    <p>לפני שורת קוד אחת — ניתוח עומק של הקובץ בסקריפטים (הקובץ עצמו מעולם לא נפתח "ביד" — הוא גדול מדי ושביר מדי). הממצאים הכתיבו את כל הארכיטקטורה.</p>
-    <p>אין שום master data. אין רשימת לקוחות, אין רשימת ספקים, אין טבלת חשבוניות. כל ישות עסקית קיימת רק כטקסט חופשי בתוך שורות משלוח. את הסכמה צריך <strong>לגזור</strong>, לא להעתיק.</p>
-    <p>היקפים אמיתיים: ~1,900 שורות משלוח בסך הכל — היקף העבודה שהמחקר על התפעול של העסק היה צריך לפרוש ולהתאים, לא קצב שנתי. סולר — מעט משלוחים גדולים (מסחרי, מאות עד אלפי ליטרים); נפט — המון משלוחים קטנים (קמעונאי-חימום), שמופיעים רק אוקטובר–מרץ. שני קווי מוצר עם אופי הפוך — באותו קובץ.</p>
-    <p>איכות הנתונים — שדה מוקשים אמיתי:</p>
-    <ul>
-      <li>תאריכים ב-4 פורמטים שונים, כולל <code>26/11*2025</code>, <code>16/092025</code>, ושנים שגויות (<code>2925</code>, <code>3036</code>); שורת הכותרת בכל גיליון בשורה אחרת (1, 2 או 4).</li>
-      <li>~916 כתיבי שם לקוח שונים — שאותו לקוח מופיע בהם ב-3+ וריאציות כתיב.</li>
-      <li>עמודת "חשבונית" מכילה מספר אמיתי בגיליונות החדשים ו"יצא" (מילת סטטוס) בישנים.</li>
-      <li>תאים מרובי ערכים ("697+698" — שתי תעודות בתא), שתי עמודות "כמות" באותו גיליון (נכנס מול יוצא).</li>
-      <li>עמודת "שולם" מערבבת סטטוס, אמצעי תשלום, פריסת תשלומים ותזכורות ("לקחת צק 05.03") — הכל בתא אחד.</li>
-    </ul>
-    <p>ממצא מפתיע ששווה מוצר: בפינת כל גיליון מסתתרת הערה חופשית על שינוי מחיר הקנייה החודשי ("עליה 22 אג'", "ירידה 46 אגורות"). נתון עסקי קריטי — שחי כהערת שוליים. במערכת הוא הפך לטבלה ייעודית עם UI.</p>
-  </ShowcaseSection>
+      <!-- HERO: the outcome in one line + real numbers. -->
+      <section class="reveal mb-12 sm:mb-16">
+        <h1 class="mb-6 text-3xl font-black leading-[1.18] tracking-tight text-text-primary sm:text-5xl">
+          מ-21 גיליונות אקסל מבולגנים למערכת הזמנות, פתקים וגבייה שמתקתקת מהנייד,
+          <span class="underline decoration-brand-500 decoration-4 underline-offset-8">תוך שבועיים.</span>
+        </h1>
+        <p class="mb-8 max-w-3xl text-lg leading-relaxed text-text-soft sm:text-xl">
+          איך עסק משפחתי להפצת סולר ונפט (למעלה מ-1,100 לקוחות) הפסיק לאבד צ'קים דחויים ופתקים, חיבר את תעודות המשלוח מהשטח ישירות לחשבוניות ב"מורנינג", וקיבל שליטה מלאה על כל ליטר וכל שקל שחייבים לו.
+        </p>
 
-  <!-- האתגר הכי קשה -->
-  <ShowcaseSection label="האתגר הכי קשה" heading="דה-דופליקציה של שמות בעברית" accent="gold">
-    <p>מיזוג ~916 וריאציות שם ל-מאות לקוחות אמיתיים, בעברית, בלי לדרוס אף אחד:</p>
-    <ol>
-      <li>סבב 1 — נורמליזציה: רווחים עודפים, ריווח סביב מקפים, גרשיים.</li>
-      <li>סבב 2 — דמיון לא תלוי-רווחים: איחוד וריאנטים של מקפים/צירופים.</li>
-      <li>סבב 3 — מרחק Levenshtein + סדר מילים + אשכולות: תפיסת שגיאות כתיב והיפוכי מילים. 40 מיזוגים בסבב הזה בלבד.</li>
-      <li>אדם בלולאה: כל סבב מייצר CSV הצעות; שום מיזוג אוטומטי לא רץ בלי אישור. מיזוגים שנפסלו — נשמרים כדי לא להציע שוב.</li>
-      <li>טבלת aliases: כל כתיב היסטורי נשמר וממופה ללקוח הקנוני — חיפוש ותיוג עובדים גם על הכתיב הישן. כיום: ~1,400 aliases.</li>
-    </ol>
-  </ShowcaseSection>
+        <!-- Numbers bar: edit the `metrics` array in frontmatter. -->
+        <div class="strip-panel grid grid-cols-2 p-0! sm:grid-cols-4">
+          {metrics.map((m, i) => (
+            <div class:list={["border-border-subtle p-4 sm:p-6", metricCellBorder[i]]}>
+              <div class="strip-stat">
+                <p class:list={["text-2xl font-black sm:text-3xl", m.highlight ? "chip-accent-text" : "text-text-primary"]}>{m.value}</p>
+                <p class="mt-1 text-xs font-medium text-text-muted sm:text-sm">{m.label}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
-  <!-- אינטגרציית מורנינג -->
-  <ShowcaseSection label="אינטגרציות" heading="אינטגרציית מורנינג">
-    <p>תיעוד ה-API הרשמי הוא SPA שלא נפתח ב-fetch רגיל — נדרש חילוץ של ה-reference דרך ה-JS. התוצר: מסמך מיפוי מלא בעברית של כל endpoint רלוונטי, שנשמר בריפו כתשתית לכל עבודה עתידית.</p>
-    <p>הסנכרון: טוקן JWT, משיכת מסמכים (חשבוניות, קבלות, זיכויים), upsert לפי מזהה מורנינג, קישור ללקוחות וליתרות. הצלבת העבר נעשתה עם סקריפט reconciliation שאימת ספירות מול מורנינג. קשרי תעודה↔חשבונית↔קבלה ממודלים רבים-לרבים — כי בנתונים האמיתיים חשבונית אחת מכסה כמה תעודות, ותעודה אחת מתפצלת בין חשבוניות.</p>
-  </ShowcaseSection>
+      <!-- BEFORE / AFTER: the pain next to the fix. Lists live in frontmatter. -->
+      <section class="mb-16 grid gap-6 sm:mb-20 md:grid-cols-2">
+        <div class="reveal strip-panel cs-panel-bad sm:p-8!">
+          <div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle pb-3">
+            <h2 class="text-xl font-black text-text-primary">איך העסק התנהל קודם (הכאב)</h2>
+            <span class="badge badge-danger">21 גיליונות אקסל</span>
+          </div>
+          <p class="mb-5 text-sm text-text-muted">
+            שני אנשים מנהלים אופרציה של אלפי משלוחי סולר לקבלנים ומאפיות, ונפט לחימום ביתי בחורף. הכל מתוך קובץ אקסל ענק ושביר שלא מדבר עם הנהלת החשבונות:
+          </p>
+          <ul class="space-y-3.5 text-sm text-text-soft sm:text-base">
+            {before.map((item) => (
+              <li class="flex items-start gap-2.5">
+                <svg class="text-danger mt-1 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                  <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+                </svg>
+                <span><strong class="text-text-primary">{item.lead}</strong> {item.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-  <!-- עבודה עם סוכני AI -->
-  <ShowcaseSection label="תהליך" heading="עבודה עם סוכני AI — איך זה נראה בפועל">
-    <p>הפרויקט נבנה בשיטת עבודה של מפתח-מנצח + סוכני AI, עם כמה עקרונות שהוכיחו את עצמם:</p>
-    <ul>
-      <li>חוקים קשיחים בקבצי הנחיה: אסור לפתוח את קובץ האקסל בהקשר הראשי (שורף context), אסור להריץ תהליכים כבדים בלי אישור (המכונה רגישת-עומס), אסור pills בעיצוב. חוק שנכתב פעם אחת נאכף בכל סשן.</li>
-      <li>Skills פנימיים: נהלים חוזרים (איך עושים מיגרציה, איך מאמתים בלי להפיל את המכונה, מוסכמות מורנינג) נכתבו כ-skills שכל סוכן טוען לפי הצורך.</li>
-      <li>זיכרון בין-סשנים: החלטות וטעם ואילוצים נשמרים בקבצי זיכרון — גם כשסשן נמחק (קרה!), ההקשר שורד.</li>
-      <li>אדם מאשר, סוכן מבצע: מיזוגי לקוחות, מחיקות נתונים ופריסות — תמיד עם אישור אנושי בנקודות ההכרעה.</li>
-    </ul>
-  </ShowcaseSection>
+        <div class="reveal strip-panel cs-panel-good sm:p-8!" style="--reveal-delay: 100">
+          <div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle pb-3">
+            <h2 class="text-xl font-black text-text-primary">איך העסק עובד היום (הפתרון)</h2>
+            <span class="badge badge-brand">מערכת Web מותאמת</span>
+          </div>
+          <p class="mb-5 text-sm text-text-muted">
+            בלי קורסים ובלי לשנות לעסק את הרגלי העבודה: בנינו מערכת תפעול בעברית מלאה שיושבת על הנתונים ההיסטוריים שלהם ועובדת חלק מכל טלפון נייד:
+          </p>
+          <ul class="space-y-3.5 text-sm text-text-soft sm:text-base">
+            {after.map((item) => (
+              <li class="flex items-start gap-2.5">
+                <svg class="chip-accent-text mt-1 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <span><strong class="text-text-primary">{item.lead}</strong> {item.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
 
+      <!--
+        SCREENSHOTS: three real screens, natural scroll (no tabs).
+        Images live in /public/images/case-studies/fuel/. Swap a file there
+        to update a screen; keep width/height in sync with the new file.
+      -->
+      <section class="mb-16 sm:mb-24">
+        <div class="mb-8">
+          <span class="text-xs font-bold tracking-wider text-text-muted">המערכת בפעולה</span>
+          <h2 class="mt-1 text-2xl font-black text-text-primary sm:text-3xl">
+            מבט מבפנים: כל המסכים שהחליפו את האקסל והוואטסאפ
+          </h2>
+          <p class="mt-1 max-w-2xl text-sm text-text-muted sm:text-base">
+            בלי תפריטים מסובכים ובלי פיצ'רים מיותרים. מערכת אחת שמרכזת את העבודה במשרד ואת ההזנה של הנהג מהשטח.
+          </p>
+        </div>
+
+        <!-- Screen 1: desktop orders board, full width -->
+        <figure class="reveal cs-frame mb-8">
+          <div class="cs-frame-bar">
+            <div class="flex items-center gap-2">
+              <span class="inline-block h-2 w-2 rounded-full bg-surface-700" aria-hidden="true"></span>
+              <span class="inline-block h-2 w-2 rounded-full bg-surface-700" aria-hidden="true"></span>
+              <span class="inline-block h-2 w-2 rounded-full bg-surface-700" aria-hidden="true"></span>
+              <span class="ms-2 font-bold text-text-primary">1. המסך הראשי במשרד: לוח הזמנות, תעודות משלוח ומאזן ליטרים</span>
+            </div>
+            <span class="chip-accent-text hidden font-bold sm:inline">● מסונכרן אוטומטית עם Morning</span>
+          </div>
+          <img
+            src="/images/case-studies/fuel/01-orders-board.webp"
+            alt="לוח הזמנות ותעודות משלוח - מערכת הפצת דלקים"
+            width="2560"
+            height="1600"
+            loading="lazy"
+            decoding="async"
+            class="block h-auto w-full bg-white"
+          />
+          <figcaption class="flex flex-col justify-between gap-2 border-t border-border-subtle px-4 py-3.5 text-xs sm:flex-row sm:items-center sm:px-6 sm:text-sm">
+            <span class="font-bold text-text-primary">שליטה במבט אחד:</span>
+            <span class="text-text-muted">כל תעודת משלוח מוצלבת אוטומטית לחשבונית וקבלה במורנינג. חובות פתוחים צפים מיד באדום.</span>
+          </figcaption>
+        </figure>
+
+        <!-- Screens 2 + 3: notes/checks window (7 cols) next to the phone (5 cols) -->
+        <div class="grid items-start gap-8 lg:grid-cols-12">
+
+          <div class="space-y-6 lg:col-span-7">
+            <figure class="reveal cs-frame">
+              <div class="cs-frame-bar">
+                <span class="font-bold text-text-primary">2. לוח פתקים, מעקב צ'קים דחויים והתראות גבייה</span>
+                <span class="badge badge-gold">סוף להערות באקסל</span>
+              </div>
+              <img
+                src="/images/case-studies/fuel/02-notes-and-checks.webp"
+                alt="לוח פתקים ומעקב גבייה וצ'קים דחויים"
+                width="2400"
+                height="1500"
+                loading="lazy"
+                decoding="async"
+                class="block h-auto w-full bg-white"
+              />
+              <figcaption class="border-t border-border-subtle p-5">
+                <h3 class="mb-1.5 text-base font-black text-text-primary sm:text-lg">
+                  שום צ'ק דחוי או הבטחת תשלום לא נופלים בין הכיסאות
+                </h3>
+                <p class="text-xs leading-relaxed text-text-muted sm:text-sm">
+                  באקסל הישן, הערות כמו <em>"לקחת צ'ק ב-05.03"</em> או <em>"לגבות יתרה אחרי החג"</em> היו נכתבות בתוך תא טקסט ונשכחות. במערכת החדשה כל הערה כזו היא פתק חי שמקושר ללקוח ומקפיץ תזכורת בזמן אמת.
+                </p>
+              </figcaption>
+            </figure>
+
+            <!-- Side note: the price-change margin notes that became a feature -->
+            <div class="reveal strip-panel sm:p-6!">
+              <div class="chip-accent-text mb-1 text-xs font-bold">מותאם בול למציאות של העסק</div>
+              <h3 class="mb-2 text-base font-black text-text-primary sm:text-lg">
+                אפילו הערות השוליים באקסל הפכו לכלי עבודה
+              </h3>
+              <p class="text-xs leading-relaxed text-text-muted sm:text-sm">
+                כשניתחנו את האקסל של הלקוח, גילינו שבפינה של כל גיליון חודשי הוא היה רושם הערה קטנה: <em>"עלייה של 22 אג' במחיר קנייה"</em> או <em>"ירידה 46 אג'"</em>. הפכנו את זה למנגנון מובנה במערכת שמחשב אוטומטית את מרווח הרווח על כל ליטר סולר ונפט.
+              </p>
+            </div>
+          </div>
+
+          <!-- Screen 3: phone mockup -->
+          <figure class="reveal flex flex-col items-center lg:col-span-5" style="--reveal-delay: 100">
+            <div class="cs-phone">
+              <div class="cs-phone-screen">
+                <img
+                  src="/images/case-studies/fuel/03-mobile-field-view.webp"
+                  alt="תצוגת מובייל מהשטח - הזנת תעודת משלוח"
+                  width="1170"
+                  height="2532"
+                  loading="lazy"
+                  decoding="async"
+                  class="block h-auto w-full"
+                />
+              </div>
+            </div>
+            <figcaption class="mt-3 max-w-[300px] text-center">
+              <div class="text-xs font-black text-text-primary">3. הזנה מהנייד בשטח ב-15 שניות</div>
+              <p class="mt-0.5 text-xs text-text-muted">
+                הנהג מזין את התעודה בזמן התדלוק. הנתון מופיע מיד במשרד, מעדכן מלאי ליטרים ופותח פתק גבייה.
+              </p>
+            </figcaption>
+          </figure>
+
+        </div>
+      </section>
+
+      <!-- OBJECTION: "my Excel is a mess". Three steps live in frontmatter. -->
+      <section class="mb-16 border-t border-border-subtle pt-12 sm:mb-20">
+        <h2 class="mb-3 text-2xl font-black text-text-primary sm:text-3xl">
+          "אבל אייל, באקסל שלי יש בלגן של שנים. איך מעבירים הכל בלי לאבד שקל?"
+        </h2>
+        <p class="mb-8 max-w-3xl text-base text-text-soft sm:text-lg">
+          הפחד הכי גדול של בעל עסק הוא לעשות סדר באקסל או להשבית את העסק לחודשיים. בפרויקט הזה, <strong class="text-text-primary">בעל העסק לא נדרש לסדר שורה אחת באקסל בעצמו.</strong> לקחנו את הקובץ כמו שהוא ועשינו את העבודה השחורה מאחורי הקלעים:
+        </p>
+        <div class="grid gap-6 sm:grid-cols-3">
+          {steps.map((s, i) => (
+            <div class="reveal strip-panel sm:p-6!" style={`--reveal-delay: ${i * 100}`}>
+              <div class="mb-2 text-xs font-black text-text-muted">{s.label}</div>
+              <h3 class="mb-2 text-lg font-black text-text-primary">{s.title}</h3>
+              <p class="text-sm leading-relaxed text-text-soft">{s.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- PRICE & TIME ANCHOR: why this vs. a software house. Owner's figures. -->
+      <section class="reveal strip-panel cs-panel-ink sm:p-10!">
+        <div class="grid items-center gap-6 md:grid-cols-12">
+          <div class="md:col-span-8">
+            <span class="chip-accent-text text-xs font-black tracking-wider">למה לעבוד ככה?</span>
+            <h2 class="mb-3 mt-1 text-2xl font-black text-text-primary sm:text-3xl">
+              בית תוכנה רגיל מתמחר פרויקט כזה ב-<span class="text-danger line-through decoration-2">60,000 ₪</span> ו-4 חודשי אפיון.
+            </h2>
+            <p class="text-sm leading-relaxed text-text-soft sm:text-base">
+              אתה לא צריך לממן משרדים במגדלים, מנהלי פרויקטים ו-10 פגישות אפיון מתישות. בזכות שיטת עבודה ממוקדת, אני בונה לעסק שלך מערכת תפורה אישית <strong class="text-text-primary">תוך שבועיים עד 3 שבועות</strong>, בתקציב שפוי וסגור מראש (בין 4,000 ל-20,000 ₪ בהתאם להיקף).
+            </p>
+          </div>
+          <div class="border-t border-border-subtle pt-4 md:col-span-4 md:border-s md:border-t-0 md:ps-6 md:pt-0">
+            <div class="text-sm font-bold text-text-muted">מה נדרש ממך כבעל העסק?</div>
+            <ol class="mt-2 space-y-2 text-sm font-bold text-text-primary">
+              <li>1. שיחת מיקוד קצרה של 15 דקות</li>
+              <li>2. פגישה אחת שבה תראה לי את האקסל/העבודה הנוכחית</li>
+              <li class="chip-accent-text">3. זהו. משם הכל עליי עד שהמערכת באוויר.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- CONTACT: site-wide lead form (WhatsApp button sits under the form). -->
   <ContactForm
     locale="he"
-    slot="cta"
     heading="מזהים את העסק שלכם בסיפור הזה?"
-    subheading="שיחה קצרה על איך העסק שלכם באמת מתפקד היום — בלי מצגת מוכנה מראש."
-    submitLabel="התחילו שיחת אבחון"
-    reassurance="בלי עלות, בלי התחייבות — רק מבט כנה על המערכת שלכם."
+    subheading="בואו נסתכל יחד 15 דקות על האקסלים או תהליך העבודה שלכם היום. בלי מצגות מוכנות מראש ובלי התחייבות. תצאו עם תוכנית ברורה ומחיר סגור."
+    fields={fields}
+    submitLabel="תיאום שיחת אפיון קצרה (ללא עלות)"
+    reassurance=""
+    whatsappFormLabel="שלחו לי הודעה ישירה בוואטסאפ"
     source="systems-fuel-distribution-he"
     loadingText="שולחים..."
     successText="קיבלנו, נחזור אליכם בהקדם."
@@ -152,18 +340,17 @@ const takeaways = [
     challengeErrorText="יש להשלים את אימות האבטחה לפני שליחה."
     contactMethodLabel="איך נוח לכם שנחזור אליכם?"
     contactMethods={[
-      { id: "email", label: "אימייל" },
       { id: "phone", label: "טלפון" },
-      { id: "telegram", label: "טלגרם" },
       { id: "whatsapp", label: "ווטסאפ" },
+      { id: "email", label: "אימייל" },
+      { id: "telegram", label: "טלגרם" },
     ]}
     contactDetailsRequiredText="צריך למלא פרטי קשר עבור הערוץ שבחרתם."
     contactDetailsPlaceholders={{
       email: "",
-      phone: "מספר טלפון (כולל קידומת)",
+      phone: "050-0000000",
       telegram: "שם משתמש בטלגרם (עם @)",
       whatsapp: "מספר ווטסאפ (כולל קידומת)",
     }}
   />
-
-</ShowcaseLayout>
+</Layout>

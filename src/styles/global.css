@@ -478,6 +478,65 @@ html[data-theme="light"] .strip-stat::before {
 }
 
 /*
+  Case-study page parts (HE fuel-distribution redesign, 2026-11-24).
+  Built on the same depth tokens as `.strip-panel`; defined after it so
+  the start-border modifiers win by source order.
+
+    .cs-panel-bad / -good / -ink — 4px accent on the panel's START edge
+        (logical property, mirrors in RTL): red = "before", brand =
+        "after", text-primary = neutral emphasis (price anchor).
+    .cs-frame / .cs-frame-bar — screenshot "window": raised panel with
+        no padding, clipped corners, and a thin title bar.
+    .cs-phone / .cs-phone-screen — device bezel around the mobile
+        screenshot. Dark in both themes (it is a physical object).
+    .text-danger / .badge-danger — red text/badge with the same
+        light-theme AA step-down as the other accent classes.
+*/
+.cs-panel-bad {
+  border-inline-start: 4px solid var(--color-red-500);
+}
+.cs-panel-good {
+  border-inline-start: 4px solid var(--color-brand-500);
+}
+.cs-panel-ink {
+  border-inline-start: 4px solid var(--color-text-primary);
+}
+.cs-frame {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--theme-panel-border);
+  background-color: var(--theme-panel-bg-to);
+  box-shadow: var(--theme-panel-highlight), var(--theme-shadow-elev);
+}
+.cs-frame-bar {
+  @apply flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle bg-surface-900 px-4 py-2.5 text-xs;
+}
+.cs-phone {
+  @apply w-full max-w-[300px] p-2.5;
+  border-radius: 2rem;
+  background-color: #0b1220;
+  border: 1px solid #1e293b;
+  box-shadow: var(--theme-shadow-elev);
+}
+.cs-phone-screen {
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background-color: #ffffff;
+}
+.text-danger {
+  @apply text-red-400;
+}
+html[data-theme="light"] .text-danger {
+  color: var(--color-red-700);
+}
+.badge-danger {
+  @apply bg-red-500/10 text-red-300;
+}
+html[data-theme="light"] .badge-danger {
+  color: var(--color-red-700);
+}
+
+/*
   Section sheen (round 7) — a top-light wash that fades out within the
   section's first ~14rem, so a section stops reading as one flat sheet
   without changing its base surface color (seams with adjacent
